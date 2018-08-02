@@ -1,0 +1,14 @@
+<plugin>
+  <key>PluginWizard</key>
+  <label>PluginWizard</label>
+  <version>1.0.0</version>
+  <author>Your name or company name</author>
+  <authorUrl>Your company support url or email</authorUrl>
+  <category>Utilities</category>
+  <commander-version min="6.0" />
+  <description></description>
+  <configure>ec_config</configure>
+  <pluginWizardBased>true</pluginWizardBased>
+  <depends min="1.4.1">EC-PluginManager</depends>
+  <help>help.xml</help>
+</plugin>

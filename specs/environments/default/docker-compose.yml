@@ -1,0 +1,16 @@
+version: '3'
+services:
+  electric-flow:
+    image: "ecdocker/eflow-ce-server"
+    ports:
+      - "8000:8000"
+      - "8443:8443"
+      - "443:443"
+      - "80:80"
+    networks:
+      - internal
+    container_name: electricflow
+    tty: true
+networks:
+  internal:
+    driver: bridge

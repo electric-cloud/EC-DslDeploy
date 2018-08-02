@@ -1,0 +1,75 @@
+<exportedData buildLabel="build_3.5_30434_OPT_2010.01.13_07:32:22" buildVersion="3.5.1.30434" version="39">
+  <exportPath>/projects/MyPlugin-1.0</exportPath>
+  <project>
+    <projectName>MyPlugin-1.0</projectName>
+    <propertySheet>
+      <property>
+        <expandable>0</expandable>
+        <propertyName>ec_setup</propertyName>
+        <value>use Cwd;
+            use File::Spec;
+            use POSIX;
+            my $dir = getcwd;
+            my $logfile =&quot;&quot;;
+            my $pluginDir;
+
+
+            if ( defined $ENV{QUERY_STRING} ) {    # Promotion through UI
+                $pluginDir = $ENV{COMMANDER_PLUGINS} . &quot;/$pluginName&quot;;
+            }
+            else {
+                my $commanderPluginDir = $commander-&gt;getProperty('/server/settings/pluginsDirectory')-&gt;findvalue('//value');
+                unless ( $commanderPluginDir &amp;&amp; -d $commanderPluginDir ) {
+                    die &quot;Cannot find commander plugin dir, please ensure that the option server/settings/pluginsDirectory is set up correctly&quot;;
+                }
+                $pluginDir = File::Spec-&gt;catfile($commanderPluginDir, $pluginName);
+            }
+
+            $logfile .= &quot;Plugin directory is $pluginDir&quot;;
+
+            $commander-&gt;setProperty(&quot;/plugins/$pluginName/project/pluginDir&quot;, {value=&gt;$pluginDir});
+            $logfile .= &quot;Plugin Name: $pluginName\n&quot;;
+            $logfile .= &quot;Current directory: $dir\n&quot;;
+
+            # Evaluate promote.groovy or demote.groovy based on whether plugin is being promoted or demoted ($promoteAction)
+            local $/ = undef;
+            # If env variable QUERY_STRING exists:
+            my $dslFilePath;
+            if(defined $ENV{QUERY_STRING}) { # Promotion through UI
+                $dslFilePath = File::Spec-&gt;catfile($ENV{COMMANDER_PLUGINS}, $pluginName, &quot;dsl&quot;, &quot;$promoteAction.groovy&quot;);
+            } else {  # Promotion from the command line
+                $dslFilePath = File::Spec-&gt;catfile($pluginDir, &quot;dsl&quot;, &quot;$promoteAction.groovy&quot;);
+            }
+
+            open FILE, $dslFilePath or die &quot;Couldn't open file: $dslFilePath: $!&quot;;
+            my $dsl = &lt;FILE&gt;;
+            close FILE;
+            my $dslReponse = $commander-&gt;evalDsl(
+                $dsl, {
+                    parameters =&gt; qq(
+                    {
+                    &quot;pluginName&quot;:&quot;$pluginName&quot;,
+                    &quot;upgradeAction&quot;:&quot;$upgradeAction&quot;,
+                    &quot;otherPluginName&quot;:&quot;$otherPluginName&quot;
+                    }
+                ),
+                debug             =&gt; 'false',
+                serverLibraryPath =&gt; File::Spec-&gt;catdir( $pluginDir, 'dsl' ),
+            },
+            );
+
+
+            $logfile .= $dslReponse-&gt;findnodes_as_string(&quot;/&quot;);
+
+            my $errorMessage = $commander-&gt;getError();
+
+            # Create output property for plugin setup debug logs
+            my $nowString = localtime;
+            $commander-&gt;setProperty( &quot;/plugins/$pluginName/project/logs/$nowString&quot;, { value =&gt; $logfile } );
+
+			die $errorMessage unless !$errorMessage
+</value>
+      </property>
+    </propertySheet>
+  </project>
+</exportedData>
