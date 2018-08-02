@@ -32,8 +32,8 @@ Top Level
 
 ### Parameters
 1. Artifact Version
-1."local" pool (to reflect server resources)
-1."broadcast" required if cluster and local workspace so artifact is retrieved on all resources
+1. "local" pool (to reflect server resources)
+1. "broadcast" required if cluster and local workspace so artifact is retrieved on all resources
 1. workspace??
 1. Repo ??
 
