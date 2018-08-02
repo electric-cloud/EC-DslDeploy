@@ -26,16 +26,16 @@ Top Level
 2. work on local workspace
 
 ## Dev Process
-1. Generate and upload an articfact of the DSL Code
+1. Generate and upload an articfact of the DSL Code (will provide script later on)
 
 ## DSL Installation
 
 ### Parameters
 1. Artifact Version
-2."local" pool (to reflect server resources)
-3."broadcast" required if cluster and local workspace so artifact is retrieved on all resources
-4. workspace??
-5. Repo ??
+1."local" pool (to reflect server resources)
+1."broadcast" required if cluster and local workspace so artifact is retrieved on all resources
+1. workspace??
+1. Repo ??
 
 ### Steps
 1. retrieve artifact on "local
