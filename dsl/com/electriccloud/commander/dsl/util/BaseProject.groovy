@@ -10,6 +10,22 @@ import com.electriccloud.commander.dsl.DslDelegatingScript
 
 abstract class BaseProject extends DslDelegatingScript {
 
+	def loadProject(String projectDir, String projectName) {
+		// load the project.groovy
+
+		def getProjectDSLFile(File projectDir) {
+			File projDSLFile = new File(projectDir, 'project.dsl')
+			if(projDSLFile.exists()) {
+				return projDSLFile
+			} else {
+				return new File(projectDir, 'project.groovy')
+			}
+		}
+
+		File projDslFile=getProjectDSLFile(projectDir).absolutePath;
+		return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
+	}
+
 	def loadProjectProperties(String projectDir, String projectName) {
 
 		// Recursively navigate each file or sub-directory in the properties directory

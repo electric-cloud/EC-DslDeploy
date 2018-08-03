@@ -1,0 +1,16 @@
+<editor>
+  <formElement>
+      <type>entry</type>
+      <label>Project Namne</label>
+      <property>projName</property>
+      <required>1</required>
+      <documentation>Name of the project to install</documentation>
+  </formElement>
+  <formElement>
+      <type>entry</type>
+      <label>Project directory</label>
+      <property>projDir</property>
+      <required>1</required>
+      <documentation>project directory</documentation>
+  </formElement>
+</editor>

@@ -10,7 +10,7 @@
     <body>
         <div class="help">
           <h1>EC-DslDeploy</h1>
-      		<p>Plugin Version 0.1.0.8</p>
+      		<p>Plugin Version 0.1.0.16</p>
           	<hr style="margin-left: -10px; margin-top: 10px; height: 1px; width: 100%; color: #5981BD;" noshade="noshade" />
 
 			<p>This plugin is intended to deploy a DSL structure to your Flow server(s).</p>

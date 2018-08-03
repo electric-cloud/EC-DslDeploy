@@ -16,5 +16,5 @@ ElectricFlow ef = new ElectricFlow()
 
 File topDSLFile = new File(".", 'main.groovy')
 if (topDSLFile.exists()) {
-  ef.evalDsl(dslFile: topDSLFile)
+  ef.evalDsl(dsl: topDSLFile.text)
 }

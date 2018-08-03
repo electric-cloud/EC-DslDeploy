@@ -35,12 +35,14 @@ documentation : Help text for the parameter
       <label>Artifact Name</label>
       <property>artName</property>
       <required>1</required>
+      <value>com.electriccloud:EC-dslDeploy</value>
       <documentation>Artifact name that contains the DSL code</documentation>
   </formElement>
     <formElement>
         <type>entry</type>
         <label>Artifact Version</label>
-        <property>artVers</property>
+        <property>artVersion</property>
+        <value>1.0.0</value>
         <required>1</required>
         <documentation>Artifact version that contains the DSL code</documentation>
     </formElement>
