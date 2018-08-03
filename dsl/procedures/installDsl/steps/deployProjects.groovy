@@ -10,22 +10,27 @@
 */
 import com.electriccloud.client.groovy.ElectricFlow
 import com.electriccloud.client.groovy.apis.model.*
-import com.electriccloud.client.groovy.apis.model.ActualParameter
+import com.electriccloud.client.groovy.models.ActualParameter
 
 ElectricFlow ef = new ElectricFlow()
 
 File projectsFolder = new File("projects")
 projectsFolder.eachFile { projDir ->
   if (projDir.directory) {
+    println "Processing directory $projDir"
+    def basename=projDir.getName().toString()
+    def params = [
+        new ActualParameter('projName', basename),
+        new ActualParameter('projDir', projDir.toString())
+    ]
+
     ef.createJobStep(
-      jobStepName: projDir,
-      subprocedure: installProject,
-      actualParameter: [
-        projName: projDir,
-        projDir: "./projects/" + projDir
-      ]
+      jobStepName: basename,
+      subproject: '$[/myProject]',
+      subprocedure: 'installProject',
+      actualParameters: params
     )
+  } else {
+    println "Ignoring file projects/$projDir"
   }
 }
-
-  }

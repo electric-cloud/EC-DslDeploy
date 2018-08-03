@@ -7,7 +7,6 @@
   <category>Administration</category>
   <commander-version min="6.0" />
   <description>A plugin to deploy your DSL code structure to your servers</description>
-  <configure>ec_config</configure>
   <pluginWizardBased>true</pluginWizardBased>
   <depends min="1.4.0">EC-PluginManager</depends>
   <help>help.xml</help>

@@ -8,6 +8,6 @@ procedure procName, {
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployProject.groovy").text,
     shell: 'ec-groovy'
 
-	// loop on each project
-	step 'projectLoop'
+  // Do not Display in the property picker
+  property 'standardStepPicker', value: false
 }

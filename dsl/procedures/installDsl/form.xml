@@ -42,7 +42,7 @@ documentation : Help text for the parameter
         <type>entry</type>
         <label>Artifact Version</label>
         <property>artVersion</property>
-        <value>1.0.0</value>
+        <value>1.0.2</value>
         <required>1</required>
         <documentation>Artifact version that contains the DSL code</documentation>
     </formElement>

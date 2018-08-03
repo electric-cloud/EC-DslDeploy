@@ -19,5 +19,7 @@ procedure procName, {
     shell: 'ec-groovy'
 
 	// loop on each project
-	step 'projectLoop'
+	step 'deployProjects',
+		command: new File(pluginDir, "dsl/procedures/$procName/steps/deployProjects.groovy").text,
+		shell: 'ec-groovy'
 }
