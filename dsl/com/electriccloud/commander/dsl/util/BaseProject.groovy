@@ -23,7 +23,7 @@ abstract class BaseProject extends DslDelegatingScript {
 		// load the project.groovy
 		println "Entering loadProject(" +  projectDirDir.toString() + ",$projectName)"
 
-		File projDslFile=getProjectDSLFile(projectDir).absolutePath;
+		File dslFile=getProjectDSLFile(projectDir).absolutePath;
 		def proj=evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
 	}
 
