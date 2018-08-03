@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta content="text/html; charset=us-ascii" http-equiv="content-type"/>
+        <title>EC-DslDeploy Plugin</title>
+        <link rel="stylesheet" href="../../plugins/EC-DslDeploy/pluginhelp.css" type="text/css" media="screen" />
+    </head>
+    <body>
+        <div class="help">
+          <h1>EC-DslDeploy</h1>
+      		<p>Plugin Version 0.1.0.8</p>
+          	<hr style="margin-left: -10px; margin-top: 10px; height: 1px; width: 100%; color: #5981BD;" noshade="noshade" />
+
+			<p>This plugin is intended to deploy a DSL structure to your Flow server(s).</p>
+
+      	<h1>Legal Jumbo</h1>
+
+      	<p>This module is free for use. Modify it however you see fit to better your
+      experience using ElectricCommander. Share your enhancements and fixes.</p>
+
+      	<p>This module is not officially supported by Electric Cloud. It has undergone no
+      formal testing and you may run into issues that have not been uncovered in the
+      limited manual testing done so far.</p>
+
+      	<p>Electric Cloud should not be held liable for any repercussions of using this
+      software.</p>
+
+      <!-- PROCEDURES END -->
+    <h1 id="releaseNotes">Release Notes</h1>
+    <h3 id="0.1.0">EC-DslDeploy 0.1.0</h3>
+    <ul>
+        <li>Initial version.</li>
+    </ul>
+
+    </div>
+	</body>
+</html>

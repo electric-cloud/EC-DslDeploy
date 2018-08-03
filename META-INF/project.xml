@@ -1,7 +1,7 @@
 <exportedData buildLabel="build_3.5_30434_OPT_2010.01.13_07:32:22" buildVersion="3.5.1.30434" version="39">
-  <exportPath>/projects/MyPlugin-1.0</exportPath>
+  <exportPath>/projects/EC-DslDeploy-1.0</exportPath>
   <project>
-    <projectName>MyPlugin-1.0</projectName>
+    <projectName>EC-DslDeploy-1.0</projectName>
     <propertySheet>
       <property>
         <expandable>0</expandable>

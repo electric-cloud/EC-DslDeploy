@@ -12,10 +12,8 @@ procedure procName, {
 			artifactVersionLocationProperty: '/myJob/retrievedArtifactVersions/$[assignedResourceName]'
 	]
 
-	//evalDsl the main.groovy if it exists
-	step 'deployMain',
-    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployMain.groovy").text,
+	step 'deployDsl',
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployDsl.groovy").text,
     shell: 'ec-groovy'
 
-	step 'projectLoop'
 }

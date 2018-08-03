@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Build, upload and promote EC-Admin using ecpluginbuilder
+# Build, upload and promote EC-DslDeploy using ecpluginbuilder
 #		https://github.com/electric-cloud/ecpluginbuilder
 
 use Getopt::Long;
