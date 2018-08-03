@@ -10,8 +10,8 @@ def projectDir = '$[projDir]'
 
 project projectName, {
   loadProject(projectDir, projectName)
-	// loadProjectProperties(projectDir, projectName)
-	// loadProcedures(projectDir, projectName, [])
+	loadProjectProperties(projectDir, projectName)
+	loadProcedures(projectDir, projectName, [])
 
 	property "deployedBy", value: "$[/myProject/projectName]"
 }

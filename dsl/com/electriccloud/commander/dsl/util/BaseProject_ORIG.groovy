@@ -10,8 +10,7 @@ import com.electriccloud.commander.dsl.DslDelegatingScript
 
 abstract class BaseProject extends DslDelegatingScript {
 
-	// return the project.groovy or project.dsl
-	def getProjectDSLFile(String projectDir) {
+	def getProjectDSLFile(File projectDir) {
 		File projDSLFile = new File(projectDir, 'project.dsl')
 		if(projDSLFile.exists()) {
 			return projDSLFile
@@ -24,21 +23,21 @@ abstract class BaseProject extends DslDelegatingScript {
 		// load the project.groovy
 		println "Entering loadProject(" +  projectDir.toString() + ",$projectName)"
 
-		File dslFile=getProjectDSLFile(projectDir);
+		File dslFile=getProjectDSLFile(projectDir).absolutePath;
 		def proj=evalInlineDsl(dslFile.toString(), [projectName: projectName, projectDir: projectDir])
 	}
 
 	def loadProjectProperties(String projectDir, String projectName) {
-		println "Entering loadProjectProperties($projectDir,$projectName)"
+		println "Entering loadProjectProperties(" +  projectDir.toString() + ",$projectName)"
 
 		// Recursively navigate each file or sub-directory in the properties directory
 		//Create a property corresponding to a file,
 		// or create a property sheet for a sub-directory before navigating into it
-		def projPropertyDir=new File(projectDir, 'properties')
-		if (projPropertyDir.directory) {
+		projPropDir=new File(projectDir, 'dsl/properties')
+		if (projPropertyDir.isDirectory) {
 			loadNestedProperties("/projects/$projectName", projPropertyDir)
 		}	else {
-			println "No properties directory for project $projectName"
+			println "No property directory for project $projectName"
 		}
 	}
 
@@ -61,28 +60,17 @@ abstract class BaseProject extends DslDelegatingScript {
 				} else {
 					createProperty propertyName: propPath, value: dir.text
 				}
+
 			}
 		}
 	}
 
-	def getProcedureDSLFile(File procedureDir) {
-		File procDSLFile = new File(procedureDir, 'procedure.dsl')
-		if(procDSLFile.exists()) {
-			return procDSLFile
-		} else {
-			return new File(procedureDir, 'procedure.groovy')
-		}
-	}
-
-	def loadProcedure(String projectDir, String projectName, String dslFile) {
-		return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
-	}
-
 	def loadProcedures(String projectDir, String projectName, List stepsWithAttachedCredentials) {
+
 		// Loop over the sub-directories in the procedures directory
 		// and evaluate procedures if a procedure.dsl file exists
 
-		File procsDir = new File(projectDir, 'procedures')
+		File procsDir = new File(projectDir, 'dsl/procedures')
 		procsDir.eachDir {
 
 			File procDslFile = getProcedureDSLFile(it)
@@ -96,24 +84,47 @@ abstract class BaseProject extends DslDelegatingScript {
 					println "Processing form XML $formXml.absolutePath"
 					buildFormalParametersFromFormXml(proc, formXml)
 				}
+
 			}
+
+		}
+
+		// project boiler-plate
+		setupprojectMetadata(projectDir, projectName, stepsWithAttachedCredentials)
+	}
+
+	def getProcedureDSLFile(File procedureDir) {
+
+		if (procedureDir.name.toLowerCase().endsWith('_ignore')) {
+			return null
+		}
+
+		File procDSLFile = new File(procedureDir, 'procedure.dsl')
+		if(procDSLFile.exists()) {
+			return procDSLFile
+		} else {
+			return new File(procedureDir, 'procedure.groovy')
 		}
 	}
 
-		//Helper function to load another dsl script and evaluate it in-context
-		def evalInlineDsl(String dslFile, Map bindingMap) {
+	def loadProcedure(String projectDir, String projectName, String dslFile) {
+		return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
+	}
 
-			CompilerConfiguration cc = new CompilerConfiguration();
-			cc.setScriptBaseClass(DelegatingScript.class.getName());
-			GroovyShell sh = new GroovyShell(this.class.classLoader, bindingMap? new Binding(bindingMap) : new Binding(), cc);
-			DelegatingScript script = (DelegatingScript)sh.parse(new File(dslFile))
-			script.setDelegate(this);
-			return script.run();
-		}
+	//Helper function to load another dsl script and evaluate it in-context
+	def evalInlineDsl(String dslFile, Map bindingMap) {
 
-		def nullIfEmpty(def value) {
-			value == '' ? null : value
-		}
+		CompilerConfiguration cc = new CompilerConfiguration();
+		cc.setScriptBaseClass(DelegatingScript.class.getName());
+		GroovyShell sh = new GroovyShell(this.class.classLoader, bindingMap? new Binding(bindingMap) : new Binding(), cc);
+		DelegatingScript script = (DelegatingScript)sh.parse(new File(dslFile))
+		script.setDelegate(this);
+		return script.run();
+	}
+
+	def nullIfEmpty(def value) {
+		value == '' ? null : value
+	}
 
 	def buildFormalParametersFromFormXml(def proc, File formXml) {
 
@@ -172,7 +183,9 @@ abstract class BaseProject extends DslDelegatingScript {
 						}
 					}
 				}
+
 			}
 		}
 	}
+
 }
