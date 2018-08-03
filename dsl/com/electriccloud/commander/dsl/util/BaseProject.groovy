@@ -21,14 +21,14 @@ abstract class BaseProject extends DslDelegatingScript {
 
 	def loadProject(String projectDir, String projectName) {
 		// load the project.groovy
-		println "Entering loadProject(" +  projectDirDir.toString() + ",$projectName)"
+		println "Entering loadProject(" +  projectDir.toString() + ",$projectName)"
 
 		File dslFile=getProjectDSLFile(projectDir).absolutePath;
 		def proj=evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
 	}
 
 	def loadProjectProperties(String projectDir, String projectName) {
-		println "Entering loadProjectProperties(" +  projectDirDir.toString() + ",$projectName)"
+		println "Entering loadProjectProperties(" +  projectDir.toString() + ",$projectName)"
 
 		// Recursively navigate each file or sub-directory in the properties directory
 		//Create a property corresponding to a file,
@@ -187,4 +187,5 @@ abstract class BaseProject extends DslDelegatingScript {
 			}
 		}
 	}
+
 }
