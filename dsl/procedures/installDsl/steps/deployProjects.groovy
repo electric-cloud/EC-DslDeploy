@@ -21,7 +21,7 @@ projectsFolder.eachFile { projDir ->
     def basename=projDir.getName().toString()
     def params = [
         new ActualParameter('projName', basename),
-        new ActualParameter('projDir', projDir.toString())
+        new ActualParameter('projDir', projDir.absolutePath.toString())
     ]
 
     ef.createJobStep(

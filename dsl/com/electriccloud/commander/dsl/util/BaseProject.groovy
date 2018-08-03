@@ -10,33 +10,41 @@ import com.electriccloud.commander.dsl.DslDelegatingScript
 
 abstract class BaseProject extends DslDelegatingScript {
 
+	def getProjectDSLFile(File projectDir) {
+		File projDSLFile = new File(projectDir, 'project.dsl')
+		if(projDSLFile.exists()) {
+			return projDSLFile
+		} else {
+			return new File(projectDir, 'project.groovy')
+		}
+	}
+
 	def loadProject(String projectDir, String projectName) {
 		// load the project.groovy
-
-		def getProjectDSLFile(File projectDir) {
-			File projDSLFile = new File(projectDir, 'project.dsl')
-			if(projDSLFile.exists()) {
-				return projDSLFile
-			} else {
-				return new File(projectDir, 'project.groovy')
-			}
-		}
+		println "Entering loadProject(" +  projectDirDir.toString() + ",$projectName)"
 
 		File projDslFile=getProjectDSLFile(projectDir).absolutePath;
-		return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
+		def proj=evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
 	}
 
 	def loadProjectProperties(String projectDir, String projectName) {
+		println "Entering loadProjectProperties(" +  projectDirDir.toString() + ",$projectName)"
 
 		// Recursively navigate each file or sub-directory in the properties directory
 		//Create a property corresponding to a file,
 		// or create a property sheet for a sub-directory before navigating into it
-		loadNestedProperties("/projects/$projectName", new File(projectDir, 'dsl/properties'))
+		projPropDir=new File(projectDir, 'dsl/properties')
+		if (projPropertyDir.isDirectory) {
+			loadNestedProperties("/projects/$projectName", projPropertyDir)
+		}	else {
+			println "No property directory for project $projectName"
+		}
 	}
 
 	def loadNestedProperties(String propRoot, File propsDir) {
-
+		println "Entering loadNestedProperties($propRoot," +  propsDir.toString() + ")"
 		propsDir.eachFile { dir ->
+			println "  parsing " + dir.toString()
 			int extension = dir.name.lastIndexOf('.')
 			int endIndex = extension > -1 ? extension : dir.name.length()
 			String propName = dir.name.substring(0, endIndex)
@@ -179,8 +187,4 @@ abstract class BaseProject extends DslDelegatingScript {
 			}
 		}
 	}
-
-
-
-
 }
