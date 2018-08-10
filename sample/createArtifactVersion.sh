@@ -1,7 +1,7 @@
 #  ectool --server XXXX login admin yyyyy
 
 ectool publishArtifactVersion \
-  --version 1.0.3 \
+  --version 1.0.4 \
   --artifactName com.electriccloud:EC-dslDeploy \
   --includePatterns "**/*" \
   --fromDirectory repo \
