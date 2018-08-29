@@ -10,26 +10,35 @@ import com.electriccloud.commander.dsl.DslDelegatingScript
 
 abstract class BaseProject extends DslDelegatingScript {
 
-	// return the project.groovy or project.dsl
-	def getProjectDSLFile(String projectDir) {
-		File projDSLFile = new File(projectDir, 'project.dsl')
-		if(projDSLFile.exists()) {
-			return projDSLFile
+	// return the object.groovy or object.dsl
+	//		AKA project.groovy, procedure.dsl, pipeline.groovy, ...
+	def getObjectDSLFile(File objDir, String obj) {
+		File dslFile = new File(objDir, obj + '.groovy')
+		if (dslFile.exists()) {
+			return dslFile
 		} else {
-			return new File(projectDir, 'project.groovy')
+			dslFile = new File(objDir, obj + '.dsl')
+			if (dslFile.exists()) {
+				return dslFile
+			} else {
+				return null
+			}
 		}
 	}
 
 	def loadProject(String projectDir, String projectName) {
 		// load the project.groovy
-		println "Entering loadProject(" +  projectDir.toString() + ",$projectName)"
+		// println "Entering loadProject(" +  projectDir.toString() + ",$projectName)"
 
-		File dslFile=getProjectDSLFile(projectDir);
-		def proj=evalInlineDsl(dslFile.toString(), [projectName: projectName, projectDir: projectDir])
+		File dslFile=getObjectDSLFile(new File(projectDir), "project");
+		if (dslFile?.exists()) {
+			println "Processing project DSL file ${dslFile.absolutePath}"
+		  def proj=evalInlineDsl(dslFile.toString(), [projectName: projectName, projectDir: projectDir])
+		}
 	}
 
 	def loadProjectProperties(String projectDir, String projectName) {
-		println "Entering loadProjectProperties($projectDir,$projectName)"
+		// println "Entering loadProjectProperties($projectDir,$projectName)"
 
 		// Recursively navigate each file or sub-directory in the properties directory
 		//Create a property corresponding to a file,
@@ -43,7 +52,7 @@ abstract class BaseProject extends DslDelegatingScript {
 	}
 
 	def loadNestedProperties(String propRoot, File propsDir) {
-		println "Entering loadNestedProperties($propRoot," +  propsDir.toString() + ")"
+		// println "Entering loadNestedProperties($propRoot," +  propsDir.toString() + ")"
 		propsDir.eachFile { dir ->
 			println "  parsing " + dir.toString()
 			int extension = dir.name.lastIndexOf('.')
@@ -65,55 +74,77 @@ abstract class BaseProject extends DslDelegatingScript {
 		}
 	}
 
-	def getProcedureDSLFile(File procedureDir) {
-		File procDSLFile = new File(procedureDir, 'procedure.dsl')
-		if(procDSLFile.exists()) {
-			return procDSLFile
-		} else {
-			return new File(procedureDir, 'procedure.groovy')
-		}
-	}
-
 	def loadProcedure(String projectDir, String projectName, String dslFile) {
 		return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
 	}
 
-	def loadProcedures(String projectDir, String projectName, List stepsWithAttachedCredentials) {
+	def loadProcedures(String projectDir, String projectName) {
 		// Loop over the sub-directories in the procedures directory
 		// and evaluate procedures if a procedure.dsl file exists
 
 		File procsDir = new File(projectDir, 'procedures')
-		procsDir.eachDir {
 
-			File procDslFile = getProcedureDSLFile(it)
-			if (procDslFile?.exists()) {
-				println "Processing procedure DSL file ${procDslFile.absolutePath}"
-				def proc = loadProcedure(projectDir, projectName, procDslFile.absolutePath)
+		if (procsDir.exists()) {
+			procsDir.eachDir {
 
-				//create formal parameters using form.xml
-				File formXml = new File(it, 'form.xml')
-				if (formXml.exists()) {
-					println "Processing form XML $formXml.absolutePath"
-					buildFormalParametersFromFormXml(proc, formXml)
+				File procDslFile = getObjectDSLFile(it, "procedure")
+				if (procDslFile?.exists()) {
+					println "Processing procedure DSL file ${procDslFile.absolutePath}"
+					def proc = loadProcedure(projectDir, projectName, procDslFile.absolutePath)
+
+					//create formal parameters using form.xml
+					File formXml = new File(it, 'form.xml')
+					if (formXml.exists()) {
+						println "Processing form XML $formXml.absolutePath"
+						buildFormalParametersFromFormXml(proc, formXml)
+					}
 				}
 			}
 		}
 	}
 
-		//Helper function to load another dsl script and evaluate it in-context
-		def evalInlineDsl(String dslFile, Map bindingMap) {
+	def loadPipeline(String projectDir, String projectName, String dslFile) {
+		return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
+	}
 
-			CompilerConfiguration cc = new CompilerConfiguration();
-			cc.setScriptBaseClass(DelegatingScript.class.getName());
-			GroovyShell sh = new GroovyShell(this.class.classLoader, bindingMap? new Binding(bindingMap) : new Binding(), cc);
-			DelegatingScript script = (DelegatingScript)sh.parse(new File(dslFile))
-			script.setDelegate(this);
-			return script.run();
-		}
+	def loadPipelines(String projectDir, String projectName) {
+		// Loop over the sub-directories in the pipelines directory
+		// and evaluate pipelines if a pipeline.dsl file exists
 
-		def nullIfEmpty(def value) {
-			value == '' ? null : value
+		File pipesDir = new File(projectDir, 'pipelines')
+		if (pipesDir.exists()) {
+			pipesDir.eachDir {
+
+				File dslFile = getObjectDSLFile(it, "pipeline")
+				if (dslFile?.exists()) {
+					println "Processing pipeline DSL file ${dslFile.absolutePath}"
+					def pipe = loadPipeline(projectDir, projectName, dslFile.absolutePath)
+
+					//create formal parameters using form.xml
+					File formXml = new File(it, 'form.xml')
+					if (formXml.exists()) {
+						println "Processing form XML $formXml.absolutePath"
+						buildFormalParametersFromFormXml(pipe, formXml)
+					}
+				}
+			}
 		}
+	}
+
+	//Helper function to load another dsl script and evaluate it in-context
+	def evalInlineDsl(String dslFile, Map bindingMap) {
+
+		CompilerConfiguration cc = new CompilerConfiguration();
+		cc.setScriptBaseClass(DelegatingScript.class.getName());
+		GroovyShell sh = new GroovyShell(this.class.classLoader, bindingMap? new Binding(bindingMap) : new Binding(), cc);
+		DelegatingScript script = (DelegatingScript)sh.parse(new File(dslFile))
+		script.setDelegate(this);
+		return script.run();
+	}
+
+	def nullIfEmpty(def value) {
+		value == '' ? null : value
+	}
 
 	def buildFormalParametersFromFormXml(def proc, File formXml) {
 
