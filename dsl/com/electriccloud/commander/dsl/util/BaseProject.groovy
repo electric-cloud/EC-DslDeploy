@@ -9,7 +9,6 @@ import org.codehaus.groovy.control.CompilerConfiguration
 import com.electriccloud.commander.dsl.DslDelegatingScript
 
 abstract class BaseProject extends DslDelegatingScript {
-
 	// return the object.groovy or object.dsl
 	//		AKA project.groovy, procedure.dsl, pipeline.groovy, ...
 	def getObjectDSLFile(File objDir, String obj) {
@@ -27,9 +26,7 @@ abstract class BaseProject extends DslDelegatingScript {
 	}
 
 	def loadProject(String projectDir, String projectName) {
-		// load the project.groovy
-		// println "Entering loadProject(" +  projectDir.toString() + ",$projectName)"
-
+		// load the project.groovy if it exists
 		File dslFile=getObjectDSLFile(new File(projectDir), "project");
 		if (dslFile?.exists()) {
 			println "Processing project DSL file ${dslFile.absolutePath}"
@@ -38,8 +35,6 @@ abstract class BaseProject extends DslDelegatingScript {
 	}
 
 	def loadProjectProperties(String projectDir, String projectName) {
-		// println "Entering loadProjectProperties($projectDir,$projectName)"
-
 		// Recursively navigate each file or sub-directory in the properties directory
 		//Create a property corresponding to a file,
 		// or create a property sheet for a sub-directory before navigating into it
@@ -85,6 +80,7 @@ abstract class BaseProject extends DslDelegatingScript {
 		File procsDir = new File(projectDir, 'procedures')
 
 		if (procsDir.exists()) {
+			// sort procedures alpahbetically
 			procsDir.eachDir {
 
 				File procDslFile = getObjectDSLFile(it, "procedure")
@@ -96,7 +92,7 @@ abstract class BaseProject extends DslDelegatingScript {
 					File formXml = new File(it, 'form.xml')
 					if (formXml.exists()) {
 						println "Processing form XML $formXml.absolutePath"
-						buildFormalParametersFromFormXml(proc, formXml)
+						buildFormalParametersFromFormXmlToProcedure(proc, formXml)
 					}
 				}
 			}
@@ -110,22 +106,64 @@ abstract class BaseProject extends DslDelegatingScript {
 	def loadPipelines(String projectDir, String projectName) {
 		// Loop over the sub-directories in the pipelines directory
 		// and evaluate pipelines if a pipeline.dsl file exists
-
+		// println "Entering loadPipelines for $projectDir ($projectName)"
 		File pipesDir = new File(projectDir, 'pipelines')
 		if (pipesDir.exists()) {
-			pipesDir.eachDir {
-
-				File dslFile = getObjectDSLFile(it, "pipeline")
+			// sort pipelines alphabetically
+			def dlist=[]
+			pipesDir.eachDir() {dlist << it}
+			dlist.sort({it.name})
+			dlist.each { fdir ->
+			// pipesDir.eachDir { fdir ->
+				print "looping "+ fdir.name
+				File dslFile = getObjectDSLFile(fdir, "pipeline")
 				if (dslFile?.exists()) {
 					println "Processing pipeline DSL file ${dslFile.absolutePath}"
 					def pipe = loadPipeline(projectDir, projectName, dslFile.absolutePath)
-
 					//create formal parameters using form.xml
-					File formXml = new File(it, 'form.xml')
+					File formXml = new File(fdir, 'form.xml')
 					if (formXml.exists()) {
 						println "Processing form XML $formXml.absolutePath"
-						buildFormalParametersFromFormXml(pipe, formXml)
+						buildFormalParametersFromFormXmlToPipeline(pipe, formXml)
 					}
+				}
+			}
+		}
+	}
+
+	def loadService(String projectDir, String projectName, String dslFile) {
+		return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
+	}
+	def loadServices(String projectDir, String projectName) {
+		// Loop over the sub-directories in the microservices directory
+		// and evaluate services if a service.dsl file exists
+
+		File dir = new File(projectDir, 'services')
+		if (dir.exists()) {
+			dir.eachDir {
+				File dslFile = getObjectDSLFile(it, "service")
+				if (dslFile?.exists()) {
+					println "Processing pipeline DSL file ${dslFile.absolutePath}"
+					def pipe = loadService(projectDir, projectName, dslFile.absolutePath)
+				}
+			}
+		}
+	}
+
+	def loadEnvironment(String projectDir, String projectName, String dslFile) {
+		return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
+	}
+	def loadEnvironments(String projectDir, String projectName) {
+		// Loop over the sub-directories in the environments directory
+		// and evaluate services if a service.dsl file exists
+
+		File dir = new File(projectDir, 'environments')
+		if (dir.exists()) {
+			dir.eachDir {
+				File dslFile = getObjectDSLFile(it, "environment")
+				if (dslFile?.exists()) {
+					println "Processing environment DSL file ${dslFile.absolutePath}"
+					def pipe = loadEnvironment(projectDir, projectName, dslFile.absolutePath)
 				}
 			}
 		}
@@ -146,7 +184,7 @@ abstract class BaseProject extends DslDelegatingScript {
 		value == '' ? null : value
 	}
 
-	def buildFormalParametersFromFormXml(def proc, File formXml) {
+	def buildFormalParametersFromFormXmlToProcedure(def proc, File formXml) {
 
 		def formElements = new XmlSlurper().parseText(formXml.text)
 
@@ -155,7 +193,7 @@ abstract class BaseProject extends DslDelegatingScript {
 			ec_parameterForm = formXml.text
 			formElements.formElement.each { formElement ->
 				def expansionDeferred = formElement.expansionDeferred == "true" ? "1" : "0"
-				println "expansionDeferred: ${formElement.property}: $expansionDeferred"
+				// println "expansionDeferred: ${formElement.property}: $expansionDeferred"
 
 				formalParameter "$formElement.property",
 						defaultValue: formElement.value,
@@ -177,6 +215,57 @@ abstract class BaseProject extends DslDelegatingScript {
 
 				//setup custom editor data for each parameter
 				property 'ec_customEditorData', procedureName: proc.procedureName, {
+					property 'parameters', {
+						property "$formElement.property", {
+							formType = 'standard'
+							println "Form element $formElement.property, type: '${formElement.type.toString()}'"
+							if ('checkbox' == formElement.type.toString()) {
+								checkedValue = formElement.checkedValue?:'true'
+								uncheckedValue = formElement.uncheckedValue?:'false'
+								initiallyChecked = formElement.initiallyChecked?:'0'
+							} else if ('select' == formElement.type.toString() ||
+									'radio' == formElement.type.toString()) {
+								int count = 0
+								property "options", {
+									formElement.option.each { option ->
+										count++
+										property "option$count", {
+											property 'text', value: "${option.name}"
+											property 'value', value: "${option.value}"
+										}
+									}
+									type = 'list'
+									optionCount = count
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	def buildFormalParametersFromFormXmlToPipeline(def pipe, File formXml) {
+
+		def formElements = new XmlSlurper().parseText(formXml.text)
+
+		pipeline pipe.pipelineName, {
+
+			ec_parameterForm = formXml.text
+			formElements.formElement.each { formElement ->
+				def expansionDeferred = formElement.expansionDeferred == "true" ? "1" : "0"
+				println "expansionDeferred: ${formElement.property}: $expansionDeferred"
+
+				formalParameter "$formElement.property",
+						defaultValue: formElement.value,
+						required: nullIfEmpty(formElement.condition) ? 0 : ( nullIfEmpty(formElement.required) ?: 0 ),
+						description: formElement.documentation,
+						type: formElement.type,
+						label: formElement.label,
+						expansionDeferred: expansionDeferred
+
+				//setup custom editor data for each parameter
+				property 'ec_customEditorData', pipelineName: pipe.pipelineName, {
 					property 'parameters', {
 						property "$formElement.property", {
 							formType = 'standard'

@@ -31,39 +31,39 @@ documentation : Help text for the parameter
 -->
 <editor>
   <formElement>
-      <type>entry</type>
-      <label>Artifact Name</label>
-      <property>artName</property>
-      <required>1</required>
-      <value>com.electriccloud:EC-dslDeploy</value>
-      <documentation>Artifact name that contains the DSL code</documentation>
+    <type>entry</type>
+    <label>Artifact Name</label>
+    <property>artName</property>
+    <required>1</required>
+    <value>com.electriccloud:EC-dslDeploy</value>
+    <documentation>Artifact name that contains the DSL code</documentation>
   </formElement>
-    <formElement>
-        <type>entry</type>
-        <label>Artifact Version</label>
-        <property>artVersion</property>
-        <value>1.0.4</value>
-        <required>1</required>
-        <documentation>Artifact version that contains the DSL code</documentation>
-    </formElement>
-    <formElement>
-        <type>entry</type>
-        <label>Server Local Pool</label>
-        <property>pool</property>
-        <required>1</required>
-        <value>local</value>
-        <documentation>Server pool</documentation>
-    </formElement>
-    <formElement>
-        <type>checkbox</type>
-        <label>Broadcast</label>
-        <property>broadcast</property>
-        <required>1</required>
-        <checkedValue>true</checkedValue>
-        <uncheckedValue>false</uncheckedValue>
-        <initiallyChecked>1</initiallyChecked>
-        <value>false</value>
-        <documentation>Server pool</documentation>
-    </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Artifact Version</label>
+    <property>artVersion</property>
+    <value></value>
+    <required>0</required>
+    <documentation>Artifact version that contains the DSL code. No version indicates latest.</documentation>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Server Local Pool</label>
+    <property>pool</property>
+    <required>1</required>
+    <value>local</value>
+    <documentation>Server pool</documentation>
+  </formElement>
+  <formElement>
+    <type>checkbox</type>
+    <label>Broadcast</label>
+    <property>broadcast</property>
+    <required>1</required>
+    <checkedValue>true</checkedValue>
+    <uncheckedValue>false</uncheckedValue>
+    <initiallyChecked>1</initiallyChecked>
+    <value>false</value>
+    <documentation>Server pool</documentation>
+  </formElement>
 	<!--Add more parameters here-->
 </editor>
