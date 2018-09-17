@@ -1,3 +1,6 @@
+2018-09-17 Laurent Rochette <lrochette@electric-cloud.com>
+  * 0.4.0.175: Add support for release
+
 2018-09-14 Laurent Rochette <lrochette@electric-cloud.com>
   * 0.3.1.140: Fix #1 Issue promoting on Windows
 

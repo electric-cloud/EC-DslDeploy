@@ -107,11 +107,12 @@ abstract class BaseProject extends DslDelegatingScript {
 		// Loop over the sub-directories in the pipelines directory
 		// and evaluate pipelines if a pipeline.dsl file exists
 		// println "Entering loadPipelines for $projectDir ($projectName)"
+		def counter=0
 		File pipesDir = new File(projectDir, 'pipelines')
 		if (pipesDir.exists()) {
 			// sort pipelines alphabetically
 			def dlist=[]
-			pipesDir.eachDir() {dlist << it}
+			pipesDir.eachDir {dlist << it}
 			dlist.sort({it.name})
 			dlist.each { fdir ->
 			// pipesDir.eachDir { fdir ->
@@ -120,6 +121,7 @@ abstract class BaseProject extends DslDelegatingScript {
 				if (dslFile?.exists()) {
 					println "Processing pipeline DSL file ${dslFile.absolutePath}"
 					def pipe = loadPipeline(projectDir, projectName, dslFile.absolutePath)
+					counter++
 					//create formal parameters using form.xml
 					File formXml = new File(fdir, 'form.xml')
 					if (formXml.exists()) {
@@ -129,6 +131,7 @@ abstract class BaseProject extends DslDelegatingScript {
 				}
 			}
 		}
+		return counter
 	}
 
 	def loadService(String projectDir, String projectName, String dslFile) {
@@ -137,7 +140,7 @@ abstract class BaseProject extends DslDelegatingScript {
 	def loadServices(String projectDir, String projectName) {
 		// Loop over the sub-directories in the microservices directory
 		// and evaluate services if a service.dsl file exists
-
+		def counter=0
 		File dir = new File(projectDir, 'services')
 		if (dir.exists()) {
 			dir.eachDir {
@@ -145,9 +148,11 @@ abstract class BaseProject extends DslDelegatingScript {
 				if (dslFile?.exists()) {
 					println "Processing pipeline DSL file ${dslFile.absolutePath}"
 					def pipe = loadService(projectDir, projectName, dslFile.absolutePath)
+					counter++
 				}
 			}
 		}
+		return counter
 	}
 
 	def loadEnvironment(String projectDir, String projectName, String dslFile) {
@@ -156,7 +161,8 @@ abstract class BaseProject extends DslDelegatingScript {
 	def loadEnvironments(String projectDir, String projectName) {
 		// Loop over the sub-directories in the environments directory
 		// and evaluate services if a service.dsl file exists
-
+		//println "Entering loadEnvironments for $projectDir ($projectName)"
+		def counter=0
 		File dir = new File(projectDir, 'environments')
 		if (dir.exists()) {
 			dir.eachDir {
@@ -164,10 +170,35 @@ abstract class BaseProject extends DslDelegatingScript {
 				if (dslFile?.exists()) {
 					println "Processing environment DSL file ${dslFile.absolutePath}"
 					def pipe = loadEnvironment(projectDir, projectName, dslFile.absolutePath)
+					counter++
 				}
 			}
 		}
+		return counter
 	}
+
+	def loadRelease(String projectDir, String projectName, String dslFile) {
+		return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
+	}
+	def loadReleases(String projectDir, String projectName) {
+		// Loop over the sub-directories in the releases directory
+		// and evaluate reelases if a release.dsl file exists
+		def counter=0
+		File dir = new File(projectDir, 'releases')
+		if (dir.exists()) {
+			//println "directory releases exists"
+			dir.eachDir {
+				File dslFile = getObjectDSLFile(it, "release")
+				if (dslFile?.exists()) {
+					println "Processing release DSL file ${dslFile.absolutePath}"
+					def pipe = loadRelease(projectDir, projectName, dslFile.absolutePath)
+					counter++
+				}
+			}	// eachDir loop
+		}		// directory releases exist
+		return counter
+	}
+
 
 	//Helper function to load another dsl script and evaluate it in-context
 	def evalInlineDsl(String dslFile, Map bindingMap) {
