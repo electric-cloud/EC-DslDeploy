@@ -199,6 +199,49 @@ abstract class BaseProject extends DslDelegatingScript {
 		return counter
 	}
 
+	def loadCatalog(String projectDir, String projectName, String dslFile) {
+		return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
+	}
+	def loadCatalogs(String projectDir, String projectName) {
+		// Loop over the sub-directories in the catalogs directory
+		// and evaluate catalogs if a catalog.dsl file exists
+		def counter=0
+		File dir = new File(projectDir, 'catalogs')
+		if (dir.exists()) {
+			//println "directory releases exists"
+			dir.eachDir {
+				File dslFile = getObjectDSLFile(it, "catalog")
+				if (dslFile?.exists()) {
+					println "Processing catalog DSL file ${dslFile.absolutePath}"
+					def cat = loadCatalog(projectDir, projectName, dslFile.absolutePath)
+					counter++
+				}
+			}	// eachDir loop
+		}		// directory catalogs exist
+		return counter
+	}
+
+	def loadApplication(String projectDir, String projectName, String dslFile) {
+		return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
+	}
+	def loadApplications(String projectDir, String projectName) {
+		// Loop over the sub-directories in the applications directory
+		// and evaluate application if a application.dsl file exists
+		def counter=0
+		File dir = new File(projectDir, 'applications')
+		if (dir.exists()) {
+			//println "directory releases exists"
+			dir.eachDir {
+				File dslFile = getObjectDSLFile(it, "application")
+				if (dslFile?.exists()) {
+					println "Processing application DSL file ${dslFile.absolutePath}"
+					def app = loadApplication(projectDir, projectName, dslFile.absolutePath)
+					counter++
+				}
+			}	// eachDir loop
+		}		// directory applications exist
+		return counter
+	}
 
 	//Helper function to load another dsl script and evaluate it in-context
 	def evalInlineDsl(String dslFile, Map bindingMap) {
