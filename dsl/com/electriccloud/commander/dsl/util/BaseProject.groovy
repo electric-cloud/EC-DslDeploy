@@ -76,7 +76,7 @@ abstract class BaseProject extends DslDelegatingScript {
 	def loadProcedures(String projectDir, String projectName) {
 		// Loop over the sub-directories in the procedures directory
 		// and evaluate procedures if a procedure.dsl file exists
-
+		def counter=0
 		File procsDir = new File(projectDir, 'procedures')
 
 		if (procsDir.exists()) {
@@ -87,7 +87,7 @@ abstract class BaseProject extends DslDelegatingScript {
 				if (procDslFile?.exists()) {
 					println "Processing procedure DSL file ${procDslFile.absolutePath}"
 					def proc = loadProcedure(projectDir, projectName, procDslFile.absolutePath)
-
+					counter++
 					//create formal parameters using form.xml
 					File formXml = new File(it, 'form.xml')
 					if (formXml.exists()) {
@@ -97,6 +97,7 @@ abstract class BaseProject extends DslDelegatingScript {
 				}
 			}
 		}
+		return counter
 	}
 
 	def loadPipeline(String projectDir, String projectName, String dslFile) {
@@ -221,6 +222,46 @@ abstract class BaseProject extends DslDelegatingScript {
 		return counter
 	}
 
+	def loadDashboard(String projectDir, String projectName, String dslFile) {
+		return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
+	}
+	def loadDashboards(String projectDir, String projectName) {
+		// Loop over the sub-directories in the dashboards directory
+		// and evaluate dashboards if a dashboard.dsl file exists
+		def counter=0
+		File dir = new File(projectDir, 'dashboards')
+		if (dir.exists()) {
+			//println "directory releases exists"
+			dir.eachDir {
+				File dslFile = getObjectDSLFile(it, "dashboard")
+				if (dslFile?.exists()) {
+					println "Processing dashboard DSL file ${dslFile.absolutePath}"
+					def cat = loadDashboard(projectDir, projectName, dslFile.absolutePath)
+					counter++
+				}
+			}	// eachDir loop
+		}		// directory dashboards exist
+		return counter
+	}
+
+	def loadReport(String projectDir, String projectName, String dslFile) {
+		return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
+	}
+	def loadReports(String projectDir, String projectName) {
+		// Loop over the sub-directories in the reports directory
+		// and evaluate .groovy file exists
+		def counter=0
+		File dir = new File(projectDir, 'reports')
+		if (dir.exists()) {
+			dir.eachFileMatch(~/.*\.(dsl|groovy)/) {
+				println "Processing report DSL file ${it.absolutePath}"
+				loadReport(projectDir, projectName, it.absolutePath)
+				counter++
+			}	// eachDir loop
+		}
+		return counter
+	}
+
 	def loadApplication(String projectDir, String projectName, String dslFile) {
 		return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
 	}
@@ -292,7 +333,7 @@ abstract class BaseProject extends DslDelegatingScript {
 					property 'parameters', {
 						property "$formElement.property", {
 							formType = 'standard'
-							println "Form element $formElement.property, type: '${formElement.type.toString()}'"
+							//println "Form element $formElement.property, type: '${formElement.type.toString()}'"
 							if ('checkbox' == formElement.type.toString()) {
 								checkedValue = formElement.checkedValue?:'true'
 								uncheckedValue = formElement.uncheckedValue?:'false'
@@ -328,7 +369,7 @@ abstract class BaseProject extends DslDelegatingScript {
 			ec_parameterForm = formXml.text
 			formElements.formElement.each { formElement ->
 				def expansionDeferred = formElement.expansionDeferred == "true" ? "1" : "0"
-				println "expansionDeferred: ${formElement.property}: $expansionDeferred"
+				// println "expansionDeferred: ${formElement.property}: $expansionDeferred"
 
 				formalParameter "$formElement.property",
 						defaultValue: formElement.value,
@@ -343,7 +384,7 @@ abstract class BaseProject extends DslDelegatingScript {
 					property 'parameters', {
 						property "$formElement.property", {
 							formType = 'standard'
-							println "Form element $formElement.property, type: '${formElement.type.toString()}'"
+							// println "Form element $formElement.property, type: '${formElement.type.toString()}'"
 							if ('checkbox' == formElement.type.toString()) {
 								checkedValue = formElement.checkedValue?:'true'
 								uncheckedValue = formElement.uncheckedValue?:'false'

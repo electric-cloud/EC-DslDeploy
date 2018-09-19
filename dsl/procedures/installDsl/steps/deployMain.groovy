@@ -13,8 +13,9 @@ import java.io.File
 import com.electriccloud.client.groovy.ElectricFlow
 
 ElectricFlow ef = new ElectricFlow()
-
+def ret
 File topDSLFile = new File(".", 'main.groovy')
 if (topDSLFile.exists()) {
-  ef.evalDsl(dsl: topDSLFile.text)
+  ret=ef.evalDsl(dsl: topDSLFile.text)
+  ef.setProperty(propertyName: "summary", value: "main.groovy loaded")
 }
