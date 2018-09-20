@@ -107,7 +107,6 @@ abstract class BaseProject extends DslDelegatingScript {
 	def loadPipelines(String projectDir, String projectName) {
 		// Loop over the sub-directories in the pipelines directory
 		// and evaluate pipelines if a pipeline.dsl file exists
-		// println "Entering loadPipelines for $projectDir ($projectName)"
 		def counter=0
 		File pipesDir = new File(projectDir, 'pipelines')
 		if (pipesDir.exists()) {
@@ -117,7 +116,7 @@ abstract class BaseProject extends DslDelegatingScript {
 			dlist.sort({it.name})
 			dlist.each { fdir ->
 			// pipesDir.eachDir { fdir ->
-				print "looping "+ fdir.name
+			//	print "looping "+ fdir.name
 				File dslFile = getObjectDSLFile(fdir, "pipeline")
 				if (dslFile?.exists()) {
 					println "Processing pipeline DSL file ${dslFile.absolutePath}"

@@ -7,6 +7,9 @@ procedure procName, {
 	step 'deployProject',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployProject.groovy").text,
     shell: 'ectool evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl"'
+	step 'deployEnvironments',
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployEnvironments.groovy").text,
+    shell: 'ectool evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl"'
 	step 'deployPipelines',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployPipelines.groovy").text,
     shell: 'ectool evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl"'
