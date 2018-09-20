@@ -24,7 +24,6 @@ project projectName, {
 def summaryStr="Created:"
 summaryStr += $relNbr?  "\n$relNbr releases" : ""
 summaryStr += $pipeNbr? "\n$pipeNbr pipelines" : ""
-summaryStr += $envNbr? "\n$envNbr environments" : ""
 summaryStr += $appNbr? "\n$appNbr applications" : ""
 summaryStr += $svrNbr==0? "\n$svrNbr services" : ""
 

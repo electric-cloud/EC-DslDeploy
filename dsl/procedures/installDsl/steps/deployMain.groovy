@@ -13,9 +13,12 @@ import java.io.File
 import com.electriccloud.client.groovy.ElectricFlow
 
 ElectricFlow ef = new ElectricFlow()
-def ret
-File topDSLFile = new File(".", 'main.groovy')
-if (topDSLFile.exists()) {
-  ret=ef.evalDsl(dsl: topDSLFile.text)
-  ef.setProperty(propertyName: "summary", value: "main.groovy loaded")
+def counter=0
+File topDslDir = new File(".")
+
+topDslDir.eachFileMatch(~/.*\.(dsl|groovy)/) { topDslFile ->
+    println "Loading " + topDslFile.getName()
+    ef.evalDsl(dsl: topDslFile.text)
+    counter++
 }
+ef.setProperty(propertyName: "summary", value: "$counter files loaded")

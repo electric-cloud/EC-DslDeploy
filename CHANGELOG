@@ -1,3 +1,6 @@
+2018-09-20 Laurent Rochette <lrochette@electric-cloud.com>
+  * 0.7.1.207: Fix #2: load any .groovy or .dsl at top level
+
 2018-09-19 Laurent Rochette <lrochette@electric-cloud.com>
   * 0.7.0.196: Add support for dashboard and reports
 
