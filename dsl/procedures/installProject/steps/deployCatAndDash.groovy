@@ -8,25 +8,20 @@ import com.electriccloud.commander.dsl.util.BaseProject
 def projectName = '$[projName]'
 def projectDir = '$[projDir]'
 
-def pipeNbr
-def relNbr
-def envNbr
-def svrNbr
-def appNbr
 def reportNbr
 def dashNbr
-def procNbr
+def catNbr
 
 project projectName, {
-  loadProject(projectDir, projectName)
-  loadProjectProperties(projectDir, projectName)
-  procNbr = loadProcedures(projectDir, projectName)
-  property "deployedBy", value: "$[/myProject/projectName]"
-  property "deployedWhen", value: "$[/timestamp YYYY-MM-DD hh:mm:ss]"
+  catNbr  = loadCatalogs(projectDir, projectName)
+  reportNbr  = loadReports(projectDir, projectName)
+  dashNbr = loadDashboards(projectDir, projectName)
 }
 
 def summaryStr="Created:"
-summaryStr += $procNbr? "\n$procNbr procedures" : ""
+summaryStr += $catNbr? "\n$catNbr catalogs" : ""
+summaryStr += $reportNbr? "\n$reportNbr reports" : ""
+summaryStr += $dashNbr? "\n$dashNbr dashboards" : ""
 //summaryStr += $Nbr? "\n$Nbr " : ""
 //summaryStr += $Nbr? "\n$Nbr " : ""
 //summaryStr += $Nbr? "\n$Nbr " : ""
