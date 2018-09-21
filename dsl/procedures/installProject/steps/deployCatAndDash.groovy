@@ -19,9 +19,9 @@ project projectName, {
 }
 
 def summaryStr="Created:"
-summaryStr += $catNbr? "\n$catNbr catalogs" : ""
-summaryStr += $reportNbr? "\n$reportNbr reports" : ""
-summaryStr += $dashNbr? "\n$dashNbr dashboards" : ""
+summaryStr += catNbr? "\n$catNbr catalogs" : ""
+summaryStr += reportNbr? "\n$reportNbr reports" : ""
+summaryStr += dashNbr? "\n$dashNbr dashboards" : ""
 //summaryStr += $Nbr? "\n$Nbr " : ""
 //summaryStr += $Nbr? "\n$Nbr " : ""
 //summaryStr += $Nbr? "\n$Nbr " : ""
