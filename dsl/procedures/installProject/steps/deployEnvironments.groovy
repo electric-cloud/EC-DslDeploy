@@ -16,6 +16,6 @@ project projectName, {
 }
 
 def summaryStr="Created:"
-summaryStr += $envNbr? "$envNbr environments" : ""
+summaryStr += envNbr? "$envNbr environments" : ""
 
 setProperty(propertyName: "summary", value: summaryStr)

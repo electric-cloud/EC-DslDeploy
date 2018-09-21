@@ -22,9 +22,9 @@ project projectName, {
 }
 
 def summaryStr="Created:"
-summaryStr += $relNbr?  "\n$relNbr releases" : ""
-summaryStr += $pipeNbr? "\n$pipeNbr pipelines" : ""
-summaryStr += $appNbr? "\n$appNbr applications" : ""
-summaryStr += $svrNbr==0? "\n$svrNbr services" : ""
+summaryStr += relNbr?  "\n$relNbr releases" : ""
+summaryStr += pipeNbr? "\n$pipeNbr pipelines" : ""
+summaryStr += appNbr? "\n$appNbr applications" : ""
+summaryStr += svrNbr? "\n$svrNbr services" : ""
 
 setProperty(propertyName: "summary", value: summaryStr)
