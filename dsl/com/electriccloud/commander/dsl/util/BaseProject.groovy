@@ -121,6 +121,11 @@ abstract class BaseProject extends DslDelegatingScript {
 				if (dslFile?.exists()) {
 					println "Processing pipeline DSL file ${dslFile.absolutePath}"
 					def pipe = loadPipeline(projectDir, projectName, dslFile.absolutePath)
+					// Check if the response is of expected type
+					def rightType = isTypeOrListOfType (pipe, Pipeline.class)
+                    println "Pipeline response is right type? $rightType"
+					//TODO: Do something with the type information
+					// Oh and the counter logic should also account for the list of pipelines
 					counter++
 					//create formal parameters using form.xml
 					File formXml = new File(fdir, 'form.xml')
@@ -133,6 +138,13 @@ abstract class BaseProject extends DslDelegatingScript {
 		}
 		return counter
 	}
+
+	def isTypeOrListOfType(def obj, def type) {
+	   // printing for purely debugging	purposes
+       obj instanceof List ? obj.each { println ("Item type ${it.class.name}") } : println ("Obj type ${obj.class.name}")
+
+       obj instanceof List ? obj.every { type.isInstance(it)} : type.isInstance(obj)
+    }
 
 	def loadService(String projectDir, String projectName, String dslFile) {
 		return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
