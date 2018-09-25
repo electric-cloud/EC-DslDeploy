@@ -13,17 +13,29 @@ def relNbr
 def svrNbr
 def appNbr
 
-
+def summaryStr = ""
 project projectName, {
   appNbr  = loadApplications(projectDir, projectName)
   svrNbr  = loadServices(projectDir, projectName)
   pipeNbr = loadPipelines(projectDir, projectName)
+  println "Return pipeNbr: $pipeNbr"
+  if (pipeNbr == -1) {
+    println "Incorrect parsing of the pipeline file"
+    transaction {
+      summaryStr += "Skipping form.xml for pipeline"
+      setProperty(propertyName: "outcome", value: "warning")
+      setProperty(propertyName: "summary", value: "incorrect pipeline type: skipping form.xml")
+    }
+  }
   relNbr  = loadReleases(projectDir, projectName)
 }
 
-def summaryStr="Created:"
+summaryStr += "Created:"
 summaryStr += relNbr?  "\n$relNbr releases" : ""
-summaryStr += pipeNbr? "\n$pipeNbr pipelines" : ""
+
+if (pipeNbr!= -1) {
+  summaryStr += pipeNbr? "\n$pipeNbr pipelines" : ""
+}
 summaryStr += appNbr? "\n$appNbr applications" : ""
 summaryStr += svrNbr? "\n$svrNbr services" : ""
 
