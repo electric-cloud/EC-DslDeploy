@@ -8,13 +8,6 @@ import com.electriccloud.commander.dsl.util.BaseProject
 def projectName = '$[projName]'
 def projectDir = '$[projDir]'
 
-def pipeNbr
-def relNbr
-def envNbr
-def svrNbr
-def appNbr
-def reportNbr
-def dashNbr
 def procNbr
 
 project projectName, {
@@ -26,9 +19,6 @@ project projectName, {
 }
 
 def summaryStr="Created:"
-summaryStr += $procNbr? "\n$procNbr procedures" : ""
-//summaryStr += $Nbr? "\n$Nbr " : ""
-//summaryStr += $Nbr? "\n$Nbr " : ""
-//summaryStr += $Nbr? "\n$Nbr " : ""
+summaryStr += $procNbr? " $procNbr procedures" : ""
 
 setProperty(propertyName: "summary", value: summaryStr)

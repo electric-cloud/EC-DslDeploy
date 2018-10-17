@@ -143,7 +143,7 @@ abstract class BaseProject extends DslDelegatingScript {
               println "Processing form XML $formXml.absolutePath"
               buildFormalParametersFromFormXmlToPipeline(it, formXml)
             }
-          }   
+          }
         }     // pipeline.groovy exists
       }       // loop on pipeline directories
     }
@@ -282,6 +282,29 @@ abstract class BaseProject extends DslDelegatingScript {
     }
     return counter
   }
+
+  def loadComponent(String projectDir, String projectName, String dslFile) {
+    return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
+  }
+  def loadComponents(String projectDir, String projectName) {
+    // Loop over the sub-directories in the components directory
+    // and evaluate componentTemplate if a component.dsl file exists
+    def counter=0
+    File dir = new File(projectDir, 'components')
+    if (dir.exists()) {
+      //println "directory releases exists"
+      dir.eachDir {
+        File dslFile = getObjectDSLFile(it, "component")
+        if (dslFile?.exists()) {
+          println "Processing component template DSL file ${dslFile.absolutePath}"
+          def app = loadComponent(projectDir, projectName, dslFile.absolutePath)
+          counter++
+        }
+      }  // eachDir loop
+    }    // directory components exist
+    return counter
+  }
+
 
   def loadApplication(String projectDir, String projectName, String dslFile) {
     return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
