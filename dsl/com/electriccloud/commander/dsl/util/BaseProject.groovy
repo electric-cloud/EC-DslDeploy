@@ -6,6 +6,7 @@ import groovy.util.XmlSlurper
 import java.io.File
 
 import org.codehaus.groovy.control.CompilerConfiguration
+import com.electriccloud.commander.dsl.DslDelegate
 import com.electriccloud.commander.dsl.DslDelegatingScript
 
 abstract class BaseProject extends DslDelegatingScript {
@@ -335,7 +336,7 @@ abstract class BaseProject extends DslDelegatingScript {
     cc.setScriptBaseClass(DelegatingScript.class.getName());
     GroovyShell sh = new GroovyShell(this.class.classLoader, bindingMap? new Binding(bindingMap) : new Binding(), cc);
     DelegatingScript script = (DelegatingScript)sh.parse(new File(dslFile))
-    script.setDelegate(this);
+    script.setDelegate(this.delegate);
     return script.run();
   }
 
@@ -454,4 +455,24 @@ abstract class BaseProject extends DslDelegatingScript {
       }
     }
   }
+
+  /**
+   * Work-around to intercept the DslDelegate
+   * so it can be set as the delegate on the
+   * dsl scripts being evaluated in context
+   * of the parent dsl script.
+   * This work-around can be removed when the
+   * getter for delegate is added in the product
+   * on <code>DslDelagatingScript</code>
+   */
+  private def delegate;
+  public void setDelegate(DslDelegate delegate) {
+    this.delegate = delegate;
+    super.setDelegate(delegate)
+  }
+
+  public def getDelegate(){
+    this.delegate
+  }
+
 }
