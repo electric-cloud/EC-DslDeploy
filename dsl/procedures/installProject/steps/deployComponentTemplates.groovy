@@ -12,7 +12,7 @@ def compNbr
 
 def summaryStr = ""
 project projectName, {
-  appNbr  = loadComponents(projectDir, projectName)
+  compNbr  = loadComponents(projectDir, projectName)
 }
 
 summaryStr += "Created:"

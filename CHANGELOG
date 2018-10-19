@@ -1,4 +1,7 @@
-2018-1-=16 Laurent Rochette <lrochette@electric-cloud.com>
+2018-10-17 Laurent Rochette <lrochette@electric-cloud.com>
+  * 0.8.2.252: Merge to support generateDsl code
+
+2018-10-16 Laurent Rochette <lrochette@electric-cloud.com>
   * 0.8.1.249: Add component templates
 
 2018-09-27 Laurent Rochette <lrochette@electric-cloud.com>
