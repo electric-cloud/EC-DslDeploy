@@ -220,12 +220,14 @@ abstract class BaseProject extends DslDelegatingScript {
   }
 
   def loadCatalog(String projectDir, String projectName, String dslFile) {
+    println "load catalog: $projectDir"
     return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
   }
 
   def loadCatalogs(String projectDir, String projectName) {
     // Loop over the sub-directories in the catalogs directory
     // and evaluate catalogs if a catalog.dsl file exists
+    println "loadCatalogs: $projectDir"
     def counter=0
     File dir = new File(projectDir, 'catalogs')
     if (dir.exists()) {
@@ -328,7 +330,8 @@ abstract class BaseProject extends DslDelegatingScript {
 
   //Helper function to load another dsl script and evaluate it in-context
   def evalInlineDsl(String dslFile, Map bindingMap) {
-
+    println "evalInlineDsl dslFile: $dslFile"
+    println "evalInlineDsl projectDir: " + bindingMap.get('projectDir')
     CompilerConfiguration cc = new CompilerConfiguration();
     cc.setScriptBaseClass(DelegatingScript.class.getName());
     GroovyShell sh = new GroovyShell(this.class.classLoader, bindingMap? new Binding(bindingMap) : new Binding(), cc);
