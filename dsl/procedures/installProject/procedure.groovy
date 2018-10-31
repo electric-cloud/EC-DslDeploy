@@ -32,8 +32,12 @@ procedure procName, {
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployReleases.groovy").text,
     shell: 'ectool evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl"'
 
-	step 'deployCatAndDash',
-    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployCatAndDash.groovy").text,
+	step 'deployCatalogs',
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployCatalogs.groovy").text,
+    shell: 'ectool evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl"'
+
+	step 'deployDashboards',
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployDashboards.groovy").text,
     shell: 'ectool evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl"'
 
   // Do not Display in the property picker

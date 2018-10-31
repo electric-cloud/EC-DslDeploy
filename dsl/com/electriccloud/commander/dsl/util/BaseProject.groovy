@@ -79,11 +79,8 @@ abstract class BaseProject extends DslDelegatingScript {
     // and evaluate procedures if a procedure.dsl file exists
     def counter=0
     File procsDir = new File(projectDir, 'procedures')
-
     if (procsDir.exists()) {
-      // sort procedures alpahbetically
       procsDir.eachDir {
-
         File procDslFile = getObjectDSLFile(it, "procedure")
         if (procDslFile?.exists()) {
           println "Processing procedure DSL file ${procDslFile.absolutePath}"
@@ -225,13 +222,13 @@ abstract class BaseProject extends DslDelegatingScript {
   def loadCatalog(String projectDir, String projectName, String dslFile) {
     return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
   }
+
   def loadCatalogs(String projectDir, String projectName) {
     // Loop over the sub-directories in the catalogs directory
     // and evaluate catalogs if a catalog.dsl file exists
     def counter=0
     File dir = new File(projectDir, 'catalogs')
     if (dir.exists()) {
-      //println "directory releases exists"
       dir.eachDir {
         File dslFile = getObjectDSLFile(it, "catalog")
         if (dslFile?.exists()) {
