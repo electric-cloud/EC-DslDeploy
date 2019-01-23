@@ -18,7 +18,6 @@ project projectName, {
   property "deployedWhen", value: "$[/timestamp YYYY-MM-DD hh:mm:ss]"
 }
 
-def summaryStr="Created:"
-summaryStr += $procNbr? " $procNbr procedures" : ""
+def summaryStr = $procNbr? "Created $procNbr procedures" : "No procedures"
 
 setProperty(propertyName: "summary", value: summaryStr)

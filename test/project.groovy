@@ -2,6 +2,10 @@ project 'EC-DslDeploy_test',
   description: "Testing project to make call easier through the plugin",
 {
   procedure "test", {
+    step 'version', {
+      command = 'ectool setProperty summary \"$[/plugins/EC-DslDeploy/pluginVersion]\"'
+     }
+
     step "call",
       subproject: '/plugins/EC-DslDeploy/project',
       subprocedure: 'installDsl',

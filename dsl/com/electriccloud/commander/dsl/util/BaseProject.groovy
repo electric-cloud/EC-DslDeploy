@@ -71,12 +71,14 @@ abstract class BaseProject extends DslDelegatingScript {
   }
 
   def loadProcedure(String projectDir, String projectName, String dslFile) {
+    println "    Entering loadProcedure($projectDir, $projectName, $dslFile)"
     return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
   }
 
   def loadProcedures(String projectDir, String projectName) {
     // Loop over the sub-directories in the procedures directory
     // and evaluate procedures if a procedure.dsl file exists
+    println "Entering loadProcedures($projectDir, $projectName)"
     def counter=0
     File procsDir = new File(projectDir, 'procedures')
     if (procsDir.exists()) {
@@ -94,6 +96,9 @@ abstract class BaseProject extends DslDelegatingScript {
           }
         }
       }
+    }
+    else {
+      println "No 'procedures' directory for project '$projectName'"
     }
     return counter
   }
