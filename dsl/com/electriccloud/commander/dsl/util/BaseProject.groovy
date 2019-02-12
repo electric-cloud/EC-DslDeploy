@@ -71,14 +71,14 @@ abstract class BaseProject extends DslDelegatingScript {
   }
 
   def loadProcedure(String projectDir, String projectName, String dslFile) {
-    println "    Entering loadProcedure($projectDir, $projectName, $dslFile)"
+    // println "    Entering loadProcedure($projectDir, $projectName, $dslFile)"
     return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
   }
 
   def loadProcedures(String projectDir, String projectName) {
     // Loop over the sub-directories in the procedures directory
     // and evaluate procedures if a procedure.dsl file exists
-    println "Entering loadProcedures($projectDir, $projectName)"
+    // println "Entering loadProcedures($projectDir, $projectName)"
     def counter=0
     File procsDir = new File(projectDir, 'procedures')
     if (procsDir.exists()) {
@@ -111,6 +111,7 @@ abstract class BaseProject extends DslDelegatingScript {
     // Loop over the sub-directories in the pipelines directory
     // and evaluate pipelines if a pipeline.dsl file exists
     def counter=0
+    def errorCode=0
     File pipesDir = new File(projectDir, 'pipelines')
     if (pipesDir.exists()) {
       // sort pipelines alphabetically
@@ -125,32 +126,35 @@ abstract class BaseProject extends DslDelegatingScript {
           // transform single result in list or keep list
           boolean isList=pipe instanceof List
           def pList=[]
+          def rightType = true
           if (isList) {
             pList=pipe
             // Check if the response is of expected type
-            def rightType = isTypeOrListOfType (pipe, Pipeline.class)
+            rightType = isTypeOrListOfType (pipe, Pipeline.class)
             println "Pipeline response is right type (Pipeline)? $rightType"
             if (! rightType) {
               println "  incorrect type return from ${dslFile.absolutePath}"
-              return -1
+              errorCode = -1
             }
           } else {
             pList << pipe
           }
             // Process List only if we have pipeline
-          pList.each {
-            counter++
-            //create formal parameters using form.xml
-            File formXml = new File(fdir, 'form.xml')
-            if (formXml.exists()) {
-              println "Processing form XML $formXml.absolutePath"
-              buildFormalParametersFromFormXmlToPipeline(it, formXml)
+          if (rightType) {
+            pList.each {
+              counter++
+              //create formal parameters using form.xml
+              File formXml = new File(fdir, 'form.xml')
+              if (formXml.exists()) {
+                println "Processing form XML $formXml.absolutePath"
+                buildFormalParametersFromFormXmlToPipeline(it, formXml)
+              }
             }
           }
         }     // pipeline.groovy exists
       }       // loop on pipeline directories
     }
-    return counter
+    return errorCode == -1? -1 : counter
   }
 
   def isTypeOrListOfType(def obj, def type) {
@@ -186,7 +190,7 @@ abstract class BaseProject extends DslDelegatingScript {
   def loadEnvironments(String projectDir, String projectName) {
     // Loop over the sub-directories in the environments directory
     // and evaluate services if a service.dsl file exists
-    //println "Entering loadEnvironments for $projectDir ($projectName)"
+    // println "Entering loadEnvironments for $projectDir ($projectName)"
     def counter=0
     File dir = new File(projectDir, 'environments')
     if (dir.exists()) {
@@ -295,7 +299,7 @@ abstract class BaseProject extends DslDelegatingScript {
     def counter=0
     File dir = new File(projectDir, 'components')
     if (dir.exists()) {
-      //println "directory releases exists"
+      //println "directory components exists"
       dir.eachDir {
         File dslFile = getObjectDSLFile(it, "component")
         if (dslFile?.exists()) {
