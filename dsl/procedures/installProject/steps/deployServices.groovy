@@ -10,12 +10,9 @@ def projectDir = '$[projDir]'
 
 def svrNbr
 
-def summaryStr = ""
 project projectName, {
   svrNbr  = loadServices(projectDir, projectName)
 }
 
-summaryStr += "Created:"
-summaryStr += svrNbr? " $svrNbr services" : ""
-
+def summaryStr = svrNbr? "Created $svrNbr services" : "No services"
 setProperty(propertyName: "summary", value: summaryStr)

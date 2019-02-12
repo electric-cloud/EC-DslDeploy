@@ -10,12 +10,9 @@ def projectDir = '$[projDir]'
 
 def envNbr
 
-
 project projectName, {
   envNbr  = loadEnvironments(projectDir, projectName)
 }
 
-def summaryStr="Created:"
-summaryStr += envNbr? "$envNbr environments" : ""
-
+def summaryStr = envNbr? "Created $envNbr environments" : "No environment"
 setProperty(propertyName: "summary", value: summaryStr)

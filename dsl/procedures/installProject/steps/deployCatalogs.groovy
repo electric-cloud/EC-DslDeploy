@@ -14,7 +14,5 @@ project projectName, {
   catNbr  = loadCatalogs(projectDir, projectName)
 }
 
-def summaryStr="Created:"
-summaryStr += catNbr? " $catNbr catalogs" : ""
-
+def summaryStr = catNbr? "Created $catNbr catalogs" : "No catalogs"
 setProperty(propertyName: "summary", value: summaryStr)

@@ -8,16 +8,6 @@ procedure procName, {
    errorHandling: 'abortProcedure',
    resourceName: '$[pool]',
    shell: 'ec-perl'
-/*
-    subproject: '/plugins/EC-Artifact/project',
-		subprocedure: 'retrieve',
-		actualParameter:[
-			artifactName: '$[artName]',
-			versionRange: '$[artVersion]',
-			artifactVersionLocationProperty: '/myJob/retrievedArtifactVersions/$[assignedResourceName]',
-			retrieveToDirectory: "."
-	]
-*/
 
 	//evalDsl the main.groovy if it exists
 	step 'deployMain',

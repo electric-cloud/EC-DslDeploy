@@ -10,12 +10,9 @@ def projectDir = '$[projDir]'
 
 def appNbr
 
-def summaryStr = ""
 project projectName, {
   appNbr  = loadApplications(projectDir, projectName)
 }
 
-summaryStr += "Created:"
-summaryStr += appNbr? " $appNbr applications" : ""
-
+def summaryStr = appNbr? "Created $appNbr applications" : ""
 setProperty(propertyName: "summary", value: summaryStr)

@@ -9,8 +9,8 @@ def projectName = '$[projName]'
 def projectDir = '$[projDir]'
 
 def pipeNbr
+def summaryStr
 
-def summaryStr = ""
 project projectName, {
   pipeNbr = loadPipelines(projectDir, projectName)
   println "Return pipeNbr: $pipeNbr"
@@ -24,10 +24,9 @@ project projectName, {
   }
 }
 
-summaryStr += "Created:"
 
-if (pipeNbr!= -1) {
-  summaryStr += pipeNbr? "$pipeNbr pipelines" : ""
+if (pipeNbr != -1) {
+  summaryStr = pipeNbr? "Created $pipeNbr pipelines" : "No pipelines"
 }
 
 setProperty(propertyName: "summary", value: summaryStr)

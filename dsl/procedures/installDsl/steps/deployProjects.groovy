@@ -21,6 +21,7 @@ File projectsFolder = new File("projects")
 // sort projects alpahbetically
 dlist=[]
 new File("projects").eachDir {dlist << it }
+new File("Projects").eachDir {dlist << it }
 dlist.sort({it.name}).each { projDir ->
   println "Processing directory $projDir"
   def basename=projDir.getName().toString()

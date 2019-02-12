@@ -14,7 +14,5 @@ project projectName, {
   relNbr  = loadReleases(projectDir, projectName)
 }
 
-def summaryStr = "Created: "
-summaryStr += relNbr?  "$relNbr releases" : ""
-
+def summaryStr = relNbr?  "Created $relNbr releases" : "No release"
 setProperty(propertyName: "summary", value: summaryStr)

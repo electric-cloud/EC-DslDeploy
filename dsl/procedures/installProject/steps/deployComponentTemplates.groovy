@@ -10,12 +10,9 @@ def projectDir = '$[projDir]'
 
 def compNbr
 
-def summaryStr = ""
 project projectName, {
   compNbr  = loadComponents(projectDir, projectName)
 }
 
-summaryStr += "Created:"
-summaryStr += compNbr? " $compNbr component templates" : ""
-
+def summaryStr = compNbr? "Created $compNbr component templates" : "No component templates"
 setProperty(propertyName: "summary", value: summaryStr)
