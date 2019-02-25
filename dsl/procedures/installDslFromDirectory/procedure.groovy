@@ -1,10 +1,10 @@
 import java.io.File
 
 procedure 'installDslFromDirectory',
-  resourceName: $[pool],
+  resourceName: '$[pool]',
 {
 
-// code is shared wkith other procedure
+// code is shared with other procedure
 def procName = 'installDsl'
 
   step 'deployMain',
@@ -15,7 +15,7 @@ def procName = 'installDsl'
 
   step 'deployProjects',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployProjects.groovy").text,
-    resourceName: '$[pool]'
+    resourceName: '$[pool]',
     shell: 'ec-groovy',
     workingDirectory: '$[directory]'
 

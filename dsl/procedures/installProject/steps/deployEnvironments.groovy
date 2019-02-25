@@ -9,10 +9,16 @@ def projectName = '$[projName]'
 def projectDir = '$[projDir]'
 
 def envNbr
+def clusterNbr
 
 project projectName, {
-  envNbr  = loadEnvironments(projectDir, projectName)
+  println "Process Environments in $projectDir"
+  (envNbr, clusterNbr)  = loadEnvironments(projectDir, projectName)
 }
 
-def summaryStr = envNbr? "Created $envNbr environments" : "No environment"
+def summaryStr="Created:\n  "
+summaryStr += envNbr? "$envNbr environments" : "no environment"
+summaryStr += "\n  "
+summaryStr += clusterNbr? "$clusterNbr clusters" : "no cluster"
+
 setProperty(propertyName: "summary", value: summaryStr)
