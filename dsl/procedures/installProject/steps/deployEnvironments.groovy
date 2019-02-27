@@ -22,3 +22,4 @@ summaryStr += "\n  "
 summaryStr += clusterNbr? "$clusterNbr clusters" : "no cluster"
 
 setProperty(propertyName: "summary", value: summaryStr)
+return ""

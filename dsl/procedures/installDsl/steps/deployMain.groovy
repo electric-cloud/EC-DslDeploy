@@ -17,7 +17,7 @@ def counter=0
 File topDslDir = new File(".")
 
 topDslDir.eachFileMatch(~/.*\.(dsl|groovy)/) { topDslFile ->
-    println "Loading " + topDslFile.getName()
+    println "Processing top level file " + topDslFile.name
     ef.evalDsl(dsl: topDslFile.text)
     counter++
 }

@@ -21,8 +21,8 @@ ElectricFlow ef = new ElectricFlow()
 dlist=[]
 new File("projects").eachDir {dlist << it }
 dlist.sort({it.name}).each { projDir ->
-  println "Processing directory $projDir"
   def basename=projDir.getName().toString()
+  println "Processing project $basename"
   def params = [
       new ActualParameter('projName', basename),
       new ActualParameter('projDir', projDir.absolutePath.toString())
