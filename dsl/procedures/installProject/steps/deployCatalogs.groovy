@@ -9,10 +9,16 @@ def projectName = '$[projName]'
 def projectDir  = '$[projDir]'
 
 def catNbr
+def itemNbr
 
 project projectName, {
-  catNbr  = loadCatalogs(projectDir, projectName)
+  (catNbr, itemNbr)  = loadCatalogs(projectDir, projectName)
 }
 
-def summaryStr = catNbr? "Created $catNbr catalogs" : "No catalogs"
+def summaryStr="Created:"
+summaryStr += " \n  "
+summaryStr += catNbr?  "$catNbr catalogs" : "no catalogs"
+summaryStr += " \n  "
+summaryStr += itemNbr? "$itemNbr catalog items" : "no catalog items"
+
 setProperty(propertyName: "summary", value: summaryStr)

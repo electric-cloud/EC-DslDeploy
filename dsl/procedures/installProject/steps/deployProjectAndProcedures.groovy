@@ -20,3 +20,4 @@ project projectName, {
 
 def summaryStr = $procNbr? "Created $procNbr procedures" : "No procedures"
 setProperty(propertyName: "summary", value: summaryStr)
+return ""
