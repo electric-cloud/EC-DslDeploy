@@ -30,3 +30,4 @@ if (pipeNbr != -1) {
 }
 
 setProperty(propertyName: "summary", value: summaryStr)
+return ""

@@ -22,3 +22,4 @@ summaryStr += " \n  "
 summaryStr += itemNbr? "$itemNbr catalog items" : "no catalog items"
 
 setProperty(propertyName: "summary", value: summaryStr)
+return ""
