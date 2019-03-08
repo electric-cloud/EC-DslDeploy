@@ -6,7 +6,7 @@ import groovy.util.XmlSlurper
 import java.io.File
 
 import org.codehaus.groovy.control.CompilerConfiguration
-// URV: import com.electriccloud.commander.dsl.DslDelegate
+import com.electriccloud.commander.dsl.DslDelegate
 import com.electriccloud.commander.dsl.DslDelegatingScript
 
 abstract class BaseProject extends DslDelegatingScript {
@@ -43,7 +43,7 @@ abstract class BaseProject extends DslDelegatingScript {
     // load the project.groovy if it exists
     File dslFile=getObjectDSLFile(new File(projectDir), "project");
     if (dslFile?.exists()) {
-      println "Processing project file projects/$projecName/${dslFile.name}"
+      println "Processing project file projects/$projectName/${dslFile.name}"
       def proj=evalInlineDsl(dslFile.toString(), [projectName: projectName, projectDir: projectDir])
     }
   }
@@ -318,7 +318,7 @@ abstract class BaseProject extends DslDelegatingScript {
         def itemName=it.name
         File dslFile = getObjectDSLFile(it, "catalogItem")
         if (dslFile?.exists()) {
-          println "Processing item file projects/$projectName/catalogs/$catalogName/catalogItems/$itenname/${dslFile.name}"
+          println "Processing item file projects/$projectName/catalogs/$catalogName/catalogItems/$itemName/${dslFile.name}"
           def item = loadCatalogItem(projectDir, catalogDir, projectName, catalogName, dslFile.absolutePath)
           counter++
         }
@@ -462,11 +462,13 @@ abstract class BaseProject extends DslDelegatingScript {
     // println "evalInlineDsl: $dslFile"
     // println "  Map: " + bindingMap
     CompilerConfiguration cc = new CompilerConfiguration();
-    cc.setScriptBaseClass(DelegatingScript.class.getName());
-    GroovyShell sh = new GroovyShell(this.class.classLoader, bindingMap? new Binding(bindingMap) : new Binding(), cc);
+    cc.setScriptBaseClass(InnerDelegatingScript.class.getName());
+    //println "Class loader class name: ${this.scriptClassLoader.class.name}"
+    // NMB-27865: Use the same groovy class loader that was used for evaluating
+    // the DSL passed to evalDsl.
+    GroovyShell sh = new GroovyShell(this.scriptClassLoader, bindingMap? new Binding(bindingMap) : new Binding(), cc);
     DelegatingScript script = (DelegatingScript)sh.parse(new File(dslFile))
-// URV:     script.setDelegate(this.delegate);
-    script.setDelegate(this);
+    script.setDelegate(this.delegate);
     return script.run();
   }
 
@@ -587,17 +589,21 @@ abstract class BaseProject extends DslDelegatingScript {
   }
 
   /**
-   * Work-around to intercept the DslDelegate
+   * NMB-27865: Intercept the DslDelegate
    * so it can be set as the delegate on the
    * dsl scripts being evaluated in context
    * of the parent dsl script.
-   * This work-around can be removed when the
-   * getter for delegate is added in the product
-   * on <code>DslDelagatingScript</code>
+   * Before setting the delegate, also capture
+   * the script's class loader before the dslDelegate
+   * highjacks the calls. This is needed to get the
+   * reference to the groovy class loader that used for
+   * evaluating the DSL script passed in to evalDsl.
    */
-/*
   private def delegate;
+  private def scriptClassLoader;
+
   public void setDelegate(DslDelegate delegate) {
+    this.scriptClassLoader = this.class.classLoader
     this.delegate = delegate;
     super.setDelegate(delegate)
   }
@@ -605,5 +611,4 @@ abstract class BaseProject extends DslDelegatingScript {
   public def getDelegate(){
     this.delegate
   }
-*/
 }

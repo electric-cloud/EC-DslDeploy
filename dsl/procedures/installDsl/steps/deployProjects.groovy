@@ -25,7 +25,7 @@ dlist.sort({it.name}).each { projDir ->
   println "Processing project $basename"
   def params = [
       new ActualParameter('projName', basename),
-      new ActualParameter('projDir', projDir.absolutePath.toString())
+      new ActualParameter('projDir', projDir.absolutePath.toString().replace('\\', '/'))
   ]
 
   ef.createJobStep(
