@@ -1,3 +1,6 @@
+2019-03-08 Laurent Rochette <lrochette@electric-cloud.com>
+  * 0.9.1.308: Merge from upstream for NMB-27865
+
 2019-02-25 Laurent Rochette <lrochette@electric-cloud.com>
   * 0.9.0.295: Merge from upstream and add installDslFromDirectory
 
