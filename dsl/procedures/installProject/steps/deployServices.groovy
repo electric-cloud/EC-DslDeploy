@@ -16,3 +16,4 @@ project projectName, {
 
 def summaryStr = svrNbr? "Created $svrNbr services" : "No services"
 setProperty(propertyName: "summary", value: summaryStr)
+return ""

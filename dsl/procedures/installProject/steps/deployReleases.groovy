@@ -16,3 +16,4 @@ project projectName, {
 
 def summaryStr = relNbr?  "Created $relNbr releases" : "No release"
 setProperty(propertyName: "summary", value: summaryStr)
+return ""

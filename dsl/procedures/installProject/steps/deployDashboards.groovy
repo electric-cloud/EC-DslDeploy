@@ -10,14 +10,19 @@ def projectDir = '$[projDir]'
 
 def reportNbr
 def dashNbr
-
+def widgetNbr
 project projectName, {
   reportNbr  = loadReports(projectDir, projectName)
-  dashNbr = loadDashboards(projectDir, projectName)
+  (dashNbr, widgetNbr) = loadDashboards(projectDir, projectName)
 }
 
 def summaryStr="Created:"
-summaryStr += reportNbr? "\n$reportNbr reports" : ""
-summaryStr += dashNbr? "\n$dashNbr dashboards" : ""
+summaryStr += "\n  "
+summaryStr += reportNbr? "$reportNbr reports" : "No reports"
+summaryStr += "\n  "
+summaryStr += dashNbr? "$dashNbr dashboards" : "No dashboards"
+summaryStr += "\n  "
+summaryStr += dwidgetNbr? "$widgetNbr widgets" : "No widgets"
 
 setProperty(propertyName: "summary", value: summaryStr)
+return ""

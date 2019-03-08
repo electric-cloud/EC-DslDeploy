@@ -16,3 +16,4 @@ project projectName, {
 
 def summaryStr = compNbr? "Created $compNbr component templates" : "No component templates"
 setProperty(propertyName: "summary", value: summaryStr)
+return ""
