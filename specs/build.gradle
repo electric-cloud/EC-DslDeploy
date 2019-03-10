@@ -1,0 +1,63 @@
+
+apply plugin: "groovy"
+apply plugin: 'idea'
+
+version = "1.0"
+description = "EC-DeslDeploy Specs"
+
+sourceCompatibility = 1.8
+
+defaultTasks 'test'
+
+repositories {
+    jcenter()
+    mavenCentral()
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+    maven {
+        url  "https://dl.bintray.com/ecpluginsdev/maven"
+    }
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.5:indy'
+    compile 'org.spockframework:spock-core:1.1-groovy-2.4-SNAPSHOT'
+    compile 'com.electriccloud:commander-spec-tests:latest.release'
+    compile 'com.jayway.restassured:rest-assured:2.4.0'
+
+
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    compile group: 'net.rcarz', name: 'jira-client', version: '0.5'
+    compile group: 'org.apache.camel', name: 'camel-xmljson', version: '2.22.1'
+
+    compile( 'com.athaydes:spock-reports:1.6.0' ) {
+        transitive = false // this avoids affecting your version of Groovy/Spock
+    }
+
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.9' //version required
+}
+
+test {
+    systemProperty 'com.athaydes.spockframework.report.showCodeBlocks', true
+
+    def server = findProperty('server') ?: 'localhost'
+    def passwd = findProperty('password') ?: 'changeme'
+    systemProperties['COMMANDER_SERVER'] = server
+    systemProperties['COMMANDER_PASSWORD'] = passwd
+    systemProperties["COMMANDER_SECURE"] = '1'
+
+    testLogging {
+        showStandardStreams = true
+    }
+    outputs.upToDateWhen { false }
+    systemProperties['EC_SPECS_CLI'] = true
+
+    def destination = findProperty('reportDestination') ?: "spec-report"
+    if (destination) {
+        systemProperty 'com.athaydes.spockframework.report.outputDir', destination
+    }
+}
