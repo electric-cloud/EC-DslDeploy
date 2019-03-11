@@ -1,13 +1,16 @@
 package com.electriccloud.plugin.spec
 import spock.lang.*
-import java.nio.file.*
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 
 class NMB27865 extends PluginTestHelper {
   static String pName='EC-DslDeploy'
   static NMB="NMB27865"
 
   def doSetupSpec() {
-    Files.copy("resources/$NMB", "/tmp/$NMB", StandardCopyOption.REPLACE_EXISTING)
+    Files.copy(Paths.get("resources/$NMB"), Paths.get("/tmp/$NMB"), StandardCopyOption.REPLACE_EXISTING)
   }
 
   def doCleanupSpec() {
