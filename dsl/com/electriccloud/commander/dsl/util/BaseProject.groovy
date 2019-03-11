@@ -300,16 +300,19 @@ abstract class BaseProject extends DslDelegatingScript {
    //
   // ########################################################################
   def loadCatalogItem(String projectDir, String catalogDir, String projectName, String catalogName, String dslFile) {
-    return evalInlineDsl(dslFile, [
+    catalog catalogName, {
+      evalInlineDsl(dslFile, [
                           projectName: projectName,
                           catalogName: catalogName,
                           projectDir: projectDir,
                           catalogDir: catalogDir])
+    }
   }
 
-  def loadCatalogItems(String projectDir, String catalogDir, String projectName, String catalogName) {
-    // Loop over the sub-directories in the items directory
-    // and evaluate dashboards if a dashboard.dsl file exists
+  def loadCatalogItems(String projectDir,  String catalogDir,
+                       String projectName, String catalogName) {
+    // Loop over the sub-directories in the catalogItems directory
+    // and evaluate catalogItems if a catalogItem.dsl file exists
     def counter=0
     File dir = new File(catalogDir, 'catalogItems')
     if (dir.exists()) {
@@ -318,12 +321,12 @@ abstract class BaseProject extends DslDelegatingScript {
         def itemName=it.name
         File dslFile = getObjectDSLFile(it, "catalogItem")
         if (dslFile?.exists()) {
-          println "Processing item file projects/$projectName/catalogs/$catalogName/catalogItems/$itemName/${dslFile.name}"
+          println "Processing catalogItem file projects/$projectName/catalogs/$catalogName/catalogItems/$itemName/${dslFile.name}"
           def item = loadCatalogItem(projectDir, catalogDir, projectName, catalogName, dslFile.absolutePath)
           counter++
         }
       }  // eachDir loop
-    }    // directory dashboards exist
+    }    // directory catalogItems exist
     return counter
   }
 
@@ -353,13 +356,43 @@ abstract class BaseProject extends DslDelegatingScript {
           def cat = loadCatalog(projectDir, projectName, dslFile.absolutePath)
           catCounter++
 
-          // Loop over the sub-directories in the items directory
-          // and evaluate items if a item.dsl file exists
+          // load catalogitems
           itemCounter += loadCatalogItems(projectDir, catalogDir, projectName, catalogName)
         }
       }  // eachDir loop
     }    // directory catalogs exist
     return [catCounter, itemCounter]
+  }
+  // ########################################################################
+  //
+  // Widgets
+  //
+  // ########################################################################
+  def loadWidget(String projectDir,  String dashboardDir,
+                 String projectName, String dashboardName, String dslFile) {
+    dashboard dashboardName, {
+      evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
+    }
+  }
+
+  def loadWidgets(String projectDir,  String dashboardDir,
+                  String projectName, String dashboardName) {
+    // Loop over the sub-directories in the widgets directory
+    // and evaluate widgets if a widget.dsl file exists
+    def counter=0
+    File dir = new File(dashboardDir, 'widgets')
+    if (dir.exists()) {
+      dir.eachDir {
+        def widgetName=it.name
+        File dslFile = getObjectDSLFile(it, "widget")
+        if (dslFile?.exists()) {
+          println "Processing widget file projects/$projectName/dashboards/$dashboardName/widgets/$widgetName/${dslFile.name}"
+          def cat = loadWidget(projectDir, dashboardDir, projectName, dashboardName, dslFile.absolutePath)
+          counter++
+        }
+      }  // eachDir loop
+    }    // directory widgets exist
+    return counter
   }
 
   // ########################################################################
@@ -374,21 +407,26 @@ abstract class BaseProject extends DslDelegatingScript {
   def loadDashboards(String projectDir, String projectName) {
     // Loop over the sub-directories in the dashboards directory
     // and evaluate dashboards if a dashboard.dsl file exists
-    def counter=0
+    def dashCounter=0
+    defwidgetCounter=0
     File dir = new File(projectDir, 'dashboards')
     if (dir.exists()) {
       //println "directory releases exists"
       dir.eachDir {
         def dashboardName=it.name
+        def dashboardDir=it.absolutePath
         File dslFile = getObjectDSLFile(it, "dashboard")
         if (dslFile?.exists()) {
           println "Processing dashboard file projects/$projectName/dashboards/$dashboardName/${dslFile.name}"
           def cat = loadDashboard(projectDir, projectName, dslFile.absolutePath)
-          counter++
+          dashCounter++
+
+          // Load widgets
+          widgetCounter += loadWidgets(projectDir, dashboardDir, projectName, dashboardName)
         }
       }  // eachDir loop
     }    // directory dashboards exist
-    return counter
+    return [dashCounter, widgetCounter]
   }
 
   def loadReport(String projectDir, String projectName, String dslFile) {

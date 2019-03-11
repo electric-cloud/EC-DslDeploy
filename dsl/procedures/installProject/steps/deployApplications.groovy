@@ -16,3 +16,4 @@ project projectName, {
 
 def summaryStr = appNbr? "Created $appNbr applications" : ""
 setProperty(propertyName: "summary", value: summaryStr)
+return ""

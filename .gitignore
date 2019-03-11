@@ -1,2 +1,14 @@
 build
 .idea
+src/out
+specs/logs/
+*.swp
+.efci
+ElectricFlow-*
+DIR1/
+hs_err*.log
+build/
+!ecpluginbuilder.exe
+.idea
+*.iml
+.DS_Store
