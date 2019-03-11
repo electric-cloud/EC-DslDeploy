@@ -62,7 +62,7 @@ class NMB27865 extends PluginTestHelper {
           catalogName: 'createKubernetesMicroservice',
           catalogItemName: 'createKubernetesMicrosesrvice'
         )"""
-      assert dsl.catalogItem.catalogItemName == 'createKubernetesMicrosesrvice'
+      assert item.catalogItem.catalogItemName == 'createKubernetesMicrosesrvice'
   }
 
 
