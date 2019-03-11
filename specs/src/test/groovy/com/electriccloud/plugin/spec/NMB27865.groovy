@@ -27,8 +27,11 @@ class NMB27865 extends PluginTestHelper {
     given:
 
     when: 'the plugin is promoted'
+      println "Pormoting plugin"
       def result = dsl """promotePlugin(pluginName: "$pName")"""
+      println "Get version"
       def version = getProperty("/plugins/$pName/pluginVersion")
+      println "Get visibility"
       def prop = getProperty("/plugins/$pName/project/ec_visibility")
     then:
       assert result.plugin.pluginVersion == version
