@@ -7,7 +7,7 @@ class NMB27865 extends PluginTestHelper {
   static NMB="NMB27865"
 
   def doSetupSpec() {
-    Files.copy("resources/$NBM", "/tmp/$NMB", REPLACE_EXISTING)
+    Files.copy("resources/$NMB", "/tmp/$NMB", REPLACE_EXISTING)
   }
 
   def doCleanupSpec() {
