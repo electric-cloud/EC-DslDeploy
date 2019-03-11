@@ -11,7 +11,7 @@ class NMB27865 extends PluginTestHelper {
   }
 
   def doCleanupSpec() {
-    conditionallyDeleteProject('$NMB')
+    conditionallyDeleteProject("$NMB")
   }
 
   // Check promotion
