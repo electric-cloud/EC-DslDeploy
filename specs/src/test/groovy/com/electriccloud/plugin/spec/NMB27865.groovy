@@ -1,6 +1,7 @@
 package com.electriccloud.plugin.spec
 import spock.lang.*
-import org.apache.commons.io.FileUtils;
+
+import org.apache.commons.io.FileUtils
 
 class NMB27865 extends PluginTestHelper {
   static String pName='EC-DslDeploy'
