@@ -5,6 +5,8 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
+import groovy.util.BuildLogger
+
 class NMB27865 extends PluginTestHelper {
   static String pName='EC-DslDeploy'
   static NMB="NMB27865"
