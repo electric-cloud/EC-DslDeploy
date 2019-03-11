@@ -28,11 +28,11 @@ class NMB27865 extends PluginTestHelper {
 
     when: 'the plugin is promoted'
       def result = dsl """promotePlugin(pluginName: "$pName")"""
-      def version = dsl """getProperty("/plugins/$pName/pluginVersion")"""
-      def prop = dsl """getProperty("/plugins/$pName/project/ec_visibility")"""
+      def version = getProperty("/plugins/$pName/pluginVersion")
+      def prop = getProperty("/plugins/$pName/project/ec_visibility")
     then:
-      assert result.plugin.pluginVersion == version.property.value
-      assert prop.property.value == 'pickListOnly'
+      assert result.plugin.pluginVersion == version
+      assert prop == 'pickListOnly'
   }
 
   // check "=" format works
