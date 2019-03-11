@@ -58,10 +58,8 @@ class PluginTestHelper extends PluginSpockTestSupport {
   }
 
   def getP(String path) {
-      println ("GetP: $path")
-      def result = dsl """getProperty(propertyName: "$path")"""
-      println result
-      return result?.property.value
+    def result = dsl """getProperty(propertyName: "$path")"""
+    return result?.property.value
   }
 
   def getStepProperty(def jobId, def stepName, def propName) {
