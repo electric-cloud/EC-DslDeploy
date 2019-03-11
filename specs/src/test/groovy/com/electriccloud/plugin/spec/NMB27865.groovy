@@ -1,14 +1,13 @@
 package com.electriccloud.plugin.spec
 import spock.lang.*
-
-import org.apache.commons.io.FileUtils
+import java.nio.file.Files
 
 class NMB27865 extends PluginTestHelper {
   static String pName='EC-DslDeploy'
   static NMB="NMB27865"
 
   def doSetupSpec() {
-    FileUtils.copyDirectory(new File("resources/$NMB"), new File("/tmp/$NMB"))
+    Files.copy("resources/$NMB", "/tmp/$NMB", Files.REPLACE_EXISTING)
   }
 
   def doCleanupSpec() {
