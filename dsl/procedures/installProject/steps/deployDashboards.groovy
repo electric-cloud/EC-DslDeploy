@@ -22,7 +22,7 @@ summaryStr += reportNbr? "$reportNbr reports" : "No reports"
 summaryStr += "\n  "
 summaryStr += dashNbr? "$dashNbr dashboards" : "No dashboards"
 summaryStr += "\n  "
-summaryStr += dwidgetNbr? "$widgetNbr widgets" : "No widgets"
+summaryStr += widgetNbr? "$widgetNbr widgets" : "No widgets"
 
 setProperty(propertyName: "summary", value: summaryStr)
 return ""
