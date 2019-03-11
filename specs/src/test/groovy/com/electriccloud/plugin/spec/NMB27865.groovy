@@ -12,7 +12,7 @@ class NMB27865 extends PluginTestHelper {
   def doSetupSpec() {
     String currentDir = new File(".").getAbsolutePath()
     println ("Current: $currentDir")
-    Files.copy(Paths.get("resources/$NMB"), Paths.get("/tmp/$NMB"), StandardCopyOption.REPLACE_EXISTING)
+    Files.copy(Paths.get("dslCode/$NMB"), Paths.get("/tmp/$NMB"), StandardCopyOption.REPLACE_EXISTING)
   }
 
   def doCleanupSpec() {
