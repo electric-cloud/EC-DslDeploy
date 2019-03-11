@@ -25,7 +25,7 @@ dependencies {
     compile 'org.spockframework:spock-core:1.1-groovy-2.4-SNAPSHOT'
     compile 'com.electriccloud:commander-spec-tests:latest.release'
     compile 'com.jayway.restassured:rest-assured:2.4.0'
-
+    compile 'org.apache.ant:ant:1.9.4'
 
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
     compile group: 'net.rcarz', name: 'jira-client', version: '0.5'
