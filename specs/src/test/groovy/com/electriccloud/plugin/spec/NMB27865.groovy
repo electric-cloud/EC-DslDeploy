@@ -53,9 +53,9 @@ class NMB27865 extends PluginTestHelper {
       def outcome=getJobProperty("outcome", result.jobId)
       assert outcome == "success"
 
-      assert getProperty("/projects/$NMB/Changes/C2834144/SM_Change_Approved") == 'false'
-      assert getProperty("/projects/$NMB/Changes/C2835095/EJ_ServiceManager_EventinLastSeq") == '1'
-      assert getProperty("/projects/$NMB/Framework/C2835095/frmSvcImageTag") == '1.0.80'
+      assert getP("/projects/$NMB/Changes/C2834144/SM_Change_Approved") == 'false'
+      assert getP("/projects/$NMB/Changes/C2835095/EJ_ServiceManager_EventinLastSeq") == '1'
+      assert getP("/projects/$NMB/Framework/C2835095/frmSvcImageTag") == '1.0.80'
 
   }
 
