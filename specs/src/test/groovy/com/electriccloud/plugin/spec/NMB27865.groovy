@@ -51,6 +51,7 @@ class NMB27865 extends PluginTestHelper {
         )""")
     then:
       assert result.jobId
+      println "JobId: " + result.jobId
       def outcome=getJobProperty("outcome", result.jobId)
       assert outcome == "success"
 
