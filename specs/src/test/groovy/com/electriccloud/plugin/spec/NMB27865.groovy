@@ -2,7 +2,7 @@ package com.electriccloud.plugin.spec
 import spock.lang.*
 import java.nio.file.Files
 
-class NMB-27865 extends PluginTestHelper {
+class NMB27865 extends PluginTestHelper {
   static String pName='EC-DslDeploy'
   static NMB="NMB27865"
 
