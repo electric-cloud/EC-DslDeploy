@@ -55,7 +55,7 @@ class NMB27865 extends PluginTestHelper {
 
       assert getP("/projects/$NMB/Changes/C2834144/SM_Change_Approved") == 'false'
       assert getP("/projects/$NMB/Changes/C2835095/EJ_ServiceManager_EventinLastSeq") == '1'
-      assert getP("/projects/$NMB/Framework/C2835095/frmSvcImageTag") == '1.0.80'
+      assert getP("/projects/$NMB/Framework/frmSvcImageTag") == '1.0.80'
 
   }
 
