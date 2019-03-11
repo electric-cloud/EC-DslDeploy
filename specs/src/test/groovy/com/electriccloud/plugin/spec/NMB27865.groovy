@@ -22,11 +22,8 @@ class NMB27865 extends PluginTestHelper {
     given:
 
     when: 'the plugin is promoted'
-      println "Pormoting plugin"
       def result = dsl """promotePlugin(pluginName: "$pName")"""
-      println "Get version"
       def version = getP("/plugins/$pName/pluginVersion")
-      println "Get visibility"
       def prop = getP("/plugins/$pName/project/ec_visibility")
     then:
       assert result.plugin.pluginVersion == version
@@ -49,14 +46,23 @@ class NMB27865 extends PluginTestHelper {
         )""")
     then:
       assert result.jobId
-      println "JobId: " + result.jobId
       def outcome=getJobProperty("outcome", result.jobId)
       assert outcome == "success"
 
+      // Prioperties are created properly
+      println "Checking properties"
       assert getP("/projects/$NMB/Changes/C2834144/SM_Change_Approved") == 'false'
       assert getP("/projects/$NMB/Changes/C2835095/EJ_ServiceManager_EventinLastSeq") == '1'
       assert getP("/projects/$NMB/Framework/frmSvcImageTag") == '1.0.80'
 
+      // catalogItem is created
+      println "Checking catalog item"
+      def item=dsl """getCatalogItem(
+          projectName: "$NMB",
+          catalogName: 'createKubernetesMicroservice',
+          catalogItemName: 'createKubernetesMicrosesrvice'
+        )"""
+      assert dsl.catalogItem.catalogItemName == 'createKubernetesMicrosesrvice'
   }
 
 
