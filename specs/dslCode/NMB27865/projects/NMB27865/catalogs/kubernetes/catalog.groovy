@@ -48,4 +48,16 @@ catalog 'createKubernetesMicroservice',
     workingDirectory = null
     workspaceName = null
   }
+}''',
+        iconUrl: 'icon-catalog-item.svg',
+        useFormalParameter: '1',
+   {
+        formalParameter 'microserviceName',
+            description: 'microserviceName',
+            label: 'Microservice Name',
+            orderIndex: '1',
+            required: '1',
+            type: 'entry'
+
+    }
 }
