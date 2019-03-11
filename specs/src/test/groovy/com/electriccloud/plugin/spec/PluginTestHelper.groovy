@@ -56,12 +56,12 @@ class PluginTestHelper extends PluginSpockTestSupport {
     logger.debug("Outcome: $outcome")
     [logs: logs, outcome: outcome, jobId: result.jobId]
   }
-/*
+
   def getProperty(String path) {
       def result = dsl "getProperty(propertyName: '$path')"
       result?.property.value
   }
-*/
+  
   def getStepProperty(def jobId, def stepName, def propName) {
     assert jobId
     assert propName
