@@ -1,10 +1,5 @@
 package com.electriccloud.plugin.spec
 import spock.lang.*
-/*import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
-*/
 import org.apache.tools.ant.BuildLogger
 
 class NMB27865 extends PluginTestHelper {
@@ -58,9 +53,9 @@ class NMB27865 extends PluginTestHelper {
       def outcome=getJobProperty("outcome", result.jobId)
       assert outcome == "success"
 
-      assert getProperty("/projects/pName/Changes/C2834144/SM_Change_Approved") == 'false'
-      assert getProperty("/projects/pName/Changes/C2835095/EJ_ServiceManager_EventinLastSeq") == '1'
-      assert getProperty("/projects/pName/Framework/C2835095/frmSvcImageTag") == '1.0.80'
+      assert getProperty("/projects/$pName/Changes/C2834144/SM_Change_Approved") == 'false'
+      assert getProperty("/projects/$pName/Changes/C2835095/EJ_ServiceManager_EventinLastSeq") == '1'
+      assert getProperty("/projects/$pName/Framework/C2835095/frmSvcImageTag") == '1.0.80'
 
   }
 
