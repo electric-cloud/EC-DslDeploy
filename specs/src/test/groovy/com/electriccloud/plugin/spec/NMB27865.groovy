@@ -7,7 +7,6 @@ class NMB27865 extends PluginTestHelper {
   static NMB="NMB27865"
 
   def doSetupSpec() {
-    String currentDir = new File(".").getAbsolutePath()
     new AntBuilder().copy( todir:"/tmp/$NMB" ) {
       fileset( dir:"dslCode/$NMB" )
     }

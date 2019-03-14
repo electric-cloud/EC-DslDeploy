@@ -9,18 +9,16 @@ def projectName = '$[projName]'
 def projectDir = '$[projDir]'
 
 def pipeNbr
-def summaryStr
+def summaryStr = ""
 
 project projectName, {
   pipeNbr = loadPipelines(projectDir, projectName)
   println "Return pipeNbr: $pipeNbr"
   if (pipeNbr == -1) {
     println "Incorrect parsing of the pipeline file"
-    transaction {
-      summaryStr += "Skipping form.xml for pipeline"
-      setProperty(propertyName: "outcome", value: "warning")
-      setProperty(propertyName: "summary", value: "incorrect pipeline type: skipping form.xml")
-    }
+    summaryStr += "Skipping form.xml for pipeline"
+    setProperty(propertyName: "outcome", value: "warning")
+    setProperty(propertyName: "summary", value: "incorrect pipeline type: skipping form.xml")
   }
 }
 
