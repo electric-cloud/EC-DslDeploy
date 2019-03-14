@@ -8,7 +8,7 @@ pipeline pipeName, {
       notificationTemplate = 'ec_default_pipeline_manual_task_notification_template'
       taskType = 'MANUAL'
       approver = [
-        'lrochette'
+        'admin'
       ]
     }
   }
@@ -22,7 +22,7 @@ pipeline pipeName, {
         notificationTemplate = 'ec_default_gate_task_notification_template'
         taskType = 'APPROVAL'
         approver = [
-          'lrochette'
+          'admin'
         ]
       }
     }
@@ -62,7 +62,7 @@ pipeline pipeName, {
         notificationTemplate = 'ec_default_gate_task_notification_template'
         taskType = 'APPROVAL'
         approver = [
-          'lrochette'
+          'admin'
         ]
       }
     }
