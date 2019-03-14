@@ -1,7 +1,9 @@
 build
 .idea
 src/out
-specs/logs/
+specs/logs
+specs/spec-report
+specs/.gradle
 *.swp
 .efci
 ElectricFlow-*
