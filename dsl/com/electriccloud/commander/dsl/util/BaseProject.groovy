@@ -135,7 +135,7 @@ abstract class BaseProject extends DslDelegatingScript {
         def pipeName=fdir.name
         File dslFile = getObjectDSLFile(fdir, "pipeline")
         if (dslFile?.exists()) {
-          println "Processing pipeline file projects/$projectName/pipelines/$pipename/${dslFile.name}"
+          println "Processing pipeline file projects/$projectName/pipelines/$pipeName/${dslFile.name}"
           def pipe = loadPipeline(projectDir, projectName, dslFile.absolutePath)
           // transform single result in list or keep list
           boolean isList=pipe instanceof List
