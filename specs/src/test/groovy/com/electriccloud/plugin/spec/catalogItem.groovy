@@ -39,7 +39,7 @@ class catalogItem extends PluginTestHelper {
 
       // Check catalog exist
       println "Checking catalog"
-      assert getP("/projects/$jira/catalogs/BundleRelease/description") == "for EC-DslDeploy testing"
+      assert getP("/projects/$jira/catalogs/BundledRelease/description") == "for EC-DslDeploy testing"
 
       // catalogItem is created
       println "Checking catalog item"
