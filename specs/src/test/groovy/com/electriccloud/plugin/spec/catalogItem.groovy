@@ -4,7 +4,7 @@ import org.apache.tools.ant.BuildLogger
 
 class catalogItem extends PluginTestHelper {
   static String pName='EC-DslDeploy'
-  static String jira="ECDSLDPLOY-2"
+  static String jira="ECDSLDEPLOY-2"
   static String dir="/tmp/dslDeploy/catalogItem/$jira"
 
   def doSetupSpec() {
@@ -19,7 +19,7 @@ class catalogItem extends PluginTestHelper {
   }
 
   // check "=" format works
-  def "$jira"() {
+  def "ECDSLDPLOY-2"() {
     given: "code with catalogItem"
 
     when: "Load DSL code"

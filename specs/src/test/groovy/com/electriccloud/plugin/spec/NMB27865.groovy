@@ -8,7 +8,7 @@ class NMB27865 extends PluginTestHelper {
   static String dir="/tmp/dslDeploy/syntax/$jira"
 
   def doSetupSpec() {
-    new AntBuilder().copy( todir:"/tmp/$jira" ) {
+    new AntBuilder().copy( todir:"$dir" ) {
       fileset( dir:"dslCode/$jira" )
     }
   }
@@ -18,7 +18,7 @@ class NMB27865 extends PluginTestHelper {
   }
 
   // check "=" format works
-  def "$jira"() {
+  def "NMB-27865 alternate syntax"() {
     given:
 
     when: "Load DSL code"
