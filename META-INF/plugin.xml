@@ -9,5 +9,5 @@
   <key>EC-DslDeploy</key>
   <label>EC-DslDeploy</label>
   <pluginWizardBased>true</pluginWizardBased>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </plugin>

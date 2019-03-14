@@ -10,7 +10,7 @@
 # 2018-09-27  lrochette Initial Version
 #
 ##############################################################################
-$[/plugins/EC-Admin/project/scripts/perlHeaderJSON]
+$[/myProject/scripts/perlHeaderJSON]
 
 #
 # Parameters
@@ -60,4 +60,4 @@ foreach my $res ($result->findnodes('//resourceName')) {
   retrieve($res)
 }
 
-$[/plugins/EC-Admin/project/scripts/perlLibJSON]
+$[/myProject/scripts/perlLibJSON]

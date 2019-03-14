@@ -15,7 +15,7 @@ my $ec = new ElectricCommander->new();
 
 my $epb="../ecpluginbuilder";
 
-my $pluginVersion = "1.0.0";
+my $pluginVersion = "1.0.1";
 my $pluginKey = "EC-DslDeploy";
 
 GetOptions ("version=s" => \$pluginVersion)
@@ -43,21 +43,21 @@ print $fh $xs->XMLout($ref);
 close $fh;
 
 # Read buildCounter
-my $buildCounter;
-{
-  local $/ = undef;
-  open FILE, "buildCounter" or die "Couldn't open file: $!";
-  $buildCounter = <FILE>;
-  close FILE;
-
- $buildCounter++;
- $pluginVersion .= ".$buildCounter";
- print "[INFO] - Incrementing build number to $buildCounter...\n";
-
- open FILE, "> buildCounter" or die "Couldn't open file: $!";
- print FILE $buildCounter;
- close FILE;
-}
+# my $buildCounter;
+# {
+#   local $/ = undef;
+#   open FILE, "buildCounter" or die "Couldn't open file: $!";
+#   $buildCounter = <FILE>;
+#   close FILE;
+#
+#  $buildCounter++;
+#  $pluginVersion .= ".$buildCounter";
+#  print "[INFO] - Incrementing build number to $buildCounter...\n";
+#
+#  open FILE, "> buildCounter" or die "Couldn't open file: $!";
+#  print FILE $buildCounter;
+#  close FILE;
+# }
 my $pluginName = "${pluginKey}-${pluginVersion}";
 
 
