@@ -1,3 +1,6 @@
+2019-03-14 Laurent Rochette <lrochette@electric-cloud.com>
+  * 1.0.0: Time to be serious
+
 2019-03-08 Laurent Rochette <lrochette@electric-cloud.com>
   * 0.9.2: Fixed "persister" issue
            Add catalogItem support
