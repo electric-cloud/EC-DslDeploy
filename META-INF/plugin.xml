@@ -1,13 +1,13 @@
 <plugin>
-  <key>EC-DslDeploy</key>
-  <label>EC-DslDeploy</label>
-  <version>1.0.0</version>
   <author>L.Rochette</author>
   <authorUrl>mailto:lrochette@electric-cloud.com</authorUrl>
   <category>Administration</category>
   <commander-version min="6.0" />
-  <description>A plugin to deploy your DSL code structure to your servers</description>
-  <pluginWizardBased>true</pluginWizardBased>
   <depends min="1.4.0">EC-PluginManager</depends>
+  <description>A plugin to deploy your DSL code structure to your servers</description>
   <help>help.xml</help>
+  <key>EC-DslDeploy</key>
+  <label>EC-DslDeploy</label>
+  <pluginWizardBased>true</pluginWizardBased>
+  <version>1.0.0</version>
 </plugin>

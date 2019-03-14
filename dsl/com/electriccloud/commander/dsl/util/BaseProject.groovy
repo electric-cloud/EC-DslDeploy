@@ -132,9 +132,10 @@ abstract class BaseProject extends DslDelegatingScript {
       pipesDir.eachDir {dlist << it}
       dlist.sort({it.name})
       for (fdir in dlist) {
+        def pipeName=fdir.name
         File dslFile = getObjectDSLFile(fdir, "pipeline")
         if (dslFile?.exists()) {
-          println "Processing pipeline DSL file ${dslFile.absolutePath}"
+          println "Processing pipeline file projects/$projectName/pipelines/$pipeName/${dslFile.name}"
           def pipe = loadPipeline(projectDir, projectName, dslFile.absolutePath)
           // transform single result in list or keep list
           boolean isList=pipe instanceof List
@@ -172,7 +173,7 @@ abstract class BaseProject extends DslDelegatingScript {
 
   def isTypeOrListOfType(def obj, def type) {
      // printing for purely debugging  purposes
-     obj instanceof List ? obj.each { println ("Item type ${it.class.name}") } : println ("Obj type ${obj.class.name}")
+     // obj instanceof List ? obj.each { println ("Item type ${it.class.name}") } : println ("Obj type ${obj.class.name}")
      obj instanceof List ? obj.every { type.isInstance(it)} : type.isInstance(obj)
   }
 
@@ -299,7 +300,9 @@ abstract class BaseProject extends DslDelegatingScript {
    // catalogItems
    //
   // ########################################################################
-  def loadCatalogItem(String projectDir, String catalogDir, String projectName, String catalogName, String dslFile) {
+  def loadCatalogItem(String projectDir,  String catalogDir,
+                      String projectName, String catalogName,
+                      String dslFile) {
     catalog catalogName, {
       evalInlineDsl(dslFile, [
                           projectName: projectName,
@@ -322,7 +325,8 @@ abstract class BaseProject extends DslDelegatingScript {
         File dslFile = getObjectDSLFile(it, "catalogItem")
         if (dslFile?.exists()) {
           println "Processing catalogItem file projects/$projectName/catalogs/$catalogName/catalogItems/$itemName/${dslFile.name}"
-          def item = loadCatalogItem(projectDir, catalogDir, projectName, catalogName, dslFile.absolutePath)
+          def item = loadCatalogItem(projectDir, catalogDir,
+                                     projectName, catalogName, dslFile.absolutePath)
           counter++
         }
       }  // eachDir loop
@@ -342,7 +346,6 @@ abstract class BaseProject extends DslDelegatingScript {
   def loadCatalogs(String projectDir, String projectName) {
     // Loop over the sub-directories in the catalogs directory
     // and evaluate catalogs if a catalog.dsl file exists
-    // println("Entering loadCatalogs $projectDir")
     def catCounter=0
     def itemCounter=0;
     File dir = new File(projectDir, 'catalogs')
@@ -357,7 +360,8 @@ abstract class BaseProject extends DslDelegatingScript {
           catCounter++
 
           // load catalogitems
-          itemCounter += loadCatalogItems(projectDir, catalogDir, projectName, catalogName)
+          itemCounter += loadCatalogItems(projectDir,  catalogDir,
+                                          projectName, catalogName)
         }
       }  // eachDir loop
     }    // directory catalogs exist
@@ -408,10 +412,9 @@ abstract class BaseProject extends DslDelegatingScript {
     // Loop over the sub-directories in the dashboards directory
     // and evaluate dashboards if a dashboard.dsl file exists
     def dashCounter=0
-    defwidgetCounter=0
+    def widgetCounter=0
     File dir = new File(projectDir, 'dashboards')
     if (dir.exists()) {
-      //println "directory releases exists"
       dir.eachDir {
         def dashboardName=it.name
         def dashboardDir=it.absolutePath
@@ -422,7 +425,8 @@ abstract class BaseProject extends DslDelegatingScript {
           dashCounter++
 
           // Load widgets
-          widgetCounter += loadWidgets(projectDir, dashboardDir, projectName, dashboardName)
+          widgetCounter += loadWidgets(projectDir,  dashboardDir,
+                                       projectName, dashboardName)
         }
       }  // eachDir loop
     }    // directory dashboards exist

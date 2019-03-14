@@ -4,6 +4,7 @@
 #		https://github.com/electric-cloud/ecpluginbuilder
 
 use Getopt::Long;
+use XML::Simple qw(:strict);
 use Data::Dumper;
 use strict;
 use File::Copy;
@@ -14,7 +15,7 @@ my $ec = new ElectricCommander->new();
 
 my $epb="../ecpluginbuilder";
 
-my $pluginVersion = "0.9.1";
+my $pluginVersion = "1.0.0";
 my $pluginKey = "EC-DslDeploy";
 
 GetOptions ("version=s" => \$pluginVersion)
@@ -25,6 +26,21 @@ Error in command line arguments
 		[--version <version>]
 		)
 );
+
+# Fix version in plugin.xml
+# Update plugin.xml with  version,
+print "[INFO] - Processing 'META-INF/plugin.xml' file...\n";
+my $xs = XML::Simple->new(
+	ForceArray => 1,
+	KeyAttr    => { },
+	KeepRoot   => 1,
+);
+my $xmlFile = "META-INF/plugin.xml";
+my $ref  = $xs->XMLin($xmlFile);
+$ref->{plugin}[0]->{version}[0] = $pluginVersion;
+open(my $fh, '>', $xmlFile) or die "Could not open file '$xmlFile' $!";
+print $fh $xs->XMLout($ref);
+close $fh;
 
 # Read buildCounter
 my $buildCounter;
