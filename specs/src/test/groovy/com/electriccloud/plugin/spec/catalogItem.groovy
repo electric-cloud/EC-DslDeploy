@@ -5,13 +5,13 @@ import org.apache.tools.ant.BuildLogger
 class catalogItem extends PluginTestHelper {
   static String pName='EC-DslDeploy'
   static String jira="ECDSLDEPLOY-2"
-  static String dir="/tmp/dslDeploy/catalogItem/$jira"
+  @Shared String pVersion
+  @Shared String plugDir
 
   def doSetupSpec() {
     dsl """ deleteProject(projectName: "$jira") """
-    new AntBuilder().copy( todir:"$dir" ) {
-      fileset( dir:"dslCode/$jira" )
-    }
+    pVersion = getP("/plugins/$pName/pluginVersion")
+    plugDir = getP("/server/settings/pluginsDirectory")
   }
 
   def doCleanupSpec() {
@@ -28,7 +28,7 @@ class catalogItem extends PluginTestHelper {
           projectName: "/plugins/$pName/project",
           procedureName: "installDslFromDirectory",
           actualParameter: [
-            directory: "$dir",
+            directory: "$plugDir/$pName-$pVersion/lib/dslCode/$jira",
             pool: 'default'
           ]
         )""")

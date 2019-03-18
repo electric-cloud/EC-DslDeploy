@@ -68,6 +68,7 @@ system ("$epb -pack-jar -plugin-name $pluginKey -plugin-version $pluginVersion "
  " -folder META-INF" .
  " -folder dsl" .
  " -folder htdocs" .
+ " -folder lib" .
  " -folder pages");
 
 move("build/${pluginKey}.jar", ".");
