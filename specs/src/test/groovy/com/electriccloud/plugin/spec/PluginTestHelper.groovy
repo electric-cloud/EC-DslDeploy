@@ -22,7 +22,7 @@ class PluginTestHelper extends PluginSpockTestSupport {
     def propertyLogName = parentProperty + '/debug_logs'
     dsl """
       setProperty(
-        propertyName: "/plugins/EC-Admin/project/ec_debug_logToProperty",
+        propertyName: "/plugins/EC-DslDeploy/project/ec_debug_logToProperty",
         value: "$propertyLogName"
       )
     """

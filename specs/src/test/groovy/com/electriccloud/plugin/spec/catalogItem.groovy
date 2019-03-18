@@ -2,12 +2,13 @@ package com.electriccloud.plugin.spec
 import spock.lang.*
 import org.apache.tools.ant.BuildLogger
 
-class NMB27865 extends PluginTestHelper {
+class catalogItem extends PluginTestHelper {
   static String pName='EC-DslDeploy'
-  static String jira="NMB27865"
-  static String dir="/tmp/dslDeploy/syntax/$jira"
+  static String jira="ECDSLDEPLOY-2"
+  static String dir="/tmp/dslDeploy/catalogItem/$jira"
 
   def doSetupSpec() {
+    dsl """ deleteProject(projectName: "$jira") """
     new AntBuilder().copy( todir:"$dir" ) {
       fileset( dir:"dslCode/$jira" )
     }
@@ -18,8 +19,8 @@ class NMB27865 extends PluginTestHelper {
   }
 
   // check "=" format works
-  def "NMB-27865 alternate syntax"() {
-    given:
+  def "ECDSLDPLOY-2"() {
+    given: "code with catalogItem"
 
     when: "Load DSL code"
       def result= runProcedureDsl("""
@@ -36,20 +37,18 @@ class NMB27865 extends PluginTestHelper {
       def outcome=getJobProperty("outcome", result.jobId)
       assert outcome == "success"
 
-      // Prioperties are created properly
-      println "Checking properties"
-      assert getP("/projects/$jira/Changes/C2834144/SM_Change_Approved") == 'false'
-      assert getP("/projects/$jira/Changes/C2835095/EJ_ServiceManager_EventinLastSeq") == '1'
-      assert getP("/projects/$jira/Framework/frmSvcImageTag") == '1.0.80'
+      // Check catalog exist
+      println "Checking catalog"
+      assert getP("/projects/$jira/catalogs/BundledRelease/description") == "for EC-DslDeploy testing"
 
       // catalogItem is created
       println "Checking catalog item"
       def item=dsl """getCatalogItem(
           projectName: "$jira",
-          catalogName: 'createKubernetesMicroservice',
-          catalogItemName: 'createKubernetesMicrosesrvice'
+          catalogName: 'BundledRelease',
+          catalogItemName: 'MonthlyBundledRelease'
         )"""
-      assert item.catalogItem.catalogItemName == 'createKubernetesMicrosesrvice'
+      assert item.catalogItem.catalogItemName == 'MonthlyBundledRelease'
   }
 
 
