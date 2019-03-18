@@ -6,12 +6,14 @@ class catalogItem extends PluginTestHelper {
   static String pName='EC-DslDeploy'
   static String jira="ECDSLDEPLOY-2"
   static String dir="/tmp/dslDeploy/catalogItem/$jira"
+  static String pVersion = getP("/plugins/$pName/pluginVersion")
+  static String plugDir = getP("/server/settings/pluginsDirectory")
 
   def doSetupSpec() {
     dsl """ deleteProject(projectName: "$jira") """
-    new AntBuilder().copy( todir:"$dir" ) {
-      fileset( dir:"dslCode/$jira" )
-    }
+    // new AntBuilder().copy( todir:"$dir" ) {
+    //   fileset( dir:"dslCode/$jira" )
+    // }
   }
 
   def doCleanupSpec() {
@@ -28,7 +30,7 @@ class catalogItem extends PluginTestHelper {
           projectName: "/plugins/$pName/project",
           procedureName: "installDslFromDirectory",
           actualParameter: [
-            directory: "$dir",
+            directory: "$plugDir/$pName-$pVersion/lib/dslCode/$jira",
             pool: 'default'
           ]
         )""")
