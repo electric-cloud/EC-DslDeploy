@@ -5,12 +5,13 @@ import org.apache.tools.ant.BuildLogger
 class NMB27865 extends PluginTestHelper {
   static String pName='EC-DslDeploy'
   static String jira="NMB27865"
-  static String dir="/tmp/dslDeploy/syntax/$jira"
+  @Shared String pVersion
+  @Shared String plugDir
 
   def doSetupSpec() {
-    new AntBuilder().copy( todir:"$dir" ) {
-      fileset( dir:"dslCode/$jira" )
-    }
+    dsl """ deleteProject(projectName: "$jira") """
+    pVersion = getP("/plugins/$pName/pluginVersion")
+    plugDir = getP("/server/settings/pluginsDirectory")
   }
 
   def doCleanupSpec() {
@@ -27,7 +28,7 @@ class NMB27865 extends PluginTestHelper {
           projectName: "/plugins/$pName/project",
           procedureName: "installDslFromDirectory",
           actualParameter: [
-            directory: "$dir",
+            directory: "$plugDir/$pName-$pVersion/lib/dslCode/$jira",
             pool: 'default'
           ]
         )""")
