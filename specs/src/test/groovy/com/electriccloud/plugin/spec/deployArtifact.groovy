@@ -17,16 +17,19 @@ class deployArtifact extends PluginTestHelper {
       deleteProject(projectName: "BAR_2")
     """
   }
-/*
+
   def doCleanupSpec() {
     dsl """
       deleteProperty(propertyName: "/server/EC-DslDeploy/date")
       deleteProject(projectName: "PIPE1")
       deleteProject(projectName: "FOO")
       deleteProject(projectName: "BAR_2")
+      deleteArtifact(artifactName: "EC-DslDeploy:sample")
     """
+    String commanderHome = System.getenv('COMMANDER_HOME') ?: '/opt/EC/'
+    new AntBuilder().delete(dir:"$commanderHome/repository-data/EC-DslDeploy")
   }
-*/
+
   // Check sample
   def "sample upload from artifact"() {
     given: "a DSL code artifact"

@@ -92,15 +92,21 @@ class PluginTestHelper extends PluginSpockTestSupport {
 // Copied from PluginSpockTestSupport.groovy
 //
 
-  def artifactExists(def artifactName) {
-    def result
-    try {
-     result = dsl "getArtifactVersions artifactName: '$artifactName'"
-    } catch (Throwable e) {
-     return false
-    }
-    return true
+  def runCommand(command) {
+    logger.debug("Command: $command")
+    def stdout = new StringBuilder()
+    def stderr = new StringBuilder()
+    def process = command.execute()
+    process.consumeProcessOutput(stdout, stderr)
+    process.waitForOrKill(20 * 1000)
+    logger.debug("STDOUT: $stdout")
+    logger.debug("STDERR: $stderr")
+    logger.debug("Exit code: ${process.exitValue()}")
+    def text = "$stdout\n$stderr"
+    assert process.exitValue() == 0
+    text
   }
+
 
   def publishArtifactVersion(String artifactName, String version, String dir) {
     String commanderServer = System.getProperty("COMMANDER_SERVER") ?: 'localhost'
