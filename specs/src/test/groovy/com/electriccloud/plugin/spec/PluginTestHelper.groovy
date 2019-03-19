@@ -129,5 +129,5 @@ class PluginTestHelper extends PluginSpockTestSupport {
     publishCommand += "--fromDirectory $dir"
     runCommand(publishCommand)
   }
-  
+
 }
