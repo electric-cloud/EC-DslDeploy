@@ -1,10 +1,10 @@
 <plugin>
   <author>L.Rochette</author>
   <authorUrl>mailto:lrochette@electric-cloud.com</authorUrl>
-  <category>Administration</category>
+  <category>Utility</category>
   <commander-version min="6.0" />
   <depends min="1.4.0">EC-PluginManager</depends>
-  <description>A plugin to deploy your DSL code structure to your servers</description>
+  <description>Deploy your complete ElectricFlow DSL file structure to the server</description>
   <help>help.xml</help>
   <key>EC-DslDeploy</key>
   <label>EC-DslDeploy</label>
