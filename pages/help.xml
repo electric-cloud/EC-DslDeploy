@@ -13,10 +13,13 @@
 	<p>Plugin Version @PLUGIN_VERSION@</p>
 	<hr style="margin-left: -10px; margin-top: 10px; height: 1px; width: 100%; color: #5981BD;" noshade="noshade" />
 
-	<p>This plugin is intended to help deploy a DSL structure to your Flow server(s).</p>
+	<p>This plugin is intended to help deploy a DSL structure to your Flow server(s).
+  The full supported file structure is available on
+  the <a href="https://github.com/electric-cloud-community/EC-DslDeploy/wiki/file-structure">Wiki</a>.</p>
 
   <h2>Links</h2>
   <a href="https://github.com/electric-cloud-community/EC-DslDeploy/wiki" target="_blank">Plugin Wiki</a>
+
 
   <h1>Contents</h1>
   <ul>
@@ -115,9 +118,9 @@
 
   <!-- PROCEDURES END -->
   <h1 id="releaseNotes">Release Notes</h1>
-  <p> Check the
-    <a href="https://github.com/electric-cloud-community/EC-DslDeploy/blob/master/CHANGELOG">
-    CHANGELOG</a> for details.</p>
+  <p> Check
+    the <a href="https://github.com/electric-cloud-community/EC-DslDeploy/blob/master/CHANGELOG">CHANGELOG</a>
+    for details.</p>
 
   <h3 id="1.0.2">@PLUGIN_KEY@ 1.0.2</h3>
   <ul>
