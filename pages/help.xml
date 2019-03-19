@@ -2,38 +2,142 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta content="text/html; charset=us-ascii" http-equiv="content-type"/>
-        <title>@PLUGIN_KEY@ Plugin</title>
-        <link rel="stylesheet" href="../../plugins/@PLUGIN_KEY@/pluginhelp.css" type="text/css" media="screen" />
-    </head>
-    <body>
-        <div class="help">
-          <h1>@PLUGIN_KEY@</h1>
-      		<p>Plugin Version @PLUGIN_VERSION@</p>
-          	<hr style="margin-left: -10px; margin-top: 10px; height: 1px; width: 100%; color: #5981BD;" noshade="noshade" />
+<head>
+  <meta content="text/html; charset=us-ascii" http-equiv="content-type"/>
+  <title>@PLUGIN_KEY@ Plugin</title>
+  <link rel="stylesheet" href="../../plugins/@PLUGIN_KEY@/pluginhelp.css" type="text/css" media="screen" />
+</head>
+<body>
+<div class="help">
+  <h1>@PLUGIN_KEY@</h1>
+	<p>Plugin Version @PLUGIN_VERSION@</p>
+	<hr style="margin-left: -10px; margin-top: 10px; height: 1px; width: 100%; color: #5981BD;" noshade="noshade" />
 
-			<p>This plugin is intended to deploy a DSL structure to your Flow server(s).</p>
+	<p>This plugin is intended to help deploy a DSL structure to your Flow server(s).
+  The full supported file structure is available on
+  the <a href="https://github.com/electric-cloud-community/EC-DslDeploy/wiki/file-structure">Wiki</a>.</p>
 
-      	<h1>Legal Jumbo</h1>
+  <h2>Links</h2>
+  <a href="https://github.com/electric-cloud-community/EC-DslDeploy/wiki" target="_blank">Plugin Wiki</a>
 
-      	<p>This module is free for use. Modify it however you see fit to better your
-      experience using ElectricCommander. Share your enhancements and fixes.</p>
 
-      	<p>This module is not officially supported by Electric Cloud. It has undergone no
-      formal testing and you may run into issues that have not been uncovered in the
-      limited manual testing done so far.</p>
+  <h1>Contents</h1>
+  <ul>
+    <li><a href="#installDsl">installDsl</a></li>
+    <li><a href="#installDslFromDirectory">installDslFromDirectory</a></li>
+  </ul>
 
-      	<p>Electric Cloud should not be held liable for any repercussions of using this
-      software.</p>
+  <h1>Procedures</h1>
+  <p>IMPORTANT: For all parameter descriptions below, required parameters are
+    shown in <span class="required">bold italics</span>.</p>
 
-      <!-- PROCEDURES END -->
-    <h1 id="releaseNotes">Release Notes</h1>
-    <h3 id="0.1.0">@PLUGIN_KEY@ 0.1.0</h3>
-    <ul>
-        <li>Initial version.</li>
-    </ul>
+  <a name="installDsl" id="installDsl" />
+  <h3>installDsl</h3>
+  <p>Deploy a DSL structure from an Artifact Version on your Flow server.</p>
 
-    </div>
-	</body>
+  <table class="grid">
+    <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="required">Artifact Name</td>
+	      <td>The name of your artifact.</td>
+	    </tr>
+      <tr>
+        <td>Artifact Version</td>
+	      <td>The version of the artifact you want to deploy. If empty, it will
+          deploy the latest version. <br /><b>Note:</b> Use an empty version
+          only in your Dev environment. In higher, best practices recommend that
+          you use a specific version that has een tested in lower environments.</td>
+	    </tr>
+      <tr>
+        <td class="required">Pool or Resource</td>
+	      <td>The name of the pool or resource where the artifact will be
+          retrieved. DSL is evaluated on the server so all system actions (like
+          file reads) will be evaluated on one of the server nodes.<br />
+          Default value is local.
+        </td>
+	    </tr>
+      <tr>
+        <td class="required">Retrieve on All server nodes</td>
+	      <td>Use this option when running in a cluster with local workspace as the
+        artifact version needs to be retrieved on all nodes. Use a resource pool
+        covering all server node agents.<br />
+        Default is "false"</td>
+	    </tr>
+    </tbody>
+  </table>
+
+  <img src="../../plugins/@PLUGIN_KEY@/images/help/installDsl.png"
+    	 alt="installDsl parameters" />
+
+  <a name="installDslFromDirectory" id="installDslFromDirectory" />
+  <h3>installDslFromDirectory</h3>
+  <p>Deploy a DSL structure from a directory on your ElectricFlow server.<br />
+  This procedure main usage is to set up a CI process and extract your code from
+  your SCM in a local directory on your Dev Flow server, and deploy it from there.</p>
+
+  <table class="grid">
+    <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="required">Directory Path</td>
+	      <td>The location of the DSL code on your Dev ElectricFlow server.</td>
+	    </tr>
+      <tr>
+        <td class="required">Pool or Resource</td>
+	      <td>The name of the pool or resource where the artifact will be
+          retrieved. Use "." if you have retrieved in your workspace.</td>
+	    </tr>
+    </tbody>
+  </table>
+
+  <img src="../../plugins/@PLUGIN_KEY@/images/help/installDslFromDirectory.png"
+    	 alt="installDslFromDirectory parameters" />
+
+	<h1>Contact authors</h1>
+	<dl>
+    <dt>Code</dt>
+	  <dd>Laurent Rochette: <a href="mailto:lrochette@electric-cloud.com">lrochette@electric-cloud.com</a></dd>
+	  <dd>Urvashi Singh: <a href="mailto:usingh@electtric-cloud.com">usingh@electtric-cloud.com</a></dd>
+	</dl>
+
+  <h1>Thanks</h1>
+  <p>Thanks to <a href="mailto:usingh@electtric-cloud.com">Urvashi Singh</a>
+  for her constant support and help. This plugin would not exist without her.</p>
+
+	<h1>Legal Jumbo</h1>
+	<p>This plugin is free for use. Modify it however you see fit to better your
+  experience using ElectricFlow. Share your enhancements and fixes.</p>
+
+	<p>This module is not officially supported by Electric Cloud. It has undergone
+  some ad-hoc testing but you may run into issues that have not been uncovered.
+  Use at your own risk.</p>
+
+	<p>Electric Cloud should not be held liable for any repercussions of using this
+  software.</p>
+
+  <!-- PROCEDURES END -->
+  <h1 id="releaseNotes">Release Notes</h1>
+  <p> Check
+    the <a href="https://github.com/electric-cloud-community/EC-DslDeploy/blob/master/CHANGELOG">CHANGELOG</a>
+    for details.</p>
+
+  <h3 id="1.0.2">@PLUGIN_KEY@ 1.0.2</h3>
+  <ul>
+    <li>Refactor tests and add sample code as test.</li>
+    <li>Fix <a href="https://github.com/electric-cloud-community/EC-DslDeploy/issues/14">Issue #14</a>.</li>
+  </ul>
+
+  <h3 id="1.0.1">@PLUGIN_KEY@ 1.0.1</h3>
+  <ul>
+    <li>Remove EC-Admin dependency.</li>
+  </ul>
+
+  <h3 id="1.0.0">@PLUGIN_KEY@ 1.0.0</h3>
+  <ul>
+    <li>First official version.</li>
+  </ul>
+
+</div>
+</body>
 </html>

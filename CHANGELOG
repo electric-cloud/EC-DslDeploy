@@ -1,3 +1,9 @@
+2019-03-19 Laurent Rochette <lrochette@electric-cloud.com>
+  * 1.0.2: Refactor tests to allow run on CI process on chronic3
+           Add Sample code as test
+           Fix #14
+           Add help page
+
 2019-03-14 Laurent Rochette <lrochette@electric-cloud.com>
   * 1.0.1: Remove EC-Admin dependency
   * 1.0.0: Time to be serious
