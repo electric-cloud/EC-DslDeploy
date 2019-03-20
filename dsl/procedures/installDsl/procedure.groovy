@@ -9,15 +9,10 @@ procedure procName, {
    resourceName: '$[pool]',
    shell: 'ec-perl'
 
-	//evalDsl the main.groovy if it exists
-	step 'deployMain',
-    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployMain.groovy").text,
-    shell: 'ec-groovy',
-    resourceName: '$[/myJob/assignedResourceName]'
-
-	// loop on each project
-	step 'deployProjects',
-		command: new File(pluginDir, "dsl/procedures/$procName/steps/deployProjects.groovy").text,
-    resourceName: '$[/myJob/assignedResourceName]',
-    shell: 'ec-groovy'
+ step 'installFromDirectory',
+    subprocedure: 'installDslFromDirectory',
+    actualParameter: [
+      directory: ".",
+      pool: '$[/myJob/assignedResourceName]'
+    ]
 }
