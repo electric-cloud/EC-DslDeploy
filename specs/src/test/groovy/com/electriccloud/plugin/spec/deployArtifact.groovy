@@ -2,6 +2,7 @@ package com.electriccloud.plugin.spec
 import spock.lang.*
 
 class deployArtifact extends PluginTestHelper {
+  static String commanderHome = System.getenv('COMMANDER_HOME') ?: '/opt/EC/'
   static String pName='EC-DslDeploy'
   @Shared String plugDir      // Plugin directory
   @Shared String pVersion     // plugin version
@@ -20,6 +21,8 @@ class deployArtifact extends PluginTestHelper {
     // SAMPLE_DIR is local on deve machine
     // or plugin Dir
     codeDir=System.getenv('CODE_DIR') ?: "$plugDir/$pName-$pVersion"
+    logger.debug("CodeDir: $codeDir")
+    runCommand("ls -ail $codeDir/lib/dslCode")
   }
 
   def doCleanupSpec() {
@@ -30,7 +33,6 @@ class deployArtifact extends PluginTestHelper {
       deleteProject(projectName: "BAR_2")
       deleteArtifact(artifactName: "EC-DslDeploy:sample")
     """
-    String commanderHome = System.getenv('COMMANDER_HOME') ?: '/opt/EC/'
     new AntBuilder().delete(dir:"$commanderHome/repository-data/EC-DslDeploy")
   }
 
