@@ -20,7 +20,7 @@ class deployArtifact extends PluginTestHelper {
     """
     // SAMPLE_DIR is local on deve machine
     // or plugin Dir
-    codeDir=System.getenv('CODE_DIR') ?: "$plugDir/$pName-$pVersion"
+    codeDir=System.getenv('CODE_DIR') ?: System.getenv('COMMANDER_HOME') + "/plugins/$pName-$pVersion"
     logger.debug("CodeDir: $codeDir")
     runCommand("ls -ail $codeDir/lib/dslCode")
   }
