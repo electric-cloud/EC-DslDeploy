@@ -15,5 +15,4 @@ procedure procName,
     resourceName: '$[pool]',
     shell: 'ec-groovy',
     workingDirectory: '$[directory]'
-
 }
