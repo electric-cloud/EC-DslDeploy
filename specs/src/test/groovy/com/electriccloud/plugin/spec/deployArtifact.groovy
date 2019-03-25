@@ -3,9 +3,9 @@ import spock.lang.*
 
 class deployArtifact extends PluginTestHelper {
   static String pName='EC-DslDeploy'
-  @Shared String plugDir      // PLugin directory
+  @Shared String plugDir      // Plugin directory
   @Shared String pVersion     // plugin version
-  @Shared String codeDir    // where to grab test samnple code
+  @Shared String codeDir      // where to grab test samnple code
 
   def doSetupSpec() {
     plugDir = getP("/server/settings/pluginsDirectory")
@@ -19,7 +19,7 @@ class deployArtifact extends PluginTestHelper {
     """
     // SAMPLE_DIR is local on deve machine
     // or plugin Dir
-    codeDir=System.getenv('CODE_DIR') ?: "$plugDir/$pName-$pVersion/lib/dslCode/sample"
+    codeDir=System.getenv('CODE_DIR') ?: "$plugDir/$pName-$pVersion"
   }
 
   def doCleanupSpec() {
