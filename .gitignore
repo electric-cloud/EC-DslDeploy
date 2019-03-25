@@ -13,3 +13,4 @@ src/out
 *.swp
 *.iml
 EC-DslDeploy.jar
+.preflight

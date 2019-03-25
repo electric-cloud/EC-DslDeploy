@@ -14,6 +14,6 @@ project projectName, {
   appNbr  = loadApplications(projectDir, projectName)
 }
 
-def summaryStr = appNbr? "Created $appNbr applications" : ""
+def summaryStr = appNbr? "Created $appNbr applications" : "No applications"
 setProperty(propertyName: "summary", value: summaryStr)
 return ""
