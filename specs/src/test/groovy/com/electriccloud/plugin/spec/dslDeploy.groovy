@@ -69,9 +69,9 @@ class dslDeploy extends PluginTestHelper {
           propertyName: "/server/ec_customerEditors/pickerStep/$pName - installProject"
         )
        """
-       println "##LR: ps - '$ps' (" + !ps + ")"
+       println "##LR: ps - '${ps.property}'"
      then: "installProject should not exist"
-       assert !ps
+       assert !ps.property
 
   }
 
