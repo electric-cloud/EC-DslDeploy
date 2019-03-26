@@ -18,9 +18,10 @@ class deployArtifact extends PluginTestHelper {
       deleteProject(projectName: "FOO")
       deleteProject(projectName: "BAR_2")
     """
-    // SAMPLE_DIR is local on deve machine
+    // SAMPLE_DIR is local on dev machine
     // or plugin Dir
-    codeDir=System.getenv('CODE_DIR') ?: "//f2/scratch/chronic3plugins/$pName-$pVersion/lib/dslCode/sample"
+    println "Cwd: " + System.getProperty("user.dir");
+    codeDir=System.getenv('CODE_DIR') ?: ".."
   }
 
   def doCleanupSpec() {
