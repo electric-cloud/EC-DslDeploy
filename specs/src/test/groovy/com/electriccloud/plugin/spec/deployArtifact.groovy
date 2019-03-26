@@ -2,7 +2,7 @@ package com.electriccloud.plugin.spec
 import spock.lang.*
 
 class deployArtifact extends PluginTestHelper {
-  @Shared String commanderHome
+  static String commanderHome = System.getenv('COMMANDER_HOME') ?: '/opt/EC/'
   static String pName='EC-DslDeploy'
   @Shared String plugDir      // Plugin directory
   @Shared String pVersion     // plugin version
@@ -11,7 +11,6 @@ class deployArtifact extends PluginTestHelper {
   def doSetupSpec() {
     plugDir = getP("/server/settings/pluginsDirectory")
     pVersion = getP("/plugins/$pName/pluginVersion")
-    commanderHome = System.getenv('COMMANDER_HOME') ?: '/opt/EC/'
     dsl """
       deleteArtifact(artifactName: "EC-DslDeploy:sample")
       deleteProperty(propertyName: "/server/EC-DslDeploy/date")
