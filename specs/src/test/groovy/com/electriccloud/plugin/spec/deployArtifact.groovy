@@ -2,14 +2,16 @@ package com.electriccloud.plugin.spec
 import spock.lang.*
 
 class deployArtifact extends PluginTestHelper {
+  @Shared String commanderHome
   static String pName='EC-DslDeploy'
-  @Shared String plugDir      // PLugin directory
+  @Shared String plugDir      // Plugin directory
   @Shared String pVersion     // plugin version
-  @Shared String codeDir    // where to grab test samnple code
+  @Shared String codeDir      // where to grab test samnple code
 
   def doSetupSpec() {
     plugDir = getP("/server/settings/pluginsDirectory")
     pVersion = getP("/plugins/$pName/pluginVersion")
+    commanderHome = System.getenv('COMMANDER_HOME') ?: '/opt/EC/'
     dsl """
       deleteArtifact(artifactName: "EC-DslDeploy:sample")
       deleteProperty(propertyName: "/server/EC-DslDeploy/date")
@@ -19,7 +21,7 @@ class deployArtifact extends PluginTestHelper {
     """
     // SAMPLE_DIR is local on deve machine
     // or plugin Dir
-    codeDir=System.getenv('CODE_DIR') ?: "$plugDir/$pName-$pVersion/lib/dslCode/sample"
+    codeDir=System.getenv('CODE_DIR') ?: "//f2/scratch/chronic3plugins/$pName-$pVersion/lib/dslCode/sample"
   }
 
   def doCleanupSpec() {
@@ -30,7 +32,6 @@ class deployArtifact extends PluginTestHelper {
       deleteProject(projectName: "BAR_2")
       deleteArtifact(artifactName: "EC-DslDeploy:sample")
     """
-    String commanderHome = System.getenv('COMMANDER_HOME') ?: '/opt/EC/'
     new AntBuilder().delete(dir:"$commanderHome/repository-data/EC-DslDeploy")
   }
 
