@@ -20,10 +20,7 @@ class deployArtifact extends PluginTestHelper {
     """
     // SAMPLE_DIR is local on deve machine
     // or plugin Dir
-    codeDir=System.getenv('CODE_DIR') ?: getProperty("/$pName-$pVersion"
-    logger.debug("CodeDir: $codeDir")
-    logger.debug("Plugin:" + getProperty("/server/settings/pluginsDirectory"))
-    runCommand("ls -ail $codeDir/lib/dslCode")
+    codeDir=System.getenv('CODE_DIR') ?: "//f2/scratch/chronic3plugins/$pName-$pVersion/lib/dslCode/sample"
   }
 
   def doCleanupSpec() {
