@@ -71,7 +71,7 @@ class dslDeploy extends PluginTestHelper {
        """
        println "##LR: ps - '$ps' (" + !ps + ")"
      then: "installProject should not exist"
-       assert ps == [:]
+       assert !ps
 
   }
 
