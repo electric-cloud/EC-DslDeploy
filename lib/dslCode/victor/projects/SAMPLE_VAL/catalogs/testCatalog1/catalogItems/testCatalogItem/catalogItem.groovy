@@ -1,6 +1,6 @@
 def catItemName='testCatalogItem'
 
-catalogItem catItemName, catalogName: catalogName, {
+catalogItem catItemName, {
   description = 'val'
   tags = ["arg1", "arg2"]
 }

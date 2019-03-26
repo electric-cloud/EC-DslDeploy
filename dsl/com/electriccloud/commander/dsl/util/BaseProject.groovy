@@ -1,3 +1,27 @@
+/* ###########################################################################
+#
+#  BaseProject: extension of BasePlugin to allow for additional Flow objects
+#
+#  Author: L.Rochette
+#
+#  Copyright 2017-2019 Electric-Cloud Inc.
+#
+#     Licensed under the Apache License, Version 2.0 (the "License");
+#     you may not use this file except in compliance with the License.
+#     You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#     Unless required by applicable law or agreed to in writing, software
+#     distributed under the License is distributed on an "AS IS" BASIS,
+#     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#     See the License for the specific language governing permissions and
+#     limitations under the License.
+#
+# History
+# ---------------------------------------------------------------------------
+# 2019-03-26 lrochette  Fix #11 to show skipped files
+############################################################################ */
 package com.electriccloud.commander.dsl.util
 
 import groovy.io.FileType
@@ -12,18 +36,25 @@ import com.electriccloud.commander.dsl.DslDelegatingScript
 abstract class BaseProject extends DslDelegatingScript {
   // return the object.groovy or object.dsl
   //    AKA project.groovy, procedure.dsl, pipeline.groovy, ...
-  def getObjectDSLFile(File objDir, String obj) {
-    File dslFile = new File(objDir, obj + '.groovy')
-    if (dslFile.exists()) {
-      return dslFile
-    } else {
-      dslFile = new File(objDir, obj + '.dsl')
-      if (dslFile.exists()) {
-        return dslFile
-      } else {
-        return null
+  // Show ignored files to make it easier to debug when a badly named file is
+  // skiped
+  File getObjectDSLFile(File objDir, String obj) {
+    // println "Checking $obj in ${objDir.name}"
+    File found=null
+    objDir.eachFileMatch(FileType.FILES, ~/(?i)^.*\.(groovy|dsl)/) { dslFile ->
+      // println "Processing ${dslFile.name}"
+      if (dslFile.name ==~ /(?i)${obj}\.(groovy|dsl)/) {
+        if (found) {
+          println "Multiple files match the ${obj}.groovy or ${obj}.dsl"
+          setProperty(propertyName: "outcome", value: "warning")
+        }
+        found =  dslFile
+      }  else {
+         println "Ignoring incorrect file  ${dslFile.name} in ${objDir.name}"
+         setProperty(propertyName: "outcome", value: "warning")
       }
     }
+    return found
   }
 
   boolean isDslFile(File dslFile) {
@@ -42,6 +73,7 @@ abstract class BaseProject extends DslDelegatingScript {
   def loadProject(String projectDir, String projectName) {
     // load the project.groovy if it exists
     File dslFile=getObjectDSLFile(new File(projectDir), "project");
+    println "projet returned " + dslFile.absolutePath
     if (dslFile?.exists()) {
       println "Processing project file projects/$projectName/${dslFile.name}"
       def proj=evalInlineDsl(dslFile.toString(), [projectName: projectName, projectDir: projectDir])
@@ -205,11 +237,13 @@ abstract class BaseProject extends DslDelegatingScript {
   // ########################################################################
   def loadCluster(String projectDir,  String environmentDir,
                   String projectName, String environmentName, String dslFile) {
-    return evalInlineDsl(dslFile, [
+    environment environmentName, {
+      return evalInlineDsl(dslFile, [
                           projectName: projectName,
                           environmentName: environmentName,
                           projectDir: projectDir,
                           environmentDir: environmentDir])
+    }
   }
 
   def loadClusters(String projectDir,  String environmentDir,
@@ -221,10 +255,11 @@ abstract class BaseProject extends DslDelegatingScript {
     File dir = new File(environmentDir, 'clusters')
     if (dir.exists()) {
       // println "  directory clusters exists"
-      dir.eachFile { dslFile ->
-
-        if ((dslFile.name =~ /(?i)\.groovy$/) || (dslFile.name =~ /(?i)\.dsl$/)) {
-          println "    Processing cluster DSL file clusters/${dslFile.name}"
+      dir.eachFile {
+        def clusterName=it.name
+        File dslFile = getObjectDSLFile(it, "cluster")
+        if (dslFile) {
+          println "    Processing cluster file projects/$projectName/environments/$environmentName/clusters/$clusterName/${dslFile.name}"
           loadCluster(projectDir,  environmentDir,
                       projectName, environmentName, dslFile.absolutePath)
           counter++
@@ -258,10 +293,9 @@ abstract class BaseProject extends DslDelegatingScript {
           println "  Processing environment file projects/$projectName/environments/$environmentName/${dslFile.name}"
           def pipe = loadEnvironment(projectDir, projectName, dslFile.absolutePath)
           envCounter++
-
-          // loop over clusters
-          clusterCounter += loadClusters(projectDir, environmentDir, projectName, environmentName)
         }
+        // loop over clusters
+        clusterCounter += loadClusters(projectDir, environmentDir, projectName, environmentName)
       }
     }
     return [envCounter, clusterCounter]
@@ -287,7 +321,7 @@ abstract class BaseProject extends DslDelegatingScript {
         File dslFile = getObjectDSLFile(it, "release")
         if (dslFile?.exists()) {
           println "Processing release file projects/$projectName/releases/$releaseName/${dslFile.name}"
-          def pipe = loadRelease(projectDir, projectName, dslFile.absolutePath)
+          def rel = loadRelease(projectDir, projectName, dslFile.absolutePath)
           counter++
         }
       }  // eachDir loop
@@ -359,10 +393,10 @@ abstract class BaseProject extends DslDelegatingScript {
           def cat = loadCatalog(projectDir, projectName, dslFile.absolutePath)
           catCounter++
 
-          // load catalogitems
-          itemCounter += loadCatalogItems(projectDir,  catalogDir,
-                                          projectName, catalogName)
         }
+        // load catalogitems
+        itemCounter += loadCatalogItems(projectDir,  catalogDir,
+                                        projectName, catalogName)
       }  // eachDir loop
     }    // directory catalogs exist
     return [catCounter, itemCounter]
@@ -424,10 +458,11 @@ abstract class BaseProject extends DslDelegatingScript {
           def cat = loadDashboard(projectDir, projectName, dslFile.absolutePath)
           dashCounter++
 
-          // Load widgets
-          widgetCounter += loadWidgets(projectDir,  dashboardDir,
-                                       projectName, dashboardName)
         }
+        // Load widgets
+        widgetCounter += loadWidgets(projectDir,  dashboardDir,
+                                     projectName, dashboardName)
+
       }  // eachDir loop
     }    // directory dashboards exist
     return [dashCounter, widgetCounter]
@@ -488,9 +523,10 @@ abstract class BaseProject extends DslDelegatingScript {
     if (dir.exists()) {
       //println "directory releases exists"
       dir.eachDir {
+        def appName=it.name
         File dslFile = getObjectDSLFile(it, "application")
         if (dslFile?.exists()) {
-          println "Processing application DSL file ${dslFile.absolutePath}"
+          println "Processing application file projects/$projectName/applications/$appName/${dslFile.name}"
           def app = loadApplication(projectDir, projectName, dslFile.absolutePath)
           counter++
         }
