@@ -125,9 +125,9 @@ abstract class BaseProject extends DslDelegatingScript {
     // and evaluate procedures if a procedure.dsl file exists
     // println "Entering loadProcedures($projectDir, $projectName)"
     def counter=0
-    File procsDir = new File(projectDir, 'procedures')
-    if (procsDir.exists()) {
-      procsDir.eachDir {
+    File dir = new File(projectDir, 'procedures')
+    if (dir.exists()) {
+      dir.eachDir {
         File procDslFile = getObjectDSLFile(it, "procedure")
         if (procDslFile?.exists()) {
           println "Processing procedure DSL file ${procDslFile.absolutePath}"
@@ -209,9 +209,15 @@ abstract class BaseProject extends DslDelegatingScript {
      obj instanceof List ? obj.every { type.isInstance(it)} : type.isInstance(obj)
   }
 
+  // ########################################################################
+  //
+  // Services
+  //
+  // ########################################################################
   def loadService(String projectDir, String projectName, String dslFile) {
     return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
   }
+
   def loadServices(String projectDir, String projectName) {
     // Loop over the sub-directories in the microservices directory
     // and evaluate services if a service.dsl file exists
@@ -219,9 +225,10 @@ abstract class BaseProject extends DslDelegatingScript {
     File dir = new File(projectDir, 'services')
     if (dir.exists()) {
       dir.eachDir {
+        def servName=it.name
         File dslFile = getObjectDSLFile(it, "service")
         if (dslFile?.exists()) {
-          println "Processing pipeline DSL file ${dslFile.absolutePath}"
+          println "Processing service  file projects/$projectName/services/$servName/${dslFile.name}"
           def pipe = loadService(projectDir, projectName, dslFile.absolutePath)
           counter++
         }
@@ -468,22 +475,31 @@ abstract class BaseProject extends DslDelegatingScript {
     return [dashCounter, widgetCounter]
   }
 
+  // ########################################################################
+  //
+  // Reports
+  //
+  // ########################################################################
   def loadReport(String projectDir, String projectName, String dslFile) {
     return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
   }
 
   def loadReports(String projectDir, String projectName) {
     // Loop over the sub-directories in the reports directory
-    // and evaluate .groovy file exists
+    // and evaluate reports if a report.dsl file exists
     def counter=0
     File dir = new File(projectDir, 'reports')
     if (dir.exists()) {
-      dir.eachFileMatch(~/.*\.(dsl|groovy)/) {
-        println "Processing report file projects/$projectName/reports/${it.name}"
-        loadReport(projectDir, projectName, it.absolutePath)
-        counter++
-      }  // eachDir loop
-    }
+      dir.eachDir {
+        def reportName=it.name
+        File dslFile = getObjectDSLFile(it, "report")
+        if (dslFile) {
+          println "Processing report file projects/$projectName/reports/$reportName/${dslFile.name}"
+          def pipe = loadReport(projectDir, projectName, dslFile.absolutePath)
+          counter++
+        }   // report.dsl exists
+      }     // report sub-dir loop
+    }       // "reports" exists
     return counter
   }
 
