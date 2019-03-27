@@ -73,7 +73,7 @@ abstract class BaseProject extends DslDelegatingScript {
   def loadProject(String projectDir, String projectName) {
     // load the project.groovy if it exists
     File dslFile=getObjectDSLFile(new File(projectDir), "project");
-    println "projet returned " + dslFile.absolutePath
+    // println "projet returned " + dslFile.absolutePath
     if (dslFile?.exists()) {
       println "Processing project file projects/$projectName/${dslFile.name}"
       def proj=evalInlineDsl(dslFile.toString(), [projectName: projectName, projectDir: projectDir])
@@ -297,7 +297,7 @@ abstract class BaseProject extends DslDelegatingScript {
         def environmentDir=it.absolutePath
         File dslFile = getObjectDSLFile(it, "environment")
         if (dslFile?.exists()) {
-          println "  Processing environment file projects/$projectName/environments/$environmentName/${dslFile.name}"
+          println "Processing environment file projects/$projectName/environments/$environmentName/${dslFile.name}"
           def pipe = loadEnvironment(projectDir, projectName, dslFile.absolutePath)
           envCounter++
         }
@@ -365,7 +365,7 @@ abstract class BaseProject extends DslDelegatingScript {
         def itemName=it.name
         File dslFile = getObjectDSLFile(it, "catalogItem")
         if (dslFile?.exists()) {
-          println "Processing catalogItem file projects/$projectName/catalogs/$catalogName/catalogItems/$itemName/${dslFile.name}"
+          println "  Processing catalogItem file projects/$projectName/catalogs/$catalogName/catalogItems/$itemName/${dslFile.name}"
           def item = loadCatalogItem(projectDir, catalogDir,
                                      projectName, catalogName, dslFile.absolutePath)
           counter++
@@ -431,7 +431,7 @@ abstract class BaseProject extends DslDelegatingScript {
         def widgetName=it.name
         File dslFile = getObjectDSLFile(it, "widget")
         if (dslFile?.exists()) {
-          println "Processing widget file projects/$projectName/dashboards/$dashboardName/widgets/$widgetName/${dslFile.name}"
+          println "  Processing widget file projects/$projectName/dashboards/$dashboardName/widgets/$widgetName/${dslFile.name}"
           def cat = loadWidget(projectDir, dashboardDir, projectName, dashboardName, dslFile.absolutePath)
           counter++
         }
