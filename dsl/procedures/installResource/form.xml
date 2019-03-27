@@ -1,0 +1,16 @@
+<editor>
+  <formElement>
+      <type>entry</type>
+      <label>Resource Name</label>
+      <property>resName</property>
+      <required>1</required>
+      <documentation>Name of the resource to install</documentation>
+  </formElement>
+  <formElement>
+      <type>entry</type>
+      <label>Resource directory</label>
+      <property>resDir</property>
+      <required>1</required>
+      <documentation>Resource directory</documentation>
+  </formElement>
+</editor>
