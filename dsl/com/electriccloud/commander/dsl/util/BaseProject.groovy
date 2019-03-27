@@ -73,7 +73,7 @@ abstract class BaseProject extends DslDelegatingScript {
   def loadProject(String projectDir, String projectName) {
     // load the project.groovy if it exists
     File dslFile=getObjectDSLFile(new File(projectDir), "project");
-    println "projet returned " + dslFile.absolutePath
+    // println "projet returned " + dslFile.absolutePath
     if (dslFile?.exists()) {
       println "Processing project file projects/$projectName/${dslFile.name}"
       def proj=evalInlineDsl(dslFile.toString(), [projectName: projectName, projectDir: projectDir])
@@ -125,9 +125,9 @@ abstract class BaseProject extends DslDelegatingScript {
     // and evaluate procedures if a procedure.dsl file exists
     // println "Entering loadProcedures($projectDir, $projectName)"
     def counter=0
-    File procsDir = new File(projectDir, 'procedures')
-    if (procsDir.exists()) {
-      procsDir.eachDir {
+    File dir = new File(projectDir, 'procedures')
+    if (dir.exists()) {
+      dir.eachDir {
         File procDslFile = getObjectDSLFile(it, "procedure")
         if (procDslFile?.exists()) {
           println "Processing procedure DSL file ${procDslFile.absolutePath}"
@@ -209,9 +209,15 @@ abstract class BaseProject extends DslDelegatingScript {
      obj instanceof List ? obj.every { type.isInstance(it)} : type.isInstance(obj)
   }
 
+  // ########################################################################
+  //
+  // Services
+  //
+  // ########################################################################
   def loadService(String projectDir, String projectName, String dslFile) {
     return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
   }
+
   def loadServices(String projectDir, String projectName) {
     // Loop over the sub-directories in the microservices directory
     // and evaluate services if a service.dsl file exists
@@ -219,9 +225,10 @@ abstract class BaseProject extends DslDelegatingScript {
     File dir = new File(projectDir, 'services')
     if (dir.exists()) {
       dir.eachDir {
+        def servName=it.name
         File dslFile = getObjectDSLFile(it, "service")
         if (dslFile?.exists()) {
-          println "Processing pipeline DSL file ${dslFile.absolutePath}"
+          println "Processing service  file projects/$projectName/services/$servName/${dslFile.name}"
           def pipe = loadService(projectDir, projectName, dslFile.absolutePath)
           counter++
         }
@@ -290,7 +297,7 @@ abstract class BaseProject extends DslDelegatingScript {
         def environmentDir=it.absolutePath
         File dslFile = getObjectDSLFile(it, "environment")
         if (dslFile?.exists()) {
-          println "  Processing environment file projects/$projectName/environments/$environmentName/${dslFile.name}"
+          println "Processing environment file projects/$projectName/environments/$environmentName/${dslFile.name}"
           def pipe = loadEnvironment(projectDir, projectName, dslFile.absolutePath)
           envCounter++
         }
@@ -358,7 +365,7 @@ abstract class BaseProject extends DslDelegatingScript {
         def itemName=it.name
         File dslFile = getObjectDSLFile(it, "catalogItem")
         if (dslFile?.exists()) {
-          println "Processing catalogItem file projects/$projectName/catalogs/$catalogName/catalogItems/$itemName/${dslFile.name}"
+          println "  Processing catalogItem file projects/$projectName/catalogs/$catalogName/catalogItems/$itemName/${dslFile.name}"
           def item = loadCatalogItem(projectDir, catalogDir,
                                      projectName, catalogName, dslFile.absolutePath)
           counter++
@@ -424,7 +431,7 @@ abstract class BaseProject extends DslDelegatingScript {
         def widgetName=it.name
         File dslFile = getObjectDSLFile(it, "widget")
         if (dslFile?.exists()) {
-          println "Processing widget file projects/$projectName/dashboards/$dashboardName/widgets/$widgetName/${dslFile.name}"
+          println "  Processing widget file projects/$projectName/dashboards/$dashboardName/widgets/$widgetName/${dslFile.name}"
           def cat = loadWidget(projectDir, dashboardDir, projectName, dashboardName, dslFile.absolutePath)
           counter++
         }
@@ -468,22 +475,31 @@ abstract class BaseProject extends DslDelegatingScript {
     return [dashCounter, widgetCounter]
   }
 
+  // ########################################################################
+  //
+  // Reports
+  //
+  // ########################################################################
   def loadReport(String projectDir, String projectName, String dslFile) {
     return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
   }
 
   def loadReports(String projectDir, String projectName) {
     // Loop over the sub-directories in the reports directory
-    // and evaluate .groovy file exists
+    // and evaluate reports if a report.dsl file exists
     def counter=0
     File dir = new File(projectDir, 'reports')
     if (dir.exists()) {
-      dir.eachFileMatch(~/.*\.(dsl|groovy)/) {
-        println "Processing report file projects/$projectName/reports/${it.name}"
-        loadReport(projectDir, projectName, it.absolutePath)
-        counter++
-      }  // eachDir loop
-    }
+      dir.eachDir {
+        def reportName=it.name
+        File dslFile = getObjectDSLFile(it, "report")
+        if (dslFile) {
+          println "Processing report file projects/$projectName/reports/$reportName/${dslFile.name}"
+          def pipe = loadReport(projectDir, projectName, dslFile.absolutePath)
+          counter++
+        }   // report.dsl exists
+      }     // report sub-dir loop
+    }       // "reports" exists
     return counter
   }
 

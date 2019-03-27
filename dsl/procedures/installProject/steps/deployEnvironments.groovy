@@ -12,7 +12,6 @@ def envNbr
 def clusterNbr
 
 project projectName, {
-  println "Process Environments in $projectDir"
   (envNbr, clusterNbr)  = loadEnvironments(projectDir, projectName)
 }
 

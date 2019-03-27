@@ -16,7 +16,7 @@ class victor extends PluginTestHelper {
   }
 
   def doCleanupSpec() {
-    conditionallyDeleteProject(projName)
+//    conditionallyDeleteProject(projName)
   }
 
 
@@ -156,7 +156,17 @@ class victor extends PluginTestHelper {
           releaseName: "testRelease"
         )"""
       assert rel.release.releaseName == "testRelease"
-      assert rel.release.plannedEndTime == "2019-04-04T00:00:00.000Z"
+      assert rel.release.plannedEndTime =~ /2019-04-04T00:00/
+
+    // check report is found
+    then: "report is found"
+      def rep=dsl """
+        getReport(
+          projectName: "$projName",
+          reportName: "testReport"
+        )"""
+      assert rep.report.reportName == "testReport"
+      assert rep.report.reportObjectTypeName == 'job'
 
     // check service is found
     then: "service is found"
