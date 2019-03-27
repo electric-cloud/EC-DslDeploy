@@ -70,6 +70,28 @@ abstract class BaseProject extends DslDelegatingScript {
       } // switch
   }
 
+ def loadResource(String resourceDir, String resourceName) {
+   // load the resource.groovy if it exists
+   File dslFile=getObjectDSLFile(new File(resourceDir), "resource");
+   // println "projet returned " + dslFile.absolutePath
+   if (dslFile) {
+     println "Processing resource file resources/$resourceName/${dslFile.name}"
+     def res=evalInlineDsl(dslFile.toString(), [resourceName: resourceName, resourceDir: resourceDir])
+   }
+ }
+
+  def loadResourceProperties(String resourceDir, String resourceName) {
+    // Recursively navigate each file or sub-directory in the properties directory
+    //Create a property corresponding to a file,
+    // or create a property sheet for a sub-directory before navigating into it
+    def resPropertyDir=new File(resourceDir, 'properties')
+    if (resPropertyDir.directory) {
+      loadNestedProperties("/resources/$resourceName", resPropertyDir)
+    }  else {
+      println "No properties directory for resource $resourceName"
+    }
+  }
+
   def loadProject(String projectDir, String projectName) {
     // load the project.groovy if it exists
     File dslFile=getObjectDSLFile(new File(projectDir), "project");

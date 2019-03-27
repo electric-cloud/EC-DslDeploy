@@ -12,11 +12,15 @@ class victor extends PluginTestHelper {
     plugDir = getP("/server/settings/pluginsDirectory")
     dsl """
       deleteProject(projectName: "$projName")
+      deleteResource(resourceName: "res457")
     """
   }
 
   def doCleanupSpec() {
-//    conditionallyDeleteProject(projName)
+    conditionallyDeleteProject(projName)
+    dsl """
+      deleteResource(resourceName: "res457")
+    """
   }
 
 
@@ -168,6 +172,15 @@ class victor extends PluginTestHelper {
       assert rep.report.reportName == "testReport"
       assert rep.report.reportObjectTypeName == 'job'
 
+    // check resource is found
+    then: "resource is found"
+      def rsc=dsl """
+        getResource(
+          resourceName: "res457"
+        )"""
+      assert rsc.resource.resourceName == "res457"
+      assert rsc.resource.hostName == 'localhost'
+      assert getP("/resources/res457/prop1") =~ /val23456\s+/
     // check service is found
     then: "service is found"
       def serv=dsl """
