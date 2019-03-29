@@ -160,7 +160,7 @@ class victor extends PluginTestHelper {
           releaseName: "testRelease"
         )"""
       assert rel.release.releaseName == "testRelease"
-      assert rel.release.plannedEndTime =~ /2019-04-04T00:00/
+      assert rel.release.plannedEndTime =~ /2019-04-04T/
 
     // check report is found
     then: "report is found"

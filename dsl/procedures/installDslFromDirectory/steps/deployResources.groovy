@@ -17,21 +17,26 @@ import java.io.File
 
 ElectricFlow ef = new ElectricFlow()
 
-// sort projects alpahbetically
-dlist=[]
-new File("resources").eachDir {dlist << it }
-dlist.sort({it.name}).each { resourceDir ->
-  def basename=resourceDir.getName().toString()
-  println "Processing resource $basename"
-  def params = [
-      new ActualParameter('resName', basename),
-      new ActualParameter('resDir', resourceDir.absolutePath.toString().replace('\\', '/'))
-  ]
+File resDir=new File("resources")
+if (resDir.exists()) {
+  // sort resources alphabetically
+  dlist=[]
+  resDir.eachDir {dlist << it }
+  dlist.sort({it.name}).each { resourceDir ->
+    def basename=resourceDir.getName().toString()
+    println "Processing resource $basename"
+    def params = [
+        new ActualParameter('resName', basename),
+        new ActualParameter('resDir', resourceDir.absolutePath.toString().replace('\\', '/'))
+    ]
 
-  ef.createJobStep(
-    jobStepName: basename,
-    subproject: '$[/myProject]',
-    subprocedure: 'installResource',
-    actualParameters: params
-  )
+    ef.createJobStep(
+      jobStepName: basename,
+      subproject: '$[/myProject]',
+      subprocedure: 'installResource',
+      actualParameters: params
+    )
+  }
+} else {
+  ef.setProperty(propertyName:"summary", value:" No resources")
 }
