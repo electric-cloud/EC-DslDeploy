@@ -17,21 +17,26 @@ import java.io.File
 
 ElectricFlow ef = new ElectricFlow()
 
-// sort projects alpahbetically
-dlist=[]
-new File("projects").eachDir {dlist << it }
-dlist.sort({it.name}).each { projDir ->
-  def basename=projDir.getName().toString()
-  println "Processing project $basename"
-  def params = [
-      new ActualParameter('projName', basename),
-      new ActualParameter('projDir', projDir.absolutePath.toString().replace('\\', '/'))
-  ]
+File pDir=new File("projects")
+if (pDir.exists()) {
+  // sort projects alpahbetically
+  dlist=[]
+  pDir.eachDir {dlist << it }
+  dlist.sort({it.name}).each { projDir ->
+    def basename=projDir.getName().toString()
+    println "Processing project $basename"
+    def params = [
+        new ActualParameter('projName', basename),
+        new ActualParameter('projDir', projDir.absolutePath.toString().replace('\\', '/'))
+    ]
 
-  ef.createJobStep(
-    jobStepName: basename,
-    subproject: '$[/myProject]',
-    subprocedure: 'installProject',
-    actualParameters: params
-  )
+    ef.createJobStep(
+      jobStepName: basename,
+      subproject: '$[/myProject]',
+      subprocedure: 'installProject',
+      actualParameters: params
+    )
+  }
+} else {
+  ef.setProperty(propertyName:"summary", value:" No projects")
 }

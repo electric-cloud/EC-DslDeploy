@@ -2,7 +2,7 @@
 Deployment of your DSL code structure to your server.
 
 # Summary
-Plugin to deploy a full DSL code structure as shown below. The main advanage is
+Plugin to deploy a full DSL code structure as shown below. The main advantage is
 to be able to push all the code as one unit to your server.
 In addition, it allows you to easily decompose the object structure (project,
 procedure, ...) from the execution code itself in your steps. This will ease
@@ -10,19 +10,7 @@ code writing without the need to escape dollar signs, quotes, ... and to use
 syntax highlight in your favorite editor.
 
 # Structure
-```
-Top Level
-  main.groovy
-  projects
-    PROJ_1
-      project.groovy
-      procedures
-        PROC_1
-          procedure.groovy
-          steps
-            echo.pl
-            compute.sh
-```      
+The file structure is explained in detail in the [Wiki](wiki/file-structure)
 
 # Usage
 1. Create an artifact of your code structure (see sample/createArtifactVersion.sh

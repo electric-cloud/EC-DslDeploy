@@ -1,3 +1,6 @@
+2019-03-29 Laurent Rochette <lrochette@electric-cloud.com>
+  * 1.0.3: Add support for resources
+
 2019-03-19 Laurent Rochette <lrochette@electric-cloud.com>
   * 1.0.2: Refactor tests to allow run on CI process on chronic3
            Add Sample code as test
