@@ -43,8 +43,11 @@ class victor extends PluginTestHelper {
       assert getJobProperty("outcome", p.jobId) == "success"
 
       // check project property exists
-    then: "project property is found"
-      getP("/projects/$projName/projectProperty") == "123"    // from project.groovy
+    then: "project properties are found"
+      def res=dsl """
+        getProperty(propertyName: "/projects/$projName/projectProperty")
+        """
+        assert res.property.value  == "123"    // from project.groovy
       getP("/projects/$projName/prop1") =~ /Hello world\s+/      // from properties/
 
     // check application is found
