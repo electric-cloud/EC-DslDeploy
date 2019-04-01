@@ -10,7 +10,7 @@ code writing without the need to escape dollar signs, quotes, ... and to use
 syntax highlight in your favorite editor.
 
 # Structure
-The file structure is explained in detail in the [Wiki](wiki/file-structure)
+The file structure is explained in detail in the [Wiki](https://github.com/electric-cloud-community/EC-DslDeploy/wiki/file-structure)
 
 # Usage
 1. Create an artifact of your code structure (see sample/createArtifactVersion.sh
