@@ -5,5 +5,5 @@ if (System.getenv("HOSTTYPE")) {
 }
 */
 resource 'res457',
-  hostName: 'localhost'
+  hostName: 'doesnotexist'
 //  hostType: "$hostType"

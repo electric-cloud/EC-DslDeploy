@@ -44,11 +44,8 @@ class victor extends PluginTestHelper {
 
       // check project property exists
     then: "project properties are found"
-      def res=dsl """
-        getProperty(propertyName: "/projects/$projName/projectProperty")
-        """
-        assert res.property.value  == "123"    // from project.groovy
-      getP("/projects/$projName/prop1") =~ /Hello world\s+/      // from properties/
+      assert getP("/projects/$projName/projectProperty")  == "123"    // from project.groovy
+      assert getP("/projects/$projName/prop1") =~ /Hello world\s+/    // from properties/
 
     // check application is found
     then: "application is found"
@@ -182,7 +179,7 @@ class victor extends PluginTestHelper {
           resourceName: "res457"
         )"""
       assert rsc.resource.resourceName == "res457"
-      assert rsc.resource.hostName == 'localhost'
+      assert rsc.resource.hostName == 'doesnotexist'
       assert getP("/resources/res457/prop1") =~ /val23456\s+/
     // check service is found
     then: "service is found"
