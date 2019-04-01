@@ -5,11 +5,11 @@ import com.electriccloud.commander.dsl.util.BaseProject
 @BaseScript BaseProject baseScript
 
 // Variables available for use in DSL code
-def resourceName = '$[resName]'
-def resourceDir = '$[resDir]'
+def resName = '$[resName]'
+def resDir = '$[resDir]'
 
-resource resourceName, {
-  loadResource(resourceDir, resourceName)
-  loadResourceProperties(resourceDir, resourceName)
+resource resName, {
+  loadResource(resDir, resName)
+  loadResourceProperties(resDir, resName)
 }
 return ""
