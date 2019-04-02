@@ -38,6 +38,7 @@ abstract class BaseProject extends DslDelegatingScript {
   //    AKA project.groovy, procedure.dsl, pipeline.groovy, ...
   // Show ignored files to make it easier to debug when a badly named file is
   // skiped
+
   File getObjectDSLFile(File objDir, String obj) {
     // println "Checking $obj in ${objDir.name}"
     File found=null
@@ -559,7 +560,7 @@ abstract class BaseProject extends DslDelegatingScript {
     def counter=0
     File dir = new File(projectDir, 'applications')
     if (dir.exists()) {
-      //println "directory releases exists"
+      //println "directory applications exists"
       dir.eachDir {
         def appName=it.name
         File dslFile = getObjectDSLFile(it, "application")

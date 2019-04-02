@@ -21,4 +21,11 @@ procedure procName,
     resourceName: '$[pool]',
     shell: 'ec-groovy',
     workingDirectory: '$[directory]'
+
+  step 'deployPost',
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployPost.groovy").text,
+    resourceName: '$[pool]',
+    shell: 'ec-groovy',
+    workingDirectory: '$[directory]'
+
 }

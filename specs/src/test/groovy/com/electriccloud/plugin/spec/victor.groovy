@@ -12,18 +12,18 @@ class victor extends PluginTestHelper {
     plugDir = getP("/server/settings/pluginsDirectory")
     dsl """
       deleteProject(projectName: "$projName")
+      deleteProject(projectName: "POST_VICTOR")
       deleteResource(resourceName: "res457")
     """
   }
 
   def doCleanupSpec() {
     conditionallyDeleteProject(projName)
+    conditionallyDeleteProject("POST_VICTOR")
     dsl """
       deleteResource(resourceName: "res457")
     """
   }
-
-
 
   // Check sample
   def "victor test suite upload"() {
@@ -42,10 +42,13 @@ class victor extends PluginTestHelper {
       assert p.jobId
       assert getJobProperty("outcome", p.jobId) == "success"
 
-      // check project property exists
+    // check project property exists
+    when: "checking project properties"
+      def prop1=getP("/projects/$projName/projectProperty")
+      def prop2=getP("/projects/$projName/prop1")
     then: "project properties are found"
-      assert getP("/projects/$projName/projectProperty")  == "123"    // from project.groovy
-      assert getP("/projects/$projName/prop1") =~ /Hello world\s+/    // from properties/
+      assert prop1  == "123"    // from project.groovy
+      assert  prop2 =~ /Hello world\s+/    // from properties/
 
     // check application is found
     then: "application is found"
@@ -189,5 +192,10 @@ class victor extends PluginTestHelper {
           serviceName: "testService"
         )"""
       assert serv.service.serviceName == "testService"
+
+    // Issue #10 - POST
+    then: "POST project is found"
+      def pp=dsl """ getProject(projectName: "POST_VICTOR") """
+      assert pp.project.projectName == "POST_VICTOR"
    }
 }

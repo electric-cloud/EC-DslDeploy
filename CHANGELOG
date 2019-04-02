@@ -1,5 +1,8 @@
+2019-04-02 Laurent Rochette <lrochette@electric-cloud.com>
+  * 1.2.0: Fix #10: add POST step
+
 2019-03-29 Laurent Rochette <lrochette@electric-cloud.com>
-  * 1.0.3: Add support for resources
+  * 1.1.0: Add support for resources
 
 2019-03-19 Laurent Rochette <lrochette@electric-cloud.com>
   * 1.0.2: Refactor tests to allow run on CI process on chronic3
