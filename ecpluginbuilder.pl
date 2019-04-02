@@ -15,7 +15,7 @@ my $ec = new ElectricCommander->new();
 
 my $epb="../ecpluginbuilder";
 
-my $pluginVersion = "1.1.0";
+my $pluginVersion = "1.2.0";
 my $pluginKey = "EC-DslDeploy";
 
 # Fix version in plugin.xml
