@@ -1,0 +1,16 @@
+<editor>
+  <formElement>
+      <type>entry</type>
+      <label>Persona Name</label>
+      <property>persName</property>
+      <required>1</required>
+      <documentation>Name of the persona to install</documentation>
+  </formElement>
+  <formElement>
+      <type>entry</type>
+      <label>Persona directory</label>
+      <property>persDir</property>
+      <required>1</required>
+      <documentation>Persona directory</documentation>
+  </formElement>
+</editor>

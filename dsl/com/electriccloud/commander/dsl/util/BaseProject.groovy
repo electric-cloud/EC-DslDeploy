@@ -37,8 +37,7 @@ abstract class BaseProject extends DslDelegatingScript {
   // return the object.groovy or object.dsl
   //    AKA project.groovy, procedure.dsl, pipeline.groovy, ...
   // Show ignored files to make it easier to debug when a badly named file is
-  // skiped
-
+  // skipped
   File getObjectDSLFile(File objDir, String obj) {
     // println "Checking $obj in ${objDir.name}"
     File found=null

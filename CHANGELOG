@@ -1,4 +1,7 @@
 2019-04-02 Laurent Rochette <lrochette@electric-cloud.com>
+  * 2.0.0: Re-architecture
+
+2019-04-02 Laurent Rochette <lrochette@electric-cloud.com>
   * 1.2.0: Fix #10: add POST step
 
 2019-03-29 Laurent Rochette <lrochette@electric-cloud.com>

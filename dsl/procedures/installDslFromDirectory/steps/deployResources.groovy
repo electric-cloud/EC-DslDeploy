@@ -5,38 +5,22 @@
 
   CHANGELOG
   ----------------------------------------------------------------------------
-  2018-08-03  lrochette Initial Version
-  2018-08-30  lrochette sorting project folder alphabetically
-
+  2019-03-27  lrochette  Initial Version
+  2019-04-03  lrochette  Convertig to deployObject
 */
+
 import groovy.io.FileType
-import com.electriccloud.client.groovy.ElectricFlow
-import com.electriccloud.client.groovy.apis.model.*
-import com.electriccloud.client.groovy.models.ActualParameter
-import java.io.File
+import groovy.transform.BaseScript
+import com.electriccloud.commander.dsl.util.BaseObject
 
-ElectricFlow ef = new ElectricFlow()
+//noinspection GroovyUnusedAssignment
+@BaseScript BaseObject baseScript
 
-File resDir=new File("resources")
-if (resDir.exists()) {
-  // sort resources alphabetically
-  dlist=[]
-  resDir.eachDir {dlist << it }
-  dlist.sort({it.name}).each { resourceDir ->
-    def basename=resourceDir.getName().toString()
-    println "Processing resource $basename"
-    def params = [
-        new ActualParameter('resName', basename),
-        new ActualParameter('resDir', resourceDir.absolutePath.toString().replace('\\', '/'))
-    ]
+File persDir=new File('$[directory]', "resources")
 
-    ef.createJobStep(
-      jobStepName: basename,
-      subproject: '$[/myProject]',
-      subprocedure: 'installResource',
-      actualParameters: params
-    )
-  }
+if (persDir.exists()) {
+  def counter=loadObjects('resource', '$[directory]')
+  setProperty(propertyName:"summary", value:" $counter resources")
 } else {
-  ef.setProperty(propertyName:"summary", value:" No resources")
+  setProperty(propertyName:"summary", value:" No resources")
 }

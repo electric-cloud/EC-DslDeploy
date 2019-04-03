@@ -14,6 +14,7 @@ class victor extends PluginTestHelper {
       deleteProject(projectName: "$projName")
       deleteProject(projectName: "POST_VICTOR")
       deleteResource(resourceName: "res457")
+      deletePersona(personaName: "serviceDeveloper")
     """
   }
 
@@ -22,7 +23,8 @@ class victor extends PluginTestHelper {
     conditionallyDeleteProject("POST_VICTOR")
     dsl """
       deleteResource(resourceName: "res457")
-    """
+      deletePersona(personaName: "serviceDeveloper")
+   """
   }
 
   // Check sample
@@ -184,6 +186,7 @@ class victor extends PluginTestHelper {
       assert rsc.resource.resourceName == "res457"
       assert rsc.resource.hostName == 'doesnotexist'
       assert getP("/resources/res457/prop1") =~ /val23456\s+/
+      
     // check service is found
     then: "service is found"
       def serv=dsl """
@@ -197,5 +200,10 @@ class victor extends PluginTestHelper {
     then: "POST project is found"
       def pp=dsl """ getProject(projectName: "POST_VICTOR") """
       assert pp.project.projectName == "POST_VICTOR"
+
+    // Issue #2 - persona
+    then: "persona is found"
+      def pa=dsl """getPersona(personaName: 'serviceDeveloper')"""
+      assert pa.persona.homePageName == 'Microservice Deployments'
    }
 }

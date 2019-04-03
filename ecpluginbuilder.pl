@@ -15,7 +15,7 @@ my $ec = new ElectricCommander->new();
 
 my $epb="../ecpluginbuilder";
 
-my $pluginVersion = "1.2.0";
+my $pluginVersion = "2.0.0";
 my $pluginKey = "EC-DslDeploy";
 
 # Fix version in plugin.xml
@@ -53,7 +53,7 @@ my $pluginName = "${pluginKey}-${pluginVersion}";
 
 
 print "[INFO] - Cleaning\n";
-system("clean.sh");
+system("./clean.sh");
 
 print "[INFO] - Creating plugin '$pluginName'\n";
 
