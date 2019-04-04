@@ -36,7 +36,7 @@ import com.electriccloud.commander.dsl.DslDelegatingScript
 
 abstract class BaseObject extends DslDelegatingScript {
 
-  @Field children = [
+  @Field def children = [
     catalog: ["catalogItem"]
   ]
 
