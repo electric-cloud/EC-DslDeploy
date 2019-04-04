@@ -19,7 +19,7 @@ import com.electriccloud.commander.dsl.util.BaseObject
 File persDir=new File('$[directory]', "resources")
 
 if (persDir.exists()) {
-  def counter=loadObjects('resource', '$[directory]')
+  def counter=loadObjects('resource', '$[directory]', '/resources')
   setProperty(propertyName:"summary", value:" $counter resources")
 } else {
   setProperty(propertyName:"summary", value:" No resources")

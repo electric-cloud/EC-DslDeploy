@@ -1,6 +1,6 @@
 /* ###########################################################################
 #
-#  BasePObject: extension of BasePProject to allow the evaluation of any object
+#  BaseObject: extension of BasePProject to allow the evaluation of any object
 #
 #  Author: L.Rochette
 #
@@ -26,7 +26,6 @@ package com.electriccloud.commander.dsl.util
 
 import groovy.io.FileType
 import groovy.json.JsonOutput
-import groovy.util.XmlSlurper
 import java.io.File
 
 import org.codehaus.groovy.control.CompilerConfiguration
@@ -70,7 +69,7 @@ abstract class BaseObject extends DslDelegatingScript {
   def loadObject(String dslFile, Map bindingMap = [:]) {
     println "Load Object:"
     println "  dslFile: $dslFile"
-    println "  map: $bindingMap.toMapString(25)"
+    println "  map: " + bindingMap.toMapString(100)
     return evalInlineDsl(dslFile, bindingMap)
   }
 
@@ -82,11 +81,14 @@ abstract class BaseObject extends DslDelegatingScript {
         - bindingMap: a list of properties to pass dow to evaluate the DSL
                       in context. Typically objectName and objectDir.
      ######################################################################## */
-  def loadObjects(String objectType, String topDir, Map bindingMap = [:]) {
-    // Loop over sub-directory
+  def loadObjects(String objectType, String topDir,
+                  String objPath = "/", Map bindingMap = [:]) {
+
     println "Entering loadObjects"
-    println "  Type: $objectType"
-    println "  dir : $topDir"
+    println "  Type:  $objectType"
+    println "  dir  : $topDir"
+    println "  path : $objPath"
+    println "  map  : " + bindingMap.toMapString(25)
     def counter=0
 
     // lookking for "objects" direction i.e. "procedures", "personas"
@@ -100,8 +102,8 @@ abstract class BaseObject extends DslDelegatingScript {
         def objDir=it.absolutePath
         File dslFile=getObjectDSLFile(it, objectType)
         println "Processing $objectType file ${objectType}s/$objName/${dslFile.name}"
-        bindingMap[(objectType+"Name")]=objName     //=> procedureName
-        bindingMap[(objectType+"Dir")]=objDir       //=> procedureDir
+        bindingMap[(objectType+"Name")] = objName     //=> procedureName
+        bindingMap[(objectType+"Dir")]  = objDir      //=> procedureDir
         def obj=loadObject(dslFile.absolutePath, bindingMap)
         counter ++
       }

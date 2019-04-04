@@ -2,6 +2,7 @@ import java.io.File
 
 def procName = 'installDslFromDirectory'
 def dslShell = 'ectool evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl"'
+
 procedure procName,
   resourceName: '$[pool]',
 {
@@ -15,7 +16,7 @@ procedure procName,
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployPersonas.groovy").text,
     resourceName: '$[pool]',
     workingDirectory: '$[directory]',
-    shell: dslShell
+    shell: 'ectool evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl"'
 
   step 'deployResources',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployResources.groovy").text,

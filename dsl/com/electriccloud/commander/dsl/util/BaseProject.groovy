@@ -231,33 +231,6 @@ abstract class BaseProject extends DslDelegatingScript {
      obj instanceof List ? obj.every { type.isInstance(it)} : type.isInstance(obj)
   }
 
-  // ########################################################################
-  //
-  // Services
-  //
-  // ########################################################################
-  def loadService(String projectDir, String projectName, String dslFile) {
-    return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
-  }
-
-  def loadServices(String projectDir, String projectName) {
-    // Loop over the sub-directories in the microservices directory
-    // and evaluate services if a service.dsl file exists
-    def counter=0
-    File dir = new File(projectDir, 'services')
-    if (dir.exists()) {
-      dir.eachDir {
-        def servName=it.name
-        File dslFile = getObjectDSLFile(it, "service")
-        if (dslFile?.exists()) {
-          println "Processing service  file projects/$projectName/services/$servName/${dslFile.name}"
-          def pipe = loadService(projectDir, projectName, dslFile.absolutePath)
-          counter++
-        }
-      }
-    }
-    return counter
-  }
 
   // ########################################################################
   //
