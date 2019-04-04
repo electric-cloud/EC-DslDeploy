@@ -37,7 +37,7 @@ abstract class BaseProject extends DslDelegatingScript {
   // return the object.groovy or object.dsl
   //    AKA project.groovy, procedure.dsl, pipeline.groovy, ...
   // Show ignored files to make it easier to debug when a badly named file is
-  // skiped
+  // skipped
   File getObjectDSLFile(File objDir, String obj) {
     // println "Checking $obj in ${objDir.name}"
     File found=null
@@ -231,33 +231,6 @@ abstract class BaseProject extends DslDelegatingScript {
      obj instanceof List ? obj.every { type.isInstance(it)} : type.isInstance(obj)
   }
 
-  // ########################################################################
-  //
-  // Services
-  //
-  // ########################################################################
-  def loadService(String projectDir, String projectName, String dslFile) {
-    return evalInlineDsl(dslFile, [projectName: projectName, projectDir: projectDir])
-  }
-
-  def loadServices(String projectDir, String projectName) {
-    // Loop over the sub-directories in the microservices directory
-    // and evaluate services if a service.dsl file exists
-    def counter=0
-    File dir = new File(projectDir, 'services')
-    if (dir.exists()) {
-      dir.eachDir {
-        def servName=it.name
-        File dslFile = getObjectDSLFile(it, "service")
-        if (dslFile?.exists()) {
-          println "Processing service  file projects/$projectName/services/$servName/${dslFile.name}"
-          def pipe = loadService(projectDir, projectName, dslFile.absolutePath)
-          counter++
-        }
-      }
-    }
-    return counter
-  }
 
   // ########################################################################
   //
@@ -559,7 +532,7 @@ abstract class BaseProject extends DslDelegatingScript {
     def counter=0
     File dir = new File(projectDir, 'applications')
     if (dir.exists()) {
-      //println "directory releases exists"
+      //println "directory applications exists"
       dir.eachDir {
         def appName=it.name
         File dslFile = getObjectDSLFile(it, "application")

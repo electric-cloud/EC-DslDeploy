@@ -12,18 +12,20 @@ class victor extends PluginTestHelper {
     plugDir = getP("/server/settings/pluginsDirectory")
     dsl """
       deleteProject(projectName: "$projName")
+      deleteProject(projectName: "POST_VICTOR")
       deleteResource(resourceName: "res457")
+      deletePersona(personaName: "serviceDeveloper")
     """
   }
 
   def doCleanupSpec() {
     conditionallyDeleteProject(projName)
+    conditionallyDeleteProject("POST_VICTOR")
     dsl """
       deleteResource(resourceName: "res457")
-    """
+      deletePersona(personaName: "serviceDeveloper")
+   """
   }
-
-
 
   // Check sample
   def "victor test suite upload"() {
@@ -42,10 +44,13 @@ class victor extends PluginTestHelper {
       assert p.jobId
       assert getJobProperty("outcome", p.jobId) == "success"
 
-      // check project property exists
+    // check project property exists
+    when: "checking project properties"
+      def prop1=getP("/projects/$projName/projectProperty")
+      def prop2=getP("/projects/$projName/prop1")
     then: "project properties are found"
-      assert getP("/projects/$projName/projectProperty")  == "123"    // from project.groovy
-      assert getP("/projects/$projName/prop1") =~ /Hello world\s+/    // from properties/
+      assert prop1  == "123"    // from project.groovy
+      assert  prop2 =~ /Hello world\s+/    // from properties/
 
     // check application is found
     then: "application is found"
@@ -181,6 +186,7 @@ class victor extends PluginTestHelper {
       assert rsc.resource.resourceName == "res457"
       assert rsc.resource.hostName == 'doesnotexist'
       assert getP("/resources/res457/prop1") =~ /val23456\s+/
+      
     // check service is found
     then: "service is found"
       def serv=dsl """
@@ -189,5 +195,15 @@ class victor extends PluginTestHelper {
           serviceName: "testService"
         )"""
       assert serv.service.serviceName == "testService"
+
+    // Issue #10 - POST
+    then: "POST project is found"
+      def pp=dsl """ getProject(projectName: "POST_VICTOR") """
+      assert pp.project.projectName == "POST_VICTOR"
+
+    // Issue #2 - persona
+    then: "persona is found"
+      def pa=dsl """getPersona(personaName: 'serviceDeveloper')"""
+      assert pa.persona.homePageName == 'Microservice Deployments'
    }
 }

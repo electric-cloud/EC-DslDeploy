@@ -13,7 +13,8 @@
 	<p>Plugin Version @PLUGIN_VERSION@</p>
 	<hr style="margin-left: -10px; margin-top: 10px; height: 1px; width: 100%; color: #5981BD;" noshade="noshade" />
 
-	<p>This plugin is intended to help deploy a DSL structure to your Flow server(s).
+	<p>This plugin is intended to help you deploy a complete DSL file structure to
+    your ElectricFlow server(s).
   The full supported file structure is available on
   the <a href="https://github.com/electric-cloud-community/EC-DslDeploy/wiki/file-structure">Wiki</a>.</p>
 
@@ -33,7 +34,7 @@
 
   <a name="installDsl" id="installDsl" />
   <h3>installDsl</h3>
-  <p>Deploy a DSL structure from an Artifact Version on your Flow server.</p>
+  <p>Deploy a DSL file structure from an Artifact Version on your Flow server.</p>
 
   <table class="grid">
     <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
@@ -46,8 +47,8 @@
         <td>Artifact Version</td>
 	      <td>The version of the artifact you want to deploy. If empty, it will
           deploy the latest version. <br /><b>Note:</b> Use an empty version
-          only in your Dev environment. In higher, best practices recommend that
-          you use a specific version that has een tested in lower environments.</td>
+          only in your Dev environment. In higher environments, the best practices recommend that
+          you use a specific version that has been tested in lower environments.</td>
 	    </tr>
       <tr>
         <td class="required">Pool or Resource</td>
@@ -60,8 +61,9 @@
       <tr>
         <td class="required">Retrieve on All server nodes</td>
 	      <td>Use this option when running in a cluster with local workspace as the
-        artifact version needs to be retrieved on all nodes. Use a resource pool
-        covering all server node agents.<br />
+        artifact version needs to be retrieved on all nodes (as the system pick
+        a random server node for each action). Use alongside a resource pool
+        covering all server node agents for the parameter above.<br />
         Default is "false"</td>
 	    </tr>
     </tbody>
@@ -72,9 +74,9 @@
 
   <a name="installDslFromDirectory" id="installDslFromDirectory" />
   <h3>installDslFromDirectory</h3>
-  <p>Deploy a DSL structure from a directory on your ElectricFlow server.<br />
-  This procedure main usage is to set up a CI process and extract your code from
-  your SCM in a local directory on your Dev Flow server, and deploy it from there.</p>
+  <p>Deploy a DSL file structure from a directory on your ElectricFlow server.<br />
+  This procedure main usage is to set up a CI process. It will extract your code from
+  your SCM in a local directory on your Dev ElectricFlow server, and deploy it from there.</p>
 
   <table class="grid">
     <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
@@ -105,16 +107,18 @@
   <p>Thanks to <a href="mailto:usingh@electtric-cloud.com">Urvashi Singh</a>
   for her constant support and help. This plugin would not exist without her.</p>
 
-	<h1>Legal Jumbo</h1>
+	<h1>Legal Mumbo Jumbo</h1>
 	<p>This plugin is free for use. Modify it however you see fit to better your
-  experience using ElectricFlow. Share your enhancements and fixes.</p>
+experience using ElectricFlow. Share
+your <a href="https://github.com/electric-cloud-community/EC-DslDeploy/issues">enhancements</a>
+and <a href="https://github.com/electric-cloud-community/EC-DslDeploy/pulls">fixes</a>.</p>
 
-	<p>This module is not officially supported by Electric Cloud. It has undergone
-  some ad-hoc testing but you may run into issues that have not been uncovered.
-  Use at your own risk.</p>
+	<p>This plughin is not officially supported by Electric Cloud. It has undergone no
+formal testing and you may run into issues that have not been uncovered in the
+limited testing done so far.</p>
 
 	<p>Electric Cloud should not be held liable for any repercussions of using this
-  software.</p>
+plugin.</p>
 
   <!-- PROCEDURES END -->
   <h1 id="releaseNotes">Release Notes</h1>

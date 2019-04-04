@@ -1,14 +1,12 @@
 /*
-  deployServices.groovy - Loop through the services and invoke each individually
+  deployProcedures.groovy - Loop through the procedures and invoke each individually
 
   Copyright 2019 Electric-Cloud Inc.
 
   CHANGELOG
   ----------------------------------------------------------------------------
-  2018-10-17  lrochette  Initial Version
   2019-04-01  lrochette  Convert to loadObjects
 */
-
 import groovy.transform.BaseScript
 import com.electriccloud.commander.dsl.util.BaseObject
 
@@ -17,20 +15,20 @@ import com.electriccloud.commander.dsl.util.BaseObject
 
 // Variables available for use in DSL code
 def projectName = '$[projName]'
-def projectDir  = '$[projDir]'
+def projectDir = '$[projDir]'
 
-def svrNbr
+def procNbr
 def counter
 project projectName, {
-  counter = loadObjects("service", projectDir, "/projects/$projectName",
+  counter = loadObjects("procedure", projectDir, "/projects/$projectName",
     [
       projectName: projectName,
       projectDir: projectDir
     ]
   )
 }
-svrNbr=counter // ['service']
+//procNbr=counter // ['procedure']
 
-def summaryStr = svrNbr? "Created $svrNbr services" : "No services"
+def summaryStr = counter? "Created $counter procedures" : "No procedures"
 setProperty(propertyName: "summary", value: summaryStr)
 return ""
