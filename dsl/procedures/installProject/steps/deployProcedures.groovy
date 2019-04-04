@@ -18,9 +18,9 @@ def projectName = '$[projName]'
 def projectDir = '$[projDir]'
 
 def procNbr
-def counter
+def counters
 project projectName, {
-  counter = loadObjects("procedure", projectDir, "/projects/$projectName",
+  counters = loadObjects("procedure", projectDir, "/projects/$projectName",
     [
       projectName: projectName,
       projectDir: projectDir
@@ -28,7 +28,7 @@ project projectName, {
   )
 }
 //procNbr=counter // ['procedure']
-
-def summaryStr = counter? "Created $counter procedures" : "No procedures"
+def nb=counters['procedure']
+def summaryStr = nb? "Created $nb procedures" : "No procedures"
 setProperty(propertyName: "summary", value: summaryStr)
 return ""

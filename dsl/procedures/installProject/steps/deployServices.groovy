@@ -19,17 +19,16 @@ import com.electriccloud.commander.dsl.util.BaseObject
 def projectName = '$[projName]'
 def projectDir  = '$[projDir]'
 
-def svrNbr
-def counter
+def counters
 project projectName, {
-  counter = loadObjects("service", projectDir, "/projects/$projectName",
+  counters = loadObjects("service", projectDir, "/projects/$projectName",
     [
       projectName: projectName,
       projectDir: projectDir
     ]
   )
 }
-svrNbr=counter // ['service']
+def svrNbr=counters['service']
 
 def summaryStr = svrNbr? "Created $svrNbr services" : "No services"
 setProperty(propertyName: "summary", value: summaryStr)

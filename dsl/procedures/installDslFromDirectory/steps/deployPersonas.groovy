@@ -15,11 +15,12 @@ import com.electriccloud.commander.dsl.util.BaseObject
 //noinspection GroovyUnusedAssignment
 @BaseScript BaseObject baseScript
 
-File persDir=new File('$[directory]', "personas")
+File dir=new File('$[directory]', "personas")
 
-if (persDir.exists()) {
-  def counter=loadObjects('persona', '$[directory]', '/personas')
-  setProperty(propertyName:"summary", value:" $counter personas")
+if (dir.exists()) {
+  def counters=loadObjects('persona', '$[directory]', '/personas')
+  def nb=counters['persona']
+  setProperty(propertyName:"summary", value:" $nb personas")
 } else {
   setProperty(propertyName:"summary", value:" No personas")
 }

@@ -57,6 +57,10 @@ class issue12 extends PluginTestHelper {
       assert rsc.resource.hostName == 'doesnotexist12'
       assert getP("/resources/res12/prop1") =~ /val12\s+/
 
+    // check resource is found
+    then: "resource nestedproperty is found"
+      assert getP("/resources/res12/level1/level2/level3/prop123") =~ /res3-level3\s+/
+
     // check service is found
     then: "service is found"
       def serv=dsl """

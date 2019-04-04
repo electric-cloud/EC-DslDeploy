@@ -34,18 +34,21 @@ import com.electriccloud.commander.dsl.DslDelegatingScript
 
 abstract class BaseObject extends DslDelegatingScript {
 
+Map children =[
+  catalog: ["catalogItem"]
+]
   // return the object.groovy or object.dsl
   //    AKA project.groovy, procedure.dsl, pipeline.groovy, ...
   // Show ignored files to make it easier to debug when a badly named file is
   // skipped
-    File getObjectDSLFile(File objDir, String objectType) {
-    // println "Checking $objectType in ${objDir.name}"
+    File getObjectDSLFile(File objDir, String objType) {
+    // println "Checking $objType in ${objDir.name}"
     File found=null
     objDir.eachFileMatch(FileType.FILES, ~/(?i)^.*\.(groovy|dsl)/) { dslFile ->
       // println "Processing ${dslFile.name}"
-      if (dslFile.name ==~ /(?i)${objectType}\.(groovy|dsl)/) {
+      if (dslFile.name ==~ /(?i)${objType}\.(groovy|dsl)/) {
         if (found) {
-          println "Multiple files match the ${objectType}.groovy or ${objectType}.dsl"
+          println "Multiple files match the ${objType}.groovy or ${objType}.dsl"
           setProperty(propertyName: "outcome", value: "warning")
         }
         found =  dslFile
@@ -76,24 +79,24 @@ abstract class BaseObject extends DslDelegatingScript {
   /* ########################################################################
       loadObjects: function to load the top directory contains "obkects"
       Parameters:
-        - objectType: the type of object like "procedure", "persona", ...
+        - objType: the type of object like "procedure", "persona", ...
         - dir: the location where "objects" will be found.
         - bindingMap: a list of properties to pass dow to evaluate the DSL
                       in context. Typically objectName and objectDir.
      ######################################################################## */
-  def loadObjects(String objectType, String topDir,
+  def loadObjects(String objType, String topDir,
                   String objPath = "/",
                   Map bindingMap = [:]) {
 
     println "Entering loadObjects"
-    println "  Type:  $objectType"
+    println "  Type:  $objType"
     println "  dir  : $topDir"
     // println "  path : $objPath"
     println "  map  : " + bindingMap.toMapString(25)
-    def counter=0
-
+    def counters=[:]
+    def nbObjs=0
     // lookking for "objects" direction i.e. "procedures", "personas"
-    File dir = new File(topDir, objectType + 's')
+    File dir = new File(topDir, objType + 's')
     if (dir.exists()) {
       def dlist=[]
       // sort object alphabetically
@@ -101,12 +104,12 @@ abstract class BaseObject extends DslDelegatingScript {
       dlist.sort({it.name}).each {
         def objName=it.name
         def objDir=it.absolutePath
-        File dslFile=getObjectDSLFile(it, objectType)
-        println "Processing $objectType file ${objectType}s/$objName/${dslFile.name}"
-        bindingMap[(objectType+"Name")] = objName     //=> procedureName
-        bindingMap[(objectType+"Dir")]  = objDir      //=> procedureDir
+        File dslFile=getObjectDSLFile(it, objType)
+        println "Processing $objType file ${objType}s/$objName/${dslFile.name}"
+        bindingMap[(objType+"Name")] = objName     //=> procedureName
+        bindingMap[(objType+"Dir")]  = objDir      //=> procedureDir
         def obj=loadObject(dslFile.absolutePath, bindingMap)
-        counter ++
+        nbObjs ++
 
         // Load nested properties
         def propDir=new File(it, 'properties')
@@ -118,7 +121,8 @@ abstract class BaseObject extends DslDelegatingScript {
 
       }
     }   // directory for "objects" exists
-    return counter
+    counters.put(objType, nbObjs)
+    return counters
   }     // loadObjects
 
 
