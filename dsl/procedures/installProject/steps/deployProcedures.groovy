@@ -16,9 +16,8 @@ import com.electriccloud.commander.dsl.util.BaseObject
 // Variables available for use in DSL code
 def projectName = '$[projName]'
 def projectDir = '$[projDir]'
-
-def procNbr
 def counters
+
 project projectName, {
   counters = loadObjects("procedure", projectDir, "/projects/$projectName",
     [
@@ -27,7 +26,7 @@ project projectName, {
     ]
   )
 }
-//procNbr=counter // ['procedure']
+
 def nb=counters['procedure']
 def summaryStr = nb? "Created $nb procedures" : "No procedures"
 setProperty(propertyName: "summary", value: summaryStr)

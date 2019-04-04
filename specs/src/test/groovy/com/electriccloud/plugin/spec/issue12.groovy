@@ -70,5 +70,18 @@ class issue12 extends PluginTestHelper {
         )"""
       assert serv.service.description == "desc12"
 
+     // Check catalog exist
+     println "Checking catalog"
+     assert getP("/projects/$projName/catalogs/testCatalog12/description") == "val12"
+
+     // catalogItem is created
+     println "Checking catalog item"
+     def item=dsl """getCatalogItem(
+         projectName: "$jira",
+         catalogName: 'testCatalog12',
+         catalogItemName: 'testCatalogItem12'
+       )"""
+     assert item.catalogItem.description == 'val12'
+
    }
 }

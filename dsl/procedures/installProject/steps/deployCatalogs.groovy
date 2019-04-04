@@ -1,19 +1,35 @@
+/*
+  deployCatalogs.groovy - Loop through the catalogs and invoke each individually,
+       including children: catalogItems
+
+  Copyright 2019 Electric-Cloud Inc.
+
+  CHANGELOG
+  ----------------------------------------------------------------------------
+  2019-04-04  lrochette  Convert to loadObjects
+*/
 import groovy.transform.BaseScript
-import com.electriccloud.commander.dsl.util.BaseProject
+import com.electriccloud.commander.dsl.util.BaseObject
 
 //noinspection GroovyUnusedAssignment
-@BaseScript BaseProject baseScript
+@BaseScript BaseObject baseScript
 
 // Variables available for use in DSL code
 def projectName = '$[projName]'
 def projectDir  = '$[projDir]'
-
-def catNbr
-def itemNbr
+def counters
 
 project projectName, {
-  (catNbr, itemNbr)  = loadCatalogs(projectDir, projectName)
+   counters = loadObjects('catalog', projectDir, "/projects/$projectName",
+     [
+       projectName: projectName,
+       projectDir: projectDir
+     ]
+   )
 }
+
+def catNbr=counters['catalog']
+def itemNbr=counters['catalogItem']
 
 def summaryStr="Created:"
 summaryStr += " \n  "

@@ -26,17 +26,20 @@ package com.electriccloud.commander.dsl.util
 
 import groovy.io.FileType
 import groovy.json.JsonOutput
+import groovy.transform.Field
 import java.io.File
 
 import org.codehaus.groovy.control.CompilerConfiguration
 import com.electriccloud.commander.dsl.DslDelegate
 import com.electriccloud.commander.dsl.DslDelegatingScript
 
+
 abstract class BaseObject extends DslDelegatingScript {
 
-Map children =[
-  catalog: ["catalogItem"]
-]
+  @Field children = [
+    catalog: ["catalogItem"]
+  ]
+
   // return the object.groovy or object.dsl
   //    AKA project.groovy, procedure.dsl, pipeline.groovy, ...
   // Show ignored files to make it easier to debug when a badly named file is
@@ -118,6 +121,18 @@ Map children =[
         }  else {
           println "No properties directory for $objType $objName"
         }
+
+        // load children loadObjects
+        println "Children Map: " + children.toMapString(100)
+        // if (children.containsKey(objType)) {
+        //   println "Parsing children for $objType"
+        // //   children[objType].each { child ->
+        //     println "   CHild: $child"
+        //     def nbChildren=loadObjects(child, objDir,
+        //       "$objPath/${objType}s/$objName", bindingMap)
+        //     counters.out(child, nbChildren)
+        //   }
+  //      }
 
       }
     }   // directory for "objects" exists
