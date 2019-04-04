@@ -82,12 +82,13 @@ abstract class BaseObject extends DslDelegatingScript {
                       in context. Typically objectName and objectDir.
      ######################################################################## */
   def loadObjects(String objectType, String topDir,
-                  String objPath = "/", Map bindingMap = [:]) {
+                  String objPath = "/",
+                  Map bindingMap = [:]) {
 
     println "Entering loadObjects"
     println "  Type:  $objectType"
     println "  dir  : $topDir"
-    println "  path : $objPath"
+    // println "  path : $objPath"
     println "  map  : " + bindingMap.toMapString(25)
     def counter=0
 
@@ -106,6 +107,15 @@ abstract class BaseObject extends DslDelegatingScript {
         bindingMap[(objectType+"Dir")]  = objDir      //=> procedureDir
         def obj=loadObject(dslFile.absolutePath, bindingMap)
         counter ++
+
+        // Load nested properties
+        def propDir=new File(it, 'properties')
+        if (propDir.directory) {
+          loadNestedProperties("$objPath/$objName", propDir)
+        }  else {
+          println "No properties directory for $objType $objName"
+        }
+
       }
     }   // directory for "objects" exists
     return counter
@@ -125,6 +135,30 @@ abstract class BaseObject extends DslDelegatingScript {
     DelegatingScript script = (DelegatingScript)sh.parse(new File(dslFile))
     script.setDelegate(this.delegate);
     return script.run();
+  }
+
+
+  def loadNestedProperties(String propRoot, File propsDir) {
+    // println "Entering loadNestedProperties($propRoot," +  propsDir.toString() + ")"
+    propsDir.eachFile { dir ->
+      println "  parsing " + dir.toString()
+      int extension = dir.name.lastIndexOf('.')
+      int endIndex = extension > -1 ? extension : dir.name.length()
+      String propName = dir.name.substring(0, endIndex)
+      String propPath = "${propRoot}/${propName}"
+      if (dir.directory) {
+        property propName, {
+          loadNestedProperties(propPath, dir)
+        }
+      } else {
+        def exists = getProperty(propPath, suppressNoSuchPropertyException: true, expand: false)
+        if (exists) {
+          modifyProperty propertyName: propPath, value: dir.text
+        } else {
+          createProperty propertyName: propPath, value: dir.text
+        }
+      }
+    }
   }
 
   /**

@@ -1,6 +1,6 @@
 persona 'serviceDeveloper', {
   isDefault = '0'
-
+/*
   personaDetail {
     personaCategoryName = 'Release Orchestration'
     personaPage = [
@@ -32,7 +32,7 @@ persona 'serviceDeveloper', {
       'My Work',
     ]
   }
-
+*/
   homePageName = 'Microservice Deployments'
 
 }

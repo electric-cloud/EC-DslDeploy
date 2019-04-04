@@ -16,8 +16,8 @@ procedure procName,
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployPersonas.groovy").text,
     resourceName: '$[pool]',
     workingDirectory: '$[directory]',
-    shell: 'ectool evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl"'
-
+    shell: dslShell
+    
   step 'deployResources',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployResources.groovy").text,
     resourceName: '$[pool]',
