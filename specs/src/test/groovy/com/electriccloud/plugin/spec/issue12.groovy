@@ -44,7 +44,7 @@ class issue12 extends PluginTestHelper {
 
      // Issue #2 - persona
     then: "persona is found"
-      def pa=dsl """getPersona(personaName: 'serviceDeveloper')"""
+      def pa=dsl """getPersona(personaName: 'SD12')"""
       assert pa.persona.homePageName == 'Microservice Deployments'
 
     // check resource is found
@@ -71,17 +71,68 @@ class issue12 extends PluginTestHelper {
       assert serv.service.description == "desc12"
 
      // Check catalog exist
-     println "Checking catalog"
-     assert getP("/projects/$projName/catalogs/testCatalog12/description") == "val12"
+     then: "catalog exist"
+       println "Checking catalog"
+       assert getP("/projects/$projName/catalogs/testCatalog12/description") == "val12"
 
      // catalogItem is created
-     println "Checking catalog item"
-     def item=dsl """getCatalogItem(
-         projectName: "$jira",
-         catalogName: 'testCatalog12',
-         catalogItemName: 'testCatalogItem12'
-       )"""
-     assert item.catalogItem.description == 'val12'
+     then: "catalogItem exist"
+       println "Checking catalog item"
+       def item=dsl """getCatalogItem(
+           projectName: "$projName",
+           catalogName: 'testCatalog12',
+           catalogItemName: 'testCatalogItem12'
+         )"""
+       assert item.catalogItem.description == 'val12'
+
+     // check master component
+     then: "master component exist"
+      println "Checking master component"
+      def mc=dsl """ getComponent(
+        projectName: "$projName",
+        applicationName: null,
+        componentName: "master12"
+        )"""
+      assert mc.component.componentName == "master12"
+
+    // check environment is found
+    then: "environment is found"
+      def env=dsl """
+        getEnvironment(
+          projectName: "$projName",
+          environmentName: "testEnv12"
+        )"""
+      assert env.environment.environmentName == "testEnv12"
+      assert env.environment.description     == "val12"
+    // check environmentTier is found
+    then: "environmentTier is found"
+      def envT=dsl """
+        getEnvironmentTier(
+          projectName: "$projName",
+          environmentName: "testEnv",
+          environmentTierName: "Tier 12",
+        )"""
+      assert envT.environmentTier.environmentTierName == "Tier 12"
+    // Check for cluster
+    then: "cluster is found"
+      def cl = dsl """
+        getCluster(
+          projectName: "$projName",
+          environmentName: "testEnv",
+          clusterName: 'testCluster12',
+        )"""
+      assert cl.cluster.clusterName == "testCluster12"
+      assert cl.cluster.description == "val12"
+
+    // check release is found
+    then: "release is found"
+      def rel=dsl """
+        getRelease(
+          projectName: "$projName",
+          releaseName: "testRelease12"
+        )"""
+      assert rel.release.releaseName == "testRelease12"
+      assert rel.release.plannedEndTime =~ /2019-04-04T/
 
    }
 }

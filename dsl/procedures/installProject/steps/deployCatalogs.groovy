@@ -26,8 +26,8 @@ project projectName, {
    )
 }
 
-def catNbr=counters['catalog']
-def itemNbr=counters['catalogItem']
+def catNbr  = counters['catalog']
+def itemNbr = counters['catalogItem']
 
 def summaryStr="Created:"
 summaryStr += " \n  "
