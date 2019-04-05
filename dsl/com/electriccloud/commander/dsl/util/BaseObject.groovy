@@ -70,9 +70,9 @@ abstract class BaseObject extends DslDelegatingScript {
                       in context. Typically objectName and objectDir
      ######################################################################## */
   def loadObject(String dslFile, Map bindingMap = [:]) {
-    println "Load Object:"
-    println "  dslFile: $dslFile"
-    println "  map: " + bindingMap.toMapString(100)
+    // println "Load Object:"
+    // println "  dslFile: $dslFile"
+    // println "  map: " + bindingMap.toMapString(100)
     return evalInlineDsl(dslFile, bindingMap)
   }
 
@@ -85,16 +85,16 @@ abstract class BaseObject extends DslDelegatingScript {
                       in context. Typically objectName and objectDir.
      ######################################################################## */
   def loadObjects(String objType, String topDir,
-                  String objPath = "/",
+                  String objPath = "",
                   def subObjects = [],
                   Map bindingMap = [:]) {
 
-    println "Entering loadObjects"
-    println "  Type:  $objType"
-    println "  dir  : $topDir"
-    println "  path : $objPath"
-    println "   sub : " + subObjects.join(",")
-    println "  map  : " + bindingMap.toMapString(25)
+    // println "Entering loadObjects"
+    // println "  Type:  $objType"
+    // println "  dir  : $topDir"
+    // println "  path : $objPath"
+    // println "   sub : " + subObjects.join(",")
+    // println "  map  : " + bindingMap.toMapString(25)
     def counters=[:]
     def nbObjs=0
     // lookking for "objects" direction i.e. "procedures", "personas"
@@ -107,7 +107,7 @@ abstract class BaseObject extends DslDelegatingScript {
         def objName=it.name
         def objDir=it.absolutePath
         File dslFile=getObjectDSLFile(it, objType)
-        println "Processing $objType file ${objType}s/$objName/${dslFile.name}"
+        println "Processing $objType file $objPath/${objType}s/$objName/${dslFile.name}"
         bindingMap[(objType+"Name")] = objName     //=> procedureName
         bindingMap[(objType+"Dir")]  = objDir      //=> procedureDir
         def obj=loadObject(dslFile.absolutePath, bindingMap)
@@ -118,15 +118,17 @@ abstract class BaseObject extends DslDelegatingScript {
         if (propDir.directory) {
           loadNestedProperties("$objPath/$objName", propDir)
         }  else {
-          println "No properties directory for $objType $objName"
+          println "  No properties directory for $objType $objName"
         }
 
         // load subObjects loadObjects
         subObjects.each { child ->
-          println "   CHild: $child"
-          def nbChildren=loadObjects(child, objDir,
-            "$objPath/${objType}s/$objName", [], bindingMap)
-          counters.out(child, nbChildren)
+          def childrenCounter
+           "${objType}" objName, {
+            childrenCounter=loadObjects(child, objDir,
+              "$objPath/${objType}s/$objName", [], bindingMap)
+          }
+          counters << childrenCounter
         }
 
 
