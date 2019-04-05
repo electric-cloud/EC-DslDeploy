@@ -21,7 +21,6 @@ def counters
 
 project projectName, {
    counters = loadObjects('catalog', projectDir, "/projects/$projectName",
-     ["catalogItem"],
      [projectName: projectName, projectDir: projectDir]
    )
 }

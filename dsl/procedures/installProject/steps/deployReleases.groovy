@@ -20,7 +20,6 @@ def counters
 
 project projectName, {
   counters = loadObjects("release", projectDir, "/projects/$projectName",
-    [],
     [projectName: projectName, projectDir: projectDir]
   )
 }

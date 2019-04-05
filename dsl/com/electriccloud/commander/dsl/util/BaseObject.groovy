@@ -36,7 +36,6 @@ import com.electriccloud.commander.dsl.DslDelegatingScript
 
 abstract class BaseObject extends DslDelegatingScript {
 
-
   // return the object.groovy or object.dsl
   //    AKA project.groovy, procedure.dsl, pipeline.groovy, ...
   // Show ignored files to make it easier to debug when a badly named file is
@@ -58,6 +57,37 @@ abstract class BaseObject extends DslDelegatingScript {
       }
     }
     return found
+  }
+
+  def loadProject(String projectDir, String projectName) {
+    // load the project.groovy if it exists
+    // println "Entering loadProject"
+    // println "  Name:  $projectName"
+    // println "  dir  : $projectDir"
+    def counter=0
+
+    File dslFile=getObjectDSLFile(new File(projectDir), "project");
+    if (dslFile?.exists()) {
+      println "Processing project file projects/$projectName/${dslFile.name}"
+      def proj=evalInlineDsl(dslFile.toString(), [projectName: projectName, projectDir: projectDir])
+      counter ++
+    } else {
+      println "No project.groovy found"
+    }
+    return counter
+  }
+
+  def loadProjectProperties(String projectDir, String projectName) {
+    println "Entering loadProjectPropreties"
+    println "  Name:  $projectName"
+    println "  dir  : $projectDir"
+
+    def propDir=new File(projectDir, 'properties')
+    if (propDir.directory) {
+      loadNestedProperties("/projects/$projectName", propDir)
+    }  else {
+      println "No properties directory for project $projectName"
+    }
   }
 
   // Generic procedure to load an object in context
@@ -86,7 +116,6 @@ abstract class BaseObject extends DslDelegatingScript {
      ######################################################################## */
   def loadObjects(String objType, String topDir,
                   String objPath = "",
-                  def subObjects = [],
                   Map bindingMap = [:]) {
 
     // println "Entering loadObjects"
@@ -94,7 +123,8 @@ abstract class BaseObject extends DslDelegatingScript {
     // println "  dir  : $topDir"
     // println "  path : $objPath"
     // println "   sub : " + subObjects.join(",")
-    // println "  map  : " + bindingMap.toMapString(25)
+    // println "  map  : " + bindingMap.toMapString(250)
+
     def counters=[:]
     def nbObjs=0
     // lookking for "objects" direction i.e. "procedures", "personas"
@@ -121,17 +151,26 @@ abstract class BaseObject extends DslDelegatingScript {
           println "  No properties directory for $objType $objName"
         }
 
-        // load subObjects loadObjects
-        subObjects.each { child ->
-          def childrenCounter
-           "${objType}" objName, {
-            childrenCounter=loadObjects(child, objDir,
-              "$objPath/${objType}s/$objName", [], bindingMap)
+        def children = [
+          pipeline : ["stage"],
+          stage:     ["task"],
+          environment: ["cluster", "environmentTier"],
+          catalog: ["catalogItem"],
+          dashboard: ["widget"]
+        ]
+        // load subObjects loadObjects (from local structure)
+        if (children.containsKey(objType)) {
+          println "Found children: "
+          children[objType].each { child ->
+            println "  processing $child"
+            def childrenCounter
+            "${objType}" objName, {
+              childrenCounter=loadObjects(child, objDir,
+                "$objPath/${objType}s/$objName", bindingMap)
+            }
+            counters << childrenCounter
           }
-          counters << childrenCounter
         }
-
-
       }
     }   // directory for "objects" exists
     counters.put(objType, nbObjs)

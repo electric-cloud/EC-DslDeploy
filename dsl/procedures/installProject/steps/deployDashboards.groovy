@@ -1,24 +1,34 @@
+/*
+  deployDashboards.groovy - Loop through the catalogs and invoke each individually,
+       including children: reports and filters
+
+  Copyright 2019 Electric-Cloud Inc.
+
+  CHANGELOG
+  ----------------------------------------------------------------------------
+  2019-04-05  lrochette  Convert to loadObjects
+*/
 import groovy.transform.BaseScript
-import com.electriccloud.commander.dsl.util.BaseProject
+import com.electriccloud.commander.dsl.util.BaseObject
 
 //noinspection GroovyUnusedAssignment
-@BaseScript BaseProject baseScript
+@BaseScript BaseObject baseScript
 
 // Variables available for use in DSL code
 def projectName = '$[projName]'
-def projectDir = '$[projDir]'
+def projectDir  = '$[projDir]'
+def counters
 
-def reportNbr
-def dashNbr
-def widgetNbr
 project projectName, {
-  reportNbr  = loadReports(projectDir, projectName)
-  (dashNbr, widgetNbr) = loadDashboards(projectDir, projectName)
+   counters = loadObjects('dashboard', projectDir, "/projects/$projectName",
+     [projectName: projectName, projectDir: projectDir]
+   )
 }
 
+def dashNbr   = counters['dashboard']
+def widgetNbr = counters['widget']
+
 def summaryStr="Created:"
-summaryStr += "\n  "
-summaryStr += reportNbr? "$reportNbr reports" : "No reports"
 summaryStr += "\n  "
 summaryStr += dashNbr? "$dashNbr dashboards" : "No dashboards"
 summaryStr += "\n  "

@@ -42,6 +42,10 @@ procedure procName, {
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployCatalogs.groovy").text,
     shell: dslShell
 
+	step 'deployReports',
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployReports.groovy").text,
+    shell: dslShell
+
 	step 'deployDashboards',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployDashboards.groovy").text,
     shell: dslShell

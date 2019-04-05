@@ -1,6 +1,6 @@
 /*
   deployEnvironments.groovy - Loop through the environments and invoke each
-      individually. And with subobjects: clusters
+      individually. And with subObjects: clusters and environmentTiers
 
   Copyright 2019 Electric-Cloud Inc.
 
@@ -19,10 +19,8 @@ def projectName = '$[projName]'
 def projectDir = '$[projDir]'
 def counters
 
-
 project projectName, {
   counters = loadObjects('environment', projectDir, "/projects/$projectName",
-     ["cluster"],
      [projectName: projectName, projectDir: projectDir]
    )
 }

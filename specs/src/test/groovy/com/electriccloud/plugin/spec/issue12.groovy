@@ -43,9 +43,9 @@ class issue12 extends PluginTestHelper {
       assert getJobProperty("outcome", p.jobId) == "success"
 
      // Issue #2 - persona
-    then: "persona is found"
+ /*   then: "persona is found"
       def pa=dsl """getPersona(personaName: 'SD12')"""
-      assert pa.persona.homePageName == 'Microservice Deployments'
+*/
 
     // check resource is found
     then: "resource is found"
@@ -109,7 +109,7 @@ class issue12 extends PluginTestHelper {
       def envT=dsl """
         getEnvironmentTier(
           projectName: "$projName",
-          environmentName: "testEnv",
+          environmentName: "testEnv12",
           environmentTierName: "Tier 12",
         )"""
       assert envT.environmentTier.environmentTierName == "Tier 12"
@@ -118,7 +118,7 @@ class issue12 extends PluginTestHelper {
       def cl = dsl """
         getCluster(
           projectName: "$projName",
-          environmentName: "testEnv",
+          environmentName: "testEnv12",
           clusterName: 'testCluster12',
         )"""
       assert cl.cluster.clusterName == "testCluster12"
@@ -133,6 +133,35 @@ class issue12 extends PluginTestHelper {
         )"""
       assert rel.release.releaseName == "testRelease12"
       assert rel.release.plannedEndTime =~ /2019-04-04T/
+
+    // check pipeline is found
+    then: "pipeline is found"
+      def pipe=dsl """
+        getPipeline(
+          projectName: "$projName",
+          pipelineName: "p12"
+        )"""
+      assert pipe.pipeline.pipelineName == "p12"
+    // check stage is #3
+    then: "stage is in right position"
+      def st=dsl """
+        getStage(
+           projectName: "$projName",
+           pipelineName: "p12",
+           stageName: 'UAT',
+        )"""
+      assert st.stage.index == 3
+   // Check task exists
+    then: "task is found"
+      def task=dsl """
+        getTask(
+          projectName: "$projName",
+          pipelineName: "p12",
+          stageName: 'DEV',
+          taskName: 'Start'
+        )"""
+      assert task.task.taskName == "Start"
+      assert task.task.taskType == "MANUAL"
 
    }
 }

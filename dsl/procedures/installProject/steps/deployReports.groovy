@@ -1,12 +1,11 @@
 /*
-  deployComponentTemplates.groovy - Loop through the components and invoke
-      each individually
+  deployReports.groovy - Loop through the reports and invoke each individually
 
   Copyright 2019 Electric-Cloud Inc.
 
   CHANGELOG
   ----------------------------------------------------------------------------
-  2019-04-01  lrochette  Convert to loadObjects
+  2019-04-05  lrochette  Convert to loadObjects
 */
 import groovy.transform.BaseScript
 import com.electriccloud.commander.dsl.util.BaseObject
@@ -16,17 +15,16 @@ import com.electriccloud.commander.dsl.util.BaseObject
 
 // Variables available for use in DSL code
 def projectName = '$[projName]'
-def projectDir = '$[projDir]'
+def projectDir  = '$[projDir]'
 def counters
 
 project projectName, {
-  counters = loadObjects("component", projectDir, "/projects/$projectName",
-    [projectName: projectName, projectDir: projectDir]
-  )
+   counters = loadObjects('report', projectDir, "/projects/$projectName",
+     [projectName: projectName, projectDir: projectDir]
+   )
 }
 
-def compNbr=counters['component']
-
-def summaryStr = compNbr? "Created $compNbr component templates" : "No component templates"
+def nb = counters['report']
+def summaryStr = nb? "Created $nb reports" : "No reports"
 setProperty(propertyName: "summary", value: summaryStr)
 return ""
