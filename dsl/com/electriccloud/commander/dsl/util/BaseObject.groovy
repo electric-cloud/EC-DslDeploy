@@ -36,9 +36,6 @@ import com.electriccloud.commander.dsl.DslDelegatingScript
 
 abstract class BaseObject extends DslDelegatingScript {
 
-  @Field def children = [
-    catalog: ["catalogItem"]
-  ]
 
   // return the object.groovy or object.dsl
   //    AKA project.groovy, procedure.dsl, pipeline.groovy, ...
@@ -89,12 +86,14 @@ abstract class BaseObject extends DslDelegatingScript {
      ######################################################################## */
   def loadObjects(String objType, String topDir,
                   String objPath = "/",
+                  def subObjects = [],
                   Map bindingMap = [:]) {
 
     println "Entering loadObjects"
     println "  Type:  $objType"
     println "  dir  : $topDir"
-    // println "  path : $objPath"
+    println "  path : $objPath"
+    println "   sub : " + subObjects.join(",")
     println "  map  : " + bindingMap.toMapString(25)
     def counters=[:]
     def nbObjs=0
@@ -122,17 +121,14 @@ abstract class BaseObject extends DslDelegatingScript {
           println "No properties directory for $objType $objName"
         }
 
-        // load children loadObjects
-        println "Children Map: " + children.toMapString(100)
-        // if (children.containsKey(objType)) {
-        //   println "Parsing children for $objType"
-        // //   children[objType].each { child ->
-        //     println "   CHild: $child"
-        //     def nbChildren=loadObjects(child, objDir,
-        //       "$objPath/${objType}s/$objName", bindingMap)
-        //     counters.out(child, nbChildren)
-        //   }
-  //      }
+        // load subObjects loadObjects
+        subObjects.each { child ->
+          println "   CHild: $child"
+          def nbChildren=loadObjects(child, objDir,
+            "$objPath/${objType}s/$objName", [], bindingMap)
+          counters.out(child, nbChildren)
+        }
+
 
       }
     }   // directory for "objects" exists

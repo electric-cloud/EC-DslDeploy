@@ -33,6 +33,6 @@ persona 'serviceDeveloper', {
     ]
   }
 */
-  homePageName = 'Microservice Deployments'
+  // homePageName = 'Microservice Deployments'
 
 }

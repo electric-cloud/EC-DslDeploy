@@ -22,10 +22,8 @@ def counters
 
 project projectName, {
   counters = loadObjects("service", projectDir, "/projects/$projectName",
-    [
-      projectName: projectName,
-      projectDir: projectDir
-    ]
+    [],
+    [projectName: projectName, projectDir: projectDir]
   )
 }
 def svrNbr=counters['service']
