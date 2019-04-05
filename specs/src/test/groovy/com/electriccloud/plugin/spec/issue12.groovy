@@ -150,7 +150,7 @@ class issue12 extends PluginTestHelper {
            pipelineName: "p12",
            stageName: 'UAT',
         )"""
-      assert st.stage.index == 3
+      assert st.stage.index == "3"
    // Check task exists
     then: "task is found"
       def task=dsl """

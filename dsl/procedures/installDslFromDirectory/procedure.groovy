@@ -16,9 +16,8 @@ procedure procName,
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployPersonas.groovy").text,
     resourceName: '$[pool]',
     workingDirectory: '$[directory]',
-    shell: dslShell,
-    condition: '$[/javascript setProperty("summary", "Broken for now. Skipping"); 0]'
-    
+    shell: dslShell
+
   step 'deployResources',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployResources.groovy").text,
     resourceName: '$[pool]',
