@@ -27,12 +27,15 @@ project projectName, {
 
 def dashNbr   = counters['dashboard']
 def widgetNbr = counters['widget']
+def repfilNbr = counters['reportingFilter']
 
 def summaryStr="Created:"
 summaryStr += "\n  "
 summaryStr += dashNbr? "$dashNbr dashboards" : "No dashboards"
 summaryStr += "\n  "
 summaryStr += widgetNbr? "$widgetNbr widgets" : "No widgets"
+summaryStr += "\n  "
+summaryStr += repfilNbr? "$repfilNbr reporting filters" : "No reporting filters"
 
 setProperty(propertyName: "summary", value: summaryStr)
 return ""

@@ -20,7 +20,7 @@ File dir=new File('$[directory]', "personas")
 if (dir.exists()) {
   def counters=loadObjects('persona', '$[directory]', '/personas')
   def nb=counters['persona']
-  setProperty(propertyName:"summary", value:" $nb personas")
+  setProperty(propertyName:"summary", value:"$nb personas")
 } else {
-  setProperty(propertyName:"summary", value:" No personas")
+  setProperty(propertyName:"summary", value:"No personas")
 }

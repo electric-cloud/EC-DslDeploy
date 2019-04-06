@@ -156,7 +156,7 @@ abstract class BaseObject extends DslDelegatingScript {
           stage:     ["task"],
           environment: ["cluster", "environmentTier"],
           catalog: ["catalogItem"],
-          dashboard: ["widget"]
+          dashboard: ["widget", "reportingFilter"]
         ]
         // load subObjects loadObjects (from local structure)
         if (children.containsKey(objType)) {

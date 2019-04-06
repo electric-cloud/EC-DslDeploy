@@ -6,11 +6,5 @@ environment 'testEnv12', {
   rollingDeployEnabled = null
   rollingDeployType = null
 
-  environmentTier 'Tier 12', {
-    batchSize = null
-    batchSizeType = null
-    resourceName = [
-      'res12',
-    ]
-  }
+
 }

@@ -27,11 +27,14 @@ project projectName, {
 
 def envNbr     = counters['environment']
 def clusterNbr = counters['cluster']
+def tierNbr    = counters['environmentTier']
 
 def summaryStr="Created:\n  "
 summaryStr += envNbr? "$envNbr environments" : "no environment"
 summaryStr += "\n  "
 summaryStr += clusterNbr? "$clusterNbr clusters" : "no cluster"
+summaryStr += "\n  "
+summaryStr += tierNbr? "$tierNbr environment tiers" : "no environment tiers"
 
 setProperty(propertyName: "summary", value: summaryStr)
 return ""

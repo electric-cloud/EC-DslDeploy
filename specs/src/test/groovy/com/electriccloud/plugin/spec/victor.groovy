@@ -119,26 +119,6 @@ class victor extends PluginTestHelper {
       assert cl.cluster.clusterName == "testCluster"
       assert cl.cluster.description == "val"
 
-    // check pipeline is found
-    then: "pipeline is found"
-      def pipe=dsl """
-        getPipeline(
-          projectName: "$projName",
-          pipelineName: "testPipeline"
-        )"""
-      assert pipe.pipeline.pipelineName == "testPipeline"
-    // Check task exists
-    then: "task is found"
-      def task=dsl """
-        getTask(
-          projectName: "$projName",
-          pipelineName: "testPipeline",
-          stageName: 'UAT',
-          taskName: 'JA1 Deploy'
-        )"""
-      assert task.task.taskName == "JA1 Deploy"
-      assert task.task.environmentName == "UAT"
-
     // check procedure is found
     then: "procedure is found"
       def proc=dsl """
@@ -156,16 +136,6 @@ class victor extends PluginTestHelper {
           stepName: 'echo'
         )"""
       assert st.step.shell == "ec-perl"
-
-    // check release is found
-    then: "release is found"
-      def rel=dsl """
-        getRelease(
-          projectName: "$projName",
-          releaseName: "testRelease"
-        )"""
-      assert rel.release.releaseName == "testRelease"
-      assert rel.release.plannedEndTime =~ /2019-04-04T/
 
     // check report is found
     then: "report is found"
@@ -186,6 +156,7 @@ class victor extends PluginTestHelper {
       assert rsc.resource.resourceName == "res457"
       assert rsc.resource.hostName == 'doesnotexist'
       assert getP("/resources/res457/prop1") =~ /val23456\s+/
+      assert getP("/resources/res457/level1/level2/level3/prop123") =~ /res3-level3\s+/
 
     // check service is found
     then: "service is found"
@@ -202,8 +173,25 @@ class victor extends PluginTestHelper {
       assert pp.project.projectName == "POST_VICTOR"
 
     // Issue #2 - persona
-    then: "persona is found"
-      def pa=dsl """getPersona(personaName: 'victorP')"""
-      assert pa.persona.personaName == 'victorP'
+    // then: "persona is found"
+    //   def pa=dsl """getPersona(personaName: 'victorP')"""
+    //   assert pa.persona.personaName == 'victorP'
+
+     // Check catalog exist
+     then: "catalog exist"
+       println "Checking catalog"
+       assert getP("/projects/$projName/catalogs/testCatalog1/description") == "val"
+
+     // catalogItem is created
+     then: "catalogItem exist"
+       println "Checking catalog item"
+       def item=dsl """getCatalogItem(
+           projectName: "$projName",
+           catalogName: 'testCatalog1',
+           catalogItemName: 'testCatalogItem'
+         )"""
+       assert item.catalogItem.description == 'val'
+
    }
+
 }
