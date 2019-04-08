@@ -14,6 +14,8 @@ import com.electriccloud.commander.dsl.util.BaseObject
 //noinspection GroovyUnusedAssignment
 @BaseScript BaseObject baseScript
 
+$[/myProject/scripts/summaryString]
+
 // Variables available for use in DSL code
 def projectName = '$[projName]'
 def projectDir  = '$[projDir]'
@@ -25,17 +27,5 @@ project projectName, {
    )
 }
 
-def dashNbr   = counters['dashboard']
-def widgetNbr = counters['widget']
-def repfilNbr = counters['reportingFilter']
-
-def summaryStr="Created:"
-summaryStr += "\n  "
-summaryStr += dashNbr? "$dashNbr dashboards" : "No dashboards"
-summaryStr += "\n  "
-summaryStr += widgetNbr? "$widgetNbr widgets" : "No widgets"
-summaryStr += "\n  "
-summaryStr += repfilNbr? "$repfilNbr reporting filters" : "No reporting filters"
-
-setProperty(propertyName: "summary", value: summaryStr)
+setProperty(propertyName: "summary", value: summaryString(counters))
 return ""

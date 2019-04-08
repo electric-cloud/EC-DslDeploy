@@ -12,6 +12,18 @@ procedure procName,
     shell: 'ec-groovy',
     workingDirectory: '$[directory]'
 
+  step 'deployTags',
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployTags.groovy").text,
+    resourceName: '$[pool]',
+    workingDirectory: '$[directory]',
+    shell: dslShell
+
+  step 'deployUsers',
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployUsers.groovy").text,
+    resourceName: '$[pool]',
+    workingDirectory: '$[directory]',
+    shell: dslShell
+
   step 'deployPersonas',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployPersonas.groovy").text,
     resourceName: '$[pool]',
@@ -20,6 +32,12 @@ procedure procName,
 
   step 'deployResources',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployResources.groovy").text,
+    resourceName: '$[pool]',
+    workingDirectory: '$[directory]',
+    shell: dslShell
+
+  step 'deployResourcePools',
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployResourcePools.groovy").text,
     resourceName: '$[pool]',
     workingDirectory: '$[directory]',
     shell: dslShell

@@ -10,6 +10,8 @@
 import groovy.transform.BaseScript
 import com.electriccloud.commander.dsl.util.BaseObject
 
+$[/myProject/scripts/summaryString]
+
 //noinspection GroovyUnusedAssignment
 @BaseScript BaseObject baseScript
 
@@ -24,7 +26,5 @@ project projectName, {
   )
 }
 
-def nb=counters['application']
-def summaryStr = nb? "Created $nb applications" : "No applications"
-setProperty(propertyName: "summary", value: summaryStr)
+setProperty(propertyName: "summary", value: summaryString(counters))
 return ""

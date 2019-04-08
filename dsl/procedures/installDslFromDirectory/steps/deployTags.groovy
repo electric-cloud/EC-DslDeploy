@@ -1,27 +1,28 @@
 /*
-  deployPersonas.groovy - Loop through the personas and invoke each individually
+  deployTags.groovy - Loop through the tags and invoke each individually
 
   Copyright 2019 Electric-Cloud Inc.
 
   CHANGELOG
   ----------------------------------------------------------------------------
-  2019-04-02  lrochette Initial Version
+  2019-04-07  lrochette  Initial version
 */
 
 import groovy.io.FileType
 import groovy.transform.BaseScript
 import com.electriccloud.commander.dsl.util.BaseObject
 
-$[/myProject/scripts/summaryString]
-
 //noinspection GroovyUnusedAssignment
 @BaseScript BaseObject baseScript
 
-File dir=new File('$[directory]', "personas")
+$[/myProject/scripts/summaryString]
+
+File dir=new File('$[directory]', "tags")
 
 if (dir.exists()) {
-  def counters=loadObjects('persona', '$[directory]', '/personas')
+  def counters=loadObjects('tag', '$[directory]', '/tags')
+  def nb=counters['tag']
   setProperty(propertyName: "summary", value: summaryString(counters))
 } else {
-  setProperty(propertyName:"summary", value:"No personas")
+  setProperty(propertyName:"summary", value:"No tags")
 }

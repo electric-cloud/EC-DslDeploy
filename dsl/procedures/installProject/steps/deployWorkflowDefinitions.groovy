@@ -1,6 +1,5 @@
 /*
-  deployComponentTemplates.groovy - Loop through the components and invoke
-      each individually
+  deployWorkflowDefinitions.groovy - Loop through the workflowDefinitions and invoke each individually
 
   Copyright 2019 Electric-Cloud Inc.
 
@@ -18,11 +17,11 @@ $[/myProject/scripts/summaryString]
 
 // Variables available for use in DSL code
 def projectName = '$[projName]'
-def projectDir = '$[projDir]'
+def projectDir  = '$[projDir]'
 def counters
 
 project projectName, {
-  counters = loadObjects("component", projectDir, "/projects/$projectName",
+  counters = loadObjects("workflowDefinition", projectDir, "/projects/$projectName",
     [projectName: projectName, projectDir: projectDir]
   )
 }

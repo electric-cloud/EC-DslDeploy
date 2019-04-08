@@ -14,6 +14,8 @@ import com.electriccloud.commander.dsl.util.BaseObject
 //noinspection GroovyUnusedAssignment
 @BaseScript BaseObject baseScript
 
+$[/myProject/scripts/summaryString]
+
 // Variables available for use in DSL code
 def projectName = '$[projName]'
 def projectDir = '$[projDir]'
@@ -25,16 +27,5 @@ project projectName, {
    )
 }
 
-def envNbr     = counters['environment']
-def clusterNbr = counters['cluster']
-def tierNbr    = counters['environmentTier']
-
-def summaryStr="Created:\n  "
-summaryStr += envNbr? "$envNbr environments" : "no environment"
-summaryStr += "\n  "
-summaryStr += clusterNbr? "$clusterNbr clusters" : "no cluster"
-summaryStr += "\n  "
-summaryStr += tierNbr? "$tierNbr environment tiers" : "no environment tiers"
-
-setProperty(propertyName: "summary", value: summaryStr)
+setProperty(propertyName: "summary", value: summaryString(counters))
 return ""

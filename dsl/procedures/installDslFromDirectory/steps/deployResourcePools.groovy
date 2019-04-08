@@ -1,27 +1,28 @@
 /*
-  deployPersonas.groovy - Loop through the personas and invoke each individually
+  deployResourcePools.groovy - Loop through the resourcePools and invoke each individually
 
   Copyright 2019 Electric-Cloud Inc.
 
   CHANGELOG
   ----------------------------------------------------------------------------
-  2019-04-02  lrochette Initial Version
+  2019-04-07  lrochette  Initial Version
 */
 
 import groovy.io.FileType
 import groovy.transform.BaseScript
 import com.electriccloud.commander.dsl.util.BaseObject
 
-$[/myProject/scripts/summaryString]
-
 //noinspection GroovyUnusedAssignment
 @BaseScript BaseObject baseScript
 
-File dir=new File('$[directory]', "personas")
+$[/myProject/scripts/summaryString]
+
+File dir=new File('$[directory]', "resourcePools")
 
 if (dir.exists()) {
-  def counters=loadObjects('persona', '$[directory]', '/personas')
+  def counters=loadObjects('resourcePool', '$[directory]', '/resourcePools')
+  def nb=counters['resourcePool']
   setProperty(propertyName: "summary", value: summaryString(counters))
 } else {
-  setProperty(propertyName:"summary", value:"No personas")
+  setProperty(propertyName:"summary", value:"No resourcePools")
 }

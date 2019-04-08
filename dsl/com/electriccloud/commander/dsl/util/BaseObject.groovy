@@ -152,11 +152,16 @@ abstract class BaseObject extends DslDelegatingScript {
         }
 
         def children = [
-          pipeline : ["stage"],
-          stage:     ["task"],
-          environment: ["cluster", "environmentTier"],
-          catalog: ["catalogItem"],
-          dashboard: ["widget", "reportingFilter"]
+          application: ['applicationTier', 'process', 'service'],
+          applicationTier: ['component'],
+          catalog:     ['catalogItem'],
+          component:   ['process'],
+          dashboard:   ['widget', 'reportingFilter'],
+          environment: ['cluster', 'environmentTier'],
+          pipeline :   ['stage'],
+          process:     ['processStep'],
+          service:     ['container', 'process'],
+          stage:       ['task']
         ]
         // load subObjects loadObjects (from local structure)
         if (children.containsKey(objType)) {
