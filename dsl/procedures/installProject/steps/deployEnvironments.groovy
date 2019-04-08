@@ -1,24 +1,31 @@
+/*
+  deployEnvironments.groovy - Loop through the environments and invoke each
+      individually. And with subObjects: clusters and environmentTiers
+
+  Copyright 2019 Electric-Cloud Inc.
+
+  CHANGELOG
+  ----------------------------------------------------------------------------
+  2019-04-01  lrochette  Convert to loadObjects
+*/
 import groovy.transform.BaseScript
-import com.electriccloud.commander.dsl.util.BaseProject
+import com.electriccloud.commander.dsl.util.BaseObject
 
 //noinspection GroovyUnusedAssignment
-@BaseScript BaseProject baseScript
+@BaseScript BaseObject baseScript
+
+$[/myProject/scripts/summaryString]
 
 // Variables available for use in DSL code
 def projectName = '$[projName]'
 def projectDir = '$[projDir]'
-
-def envNbr
-def clusterNbr
+def counters
 
 project projectName, {
-  (envNbr, clusterNbr)  = loadEnvironments(projectDir, projectName)
+  counters = loadObjects('environment', projectDir, "/projects/$projectName",
+     [projectName: projectName, projectDir: projectDir]
+   )
 }
 
-def summaryStr="Created:\n  "
-summaryStr += envNbr? "$envNbr environments" : "no environment"
-summaryStr += "\n  "
-summaryStr += clusterNbr? "$clusterNbr clusters" : "no cluster"
-
-setProperty(propertyName: "summary", value: summaryStr)
+setProperty(propertyName: "summary", value: summaryString(counters))
 return ""

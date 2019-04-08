@@ -58,19 +58,19 @@ class dslDeploy extends PluginTestHelper {
 
   // Check that installProject is not visible in the step picker
   def "installProject should not be in the stepPicker"() {
-    when : "getting procedure standardStepPicker"
+    when: "getting procedure standardStepPicker"
       def prop = getP("/plugins/$pName/project/procedures/installProject/standardStepPicker")
     then: "installProject should be false"
       assert prop == "false"
 
-    when : "getting server stepPicker property"
+    when: "getting server stepPicker property"
       def ps = dsl """
         getProperty(
           propertyName: "/server/ec_customerEditors/pickerStep/$pName - installProject"
         )
-       """
-     then: "installProject should not exist"
-       assert !ps.property
+      """
+    then: "installProject should not exist"
+      assert !ps.property
 
   }
 
