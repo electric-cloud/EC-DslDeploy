@@ -1,4 +1,7 @@
 2019-04-02 Laurent Rochette <lrochette@electric-cloud.com>
+  * 2.0.1: Issue #33: adding support for resourcePools
+
+2019-04-02 Laurent Rochette <lrochette@electric-cloud.com>
   * 2.0.0: Re-architecture
 
 2019-04-02 Laurent Rochette <lrochette@electric-cloud.com>
