@@ -18,7 +18,7 @@ $[/myProject/scripts/summaryString]
 
 // Variables available for use in DSL code
 def projectName = '$[projName]'
-def projectDir = '$[projDir]'
+def projectDir  = '$[projDir]'
 def counters
 
 

@@ -128,7 +128,7 @@ abstract class BaseObject extends DslDelegatingScript {
     def counters=[:]
     def nbObjs=0
     // lookking for "objects" direction i.e. "procedures", "personas"
-    File dir = new File(topDir, objType + 's')
+    File dir = new File(topDir, pluralForm(objType))
     if (dir.exists()) {
       def dlist=[]
       // sort object alphabetically
@@ -137,7 +137,7 @@ abstract class BaseObject extends DslDelegatingScript {
         def objName=it.name
         def objDir=it.absolutePath
         File dslFile=getObjectDSLFile(it, objType)
-        println "Processing $objType file $objPath/${objType}s/$objName/${dslFile.name}"
+        println "Processing $objType file $objPath/" + pluralForm(objType) + "/$objName/${dslFile.name}"
         bindingMap[(objType+"Name")] = objName     //=> procedureName
         bindingMap[(objType+"Dir")]  = objDir      //=> procedureDir
         def obj=loadObject(dslFile.absolutePath, bindingMap)
@@ -160,6 +160,7 @@ abstract class BaseObject extends DslDelegatingScript {
           environment: ['cluster', 'environmentTier'],
           pipeline :   ['stage'],
           process:     ['processStep'],
+          procedure:   ['step'],
           service:     ['container', 'process'],
           stage:       ['task']
         ]
