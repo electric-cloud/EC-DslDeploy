@@ -8,5 +8,5 @@
   <help>help.xml</help>
   <key>EC-DslDeploy</key>
   <label>EC-DslDeploy</label>
-  <version>2.0.1</version>
+  <version>2.1.0</version>
 </plugin>
