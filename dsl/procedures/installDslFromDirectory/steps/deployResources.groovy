@@ -21,7 +21,7 @@ $[/myProject/scripts/summaryString]
 File dir=new File('$[directory]', "resources")
 
 if (dir.exists()) {
-  def counters=loadObjects('resource', '$[directory]', '/resources')
+  def counters=loadObjects('resource', '$[directory]')
   def nb=counters['resource']
   setProperty(propertyName: "summary", value: summaryString(counters))
 } else {
