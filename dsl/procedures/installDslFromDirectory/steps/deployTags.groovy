@@ -20,7 +20,7 @@ $[/myProject/scripts/summaryString]
 File dir=new File('$[directory]', "tags")
 
 if (dir.exists()) {
-  def counters=loadObjects('tag', '$[directory]', '/tags')
+  def counters=loadObjects('tag', '$[directory]')
   def nb=counters['tag']
   setProperty(propertyName: "summary", value: summaryString(counters))
 } else {

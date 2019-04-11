@@ -69,7 +69,8 @@ abstract class BaseObject extends DslDelegatingScript {
     File dslFile=getObjectDSLFile(new File(projectDir), "project");
     if (dslFile?.exists()) {
       println "Processing project file projects/$projectName/${dslFile.name}"
-      def proj=evalInlineDsl(dslFile.toString(), [projectName: projectName, projectDir: projectDir])
+      def proj=evalInlineDsl(dslFile.toString(),
+                            [projectName: projectName, projectDir: projectDir])
       counter ++
     } else {
       println "No project.groovy found"
@@ -78,15 +79,29 @@ abstract class BaseObject extends DslDelegatingScript {
   }
 
   def loadProjectProperties(String projectDir, String projectName) {
-    println "Entering loadProjectPropreties"
-    println "  Name:  $projectName"
-    println "  dir  : $projectDir"
+    // println "Entering loadProjectPropreties"
+    // println "  Name:  $projectName"
+    // println "  dir  : $projectDir"
 
     def propDir=new File(projectDir, 'properties')
     if (propDir.directory) {
       loadNestedProperties("/projects/$projectName", propDir)
     }  else {
       println "No properties directory for project $projectName"
+    }
+  }
+
+  def loadProjectAcls(String projectDir, String projectName) {
+    // println "Entering loadProjectAcls"
+    // println "  Name:  $projectName"
+    // println "  dir  : $projectDir"
+
+    def aclDir=new File(projectDir, 'acls')
+    if (aclDir.directory) {
+      loadAcls(aclDir, "/projects/$projectName",
+               [projectName: projectName, projectDir: projectDir])
+    }  else {
+      println "No acls directory for project $projectName"
     }
   }
 
@@ -115,7 +130,7 @@ abstract class BaseObject extends DslDelegatingScript {
                       in context. Typically objectName and objectDir.
      ######################################################################## */
   def loadObjects(String objType, String topDir,
-                  String objPath = "",
+                  String objPath = "/",
                   Map bindingMap = [:]) {
 
     // println "Entering loadObjects"
@@ -127,8 +142,9 @@ abstract class BaseObject extends DslDelegatingScript {
 
     def counters=[:]
     def nbObjs=0
-    // lookking for "objects" direction i.e. "procedures", "personas"
-    File dir = new File(topDir, pluralForm(objType))
+    def plural=pluralForm(objType)
+    // lookking for "objects" directory i.e. "procedures", "personas"
+    File dir = new File(topDir, plural)
     if (dir.exists()) {
       def dlist=[]
       // sort object alphabetically
@@ -137,16 +153,29 @@ abstract class BaseObject extends DslDelegatingScript {
         def objName=it.name
         def objDir=it.absolutePath
         File dslFile=getObjectDSLFile(it, objType)
-        println "Processing $objType file $objPath/" + pluralForm(objType) + "/$objName/${dslFile.name}"
+        println "Processing $objType file $objPath/$plural/$objName/${dslFile.name}"
         bindingMap[(objType+"Name")] = objName     //=> procedureName
         bindingMap[(objType+"Dir")]  = objDir      //=> procedureDir
         def obj=loadObject(dslFile.absolutePath, bindingMap)
         nbObjs ++
 
         // Load nested properties
+        def aclDir=new File(it, 'acls')
+        if (aclDir.directory) {
+          println "Found acls for $objPath/$plural/$objName"
+          "${objType}" objName, {
+            loadAcls(aclDir, "$objPath/$plural/$objName", bindingMap)
+          }
+        }  else {
+          println "  No acls directory for $objType $objName"
+        }
+
+        // Load nested properties
         def propDir=new File(it, 'properties')
         if (propDir.directory) {
-          loadNestedProperties("$objPath/$objName", propDir)
+          "${objType}" objName, {
+            loadNestedProperties("$objPath/$plural/$objName", propDir)
+          }
         }  else {
           println "  No properties directory for $objType $objName"
         }
@@ -166,9 +195,9 @@ abstract class BaseObject extends DslDelegatingScript {
         ]
         // load subObjects loadObjects (from local structure)
         if (children.containsKey(objType)) {
-          println "Found children: "
+          // println "Found children: "
           children[objType].each { child ->
-            println "  processing $child"
+            // println "  processing $child"
             def childrenCounter
             "${objType}" objName, {
               childrenCounter=loadObjects(child, objDir,
@@ -199,6 +228,18 @@ abstract class BaseObject extends DslDelegatingScript {
     return script.run();
   }
 
+  def loadAcls (File aclDir, String objPath,
+                Map bindingMap) {
+   println "Entering loadAcls"
+   println "  dir  : $aclDir"
+   println "  path : $objPath"
+   println "  map  : " + bindingMap.toMapString(250)
+
+    aclDir.eachFileMatch(FileType.FILES, ~/(?i)^.*\.(groovy|dsl)/) { dslFile ->
+      println "  Processing ACL file $objPath/acls/${dslFile.name}"
+      evalInlineDsl(dslFile.toString(), bindingMap)
+    }
+  }
 
   def loadNestedProperties(String propRoot, File propsDir) {
     // println "Entering loadNestedProperties($propRoot," +  propsDir.toString() + ")"
