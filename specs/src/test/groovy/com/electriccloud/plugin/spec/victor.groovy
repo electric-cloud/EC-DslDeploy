@@ -37,7 +37,7 @@ class victor extends PluginTestHelper {
           procedureName: "installDslFromDirectory",
           actualParameter: [
             directory: "$plugDir/$pName-$pVersion/lib/dslCode/victor",
-            pool: 'default'
+            pool: 'local'
           ]
         )""")
     then: "job succeeds"

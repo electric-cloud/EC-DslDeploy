@@ -31,7 +31,7 @@ class issue33 extends PluginTestHelper {
           procedureName: "installDslFromDirectory",
           actualParameter: [
             directory: "$plugDir/$pName-$pVersion/lib/dslCode/issue33",
-            pool: 'default'
+            pool: 'local'
           ]
         )""")
     then: "job succeeds"

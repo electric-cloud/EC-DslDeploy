@@ -29,7 +29,7 @@ class catalogItem extends PluginTestHelper {
           procedureName: "installDslFromDirectory",
           actualParameter: [
             directory: "$plugDir/$pName-$pVersion/lib/dslCode/$jira",
-            pool: 'default'
+            pool: 'local'
           ]
         )""")
     then:

@@ -1,4 +1,7 @@
-2019-04-011 Laurent Rochette <lrochette@electric-cloud.com>
+2019-04-17 Laurent Rochette <lrochette@electric-cloud.com>
+  * 2.1.1: Issue #39: timeout issue
+
+2019-04-11 Laurent Rochette <lrochette@electric-cloud.com>
   * 2.1.0: Issue #34: adding support for ACLs
 
 2019-04-02 Laurent Rochette <lrochette@electric-cloud.com>

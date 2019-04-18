@@ -1,17 +1,17 @@
 import java.io.File
 
 def procName = 'installProject'
-def dslShell = 'ectool evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl"'
+def dslShell = 'ectool --timeout $[/server/@PLUGIN_KEY@/timeout] evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl"'
 
 procedure procName, {
 
 	//evalDsl the main.groovy if it exists
 	step 'deployProject',
-    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployProject.groovy").text,
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployProject.dsl").text,
     shell: dslShell
 
 	step 'deployProcedures',
-    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployProcedures.groovy").text,
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployProcedures.dsl").text,
     shell: dslShell
 
 	step 'deployWorkflowDefinitions',

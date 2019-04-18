@@ -32,9 +32,11 @@ class dslDeploy extends PluginTestHelper {
       pVersion = getP("/plugins/$pName/pluginVersion")
       plugDir = getP("/server/settings/pluginsDirectory")
       def prop = getP("/plugins/$pName/project/ec_visibility")
+      def timeout = getP("/server/$pName/timeout")
     then:
       assert result.plugin.pluginVersion == pVersion
       assert prop == 'pickListOnly'
+      assert timeout?.isInteger()
   }
 
   // Check procedures exist
@@ -84,7 +86,7 @@ class dslDeploy extends PluginTestHelper {
           procedureName: "installDslFromDirectory",
           actualParameter: [
             directory: "$plugDir/$pName-$pVersion/lib/dslCode/sample",
-            pool: 'default'
+            pool: 'local'
           ]
         )""")
     then: "job succeeds"
