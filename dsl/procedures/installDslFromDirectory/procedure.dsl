@@ -1,7 +1,7 @@
 import java.io.File
 
 def procName = 'installDslFromDirectory'
-def dslShell = 'ectool evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl"'
+def dslShell = 'ectool --timeout $[/server/@PLUGIN_KEY@/timeout] evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl"'
 
 procedure procName,
   resourceName: '$[pool]',
@@ -13,31 +13,31 @@ procedure procName,
     workingDirectory: '$[directory]'
 
   step 'deployTags',
-    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployTags.groovy").text,
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployTags.dsl").text,
     resourceName: '$[pool]',
     workingDirectory: '$[directory]',
     shell: dslShell
 
   step 'deployUsers',
-    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployUsers.groovy").text,
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployUsers.dsl").text,
     resourceName: '$[pool]',
     workingDirectory: '$[directory]',
     shell: dslShell
 
   step 'deployPersonas',
-    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployPersonas.groovy").text,
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployPersonas.dsl").text,
     resourceName: '$[pool]',
     workingDirectory: '$[directory]',
     shell: dslShell
 
   step 'deployResources',
-    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployResources.groovy").text,
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployResources.dsl").text,
     resourceName: '$[pool]',
     workingDirectory: '$[directory]',
     shell: dslShell
 
   step 'deployResourcePools',
-    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployResourcePools.groovy").text,
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployResourcePools.dsl").text,
     resourceName: '$[pool]',
     workingDirectory: '$[directory]',
     shell: dslShell
