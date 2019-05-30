@@ -7,9 +7,9 @@ procedure procName,
   resourceName: '$[pool]',
 {
   step 'deployMain',
-    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployMain.groovy").text,
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployMain.pl").text,
     resourceName: '$[pool]',
-    shell: 'ec-groovy',
+    shell: 'ec-perl',
     workingDirectory: '$[directory]'
 
   step 'deployTags',
@@ -49,9 +49,9 @@ procedure procName,
     workingDirectory: '$[directory]'
 
   step 'deployPost',
-    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployPost.groovy").text,
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployPost.pl").text,
     resourceName: '$[pool]',
-    shell: 'ec-groovy',
+    shell: 'ec-perl',
     workingDirectory: '$[directory]'
 
 }

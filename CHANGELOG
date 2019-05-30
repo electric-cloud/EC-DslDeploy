@@ -1,3 +1,6 @@
+2019-05-30 Laurent Rochette <lrochette@electric-cloud.com>
+  * 2.1.2: convert deployMain and deployPost to ec-perl to work around 8K limit
+
 2019-04-17 Laurent Rochette <lrochette@electric-cloud.com>
   * 2.1.1: Issue #39: timeout issue
 

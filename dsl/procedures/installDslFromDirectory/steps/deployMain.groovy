@@ -19,6 +19,7 @@ File topDslDir = new File(".")
 topDslDir.eachFileMatch(~/.*\.(dsl|groovy)/) { topDslFile ->
     println "Processing top level file " + topDslFile.name
     ef.evalDsl(dsl: topDslFile.text)
+    //    ef.evalDsl(dslFile: topDslFile.absolutePath.toString())
     counter++
 }
 ef.setProperty(propertyName: "summary", value: "$counter files loaded")
