@@ -12,15 +12,16 @@ import groovy.io.FileType
 import groovy.transform.BaseScript
 import com.electriccloud.commander.dsl.util.BaseObject
 
-$[/myProject/scripts/summaryString]
-
 //noinspection GroovyUnusedAssignment
 @BaseScript BaseObject baseScript
 
-File dir=new File('$[directory]', "personas")
+$[/myProject/scripts/summaryString]
+
+def absDir='$[/myJob/CWD]'
+File dir=new File(absDir, "personas")
 
 if (dir.exists()) {
-  def counters=loadObjects('persona', '$[directory]')
+  def counters=loadObjects('persona', absDir)
   setProperty(propertyName: "summary", value: summaryString(counters))
 } else {
   setProperty(propertyName:"summary", value:"No personas")
