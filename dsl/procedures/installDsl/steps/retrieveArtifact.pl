@@ -8,7 +8,7 @@
 # CHANGELOG
 # ----------------------------------------------------------------------------
 # 2018-09-27  lrochette Initial Version
-#
+# 2019-06-24  lrochette Remove additionbal single   quote in step name
 ##############################################################################
 $[/myProject/scripts/perlHeaderJSON]
 
@@ -22,8 +22,8 @@ my $broadcast='$[allNodes]';
 sub retrieve {
   my $res=shift;
   $ec->createJobStep({
-    jobStepName  => "$res",
-    resourceName => "$res",
+    jobStepName  => $res,
+    resourceName => $res,
     subproject   => '/plugins/EC-Artifact/project',
     subprocedure => 'retrieve',
     actualParameter => [
