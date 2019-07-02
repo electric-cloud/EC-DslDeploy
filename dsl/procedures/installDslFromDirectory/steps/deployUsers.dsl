@@ -17,10 +17,11 @@ import com.electriccloud.commander.dsl.util.BaseObject
 
 $[/myProject/scripts/summaryString]
 
-File dir=new File('$[directory]', "users")
+def absDir='$[/myJob/CWD]'
+File dir=new File(absDir, "users")
 
 if (dir.exists()) {
-  def counters=loadObjects('user', '$[directory]')
+  def counters=loadObjects('user', absDir)
   def nb=counters['user']
   setProperty(propertyName: "summary", value: summaryString(counters))
 } else {

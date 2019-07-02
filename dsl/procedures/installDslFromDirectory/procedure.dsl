@@ -15,43 +15,43 @@ procedure procName,
   step 'deployTags',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployTags.dsl").text,
     resourceName: '$[pool]',
-    workingDirectory: '$[directory]',
+    workingDirectory: '$[/myJob/CWD]',
     shell: dslShell
 
   step 'deployUsers',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployUsers.dsl").text,
     resourceName: '$[pool]',
-    workingDirectory: '$[directory]',
+    workingDirectory: '$[/myJob/CWD]',
     shell: dslShell
 
   step 'deployPersonas',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployPersonas.dsl").text,
     resourceName: '$[pool]',
-    workingDirectory: '$[directory]',
+    workingDirectory: '$[/myJob/CWD]',
     shell: dslShell
 
   step 'deployResources',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployResources.dsl").text,
     resourceName: '$[pool]',
-    workingDirectory: '$[directory]',
+    workingDirectory: '$[/myJob/CWD]',
     shell: dslShell
 
   step 'deployResourcePools',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployResourcePools.dsl").text,
     resourceName: '$[pool]',
-    workingDirectory: '$[directory]',
+    workingDirectory: '$[/myJob/CWD]',
     shell: dslShell
 
   step 'deployProjects',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployProjects.groovy").text,
     resourceName: '$[pool]',
     shell: 'ec-groovy',
-    workingDirectory: '$[directory]'
+    workingDirectory: '$[/myJob/CWD]'
 
   step 'deployPost',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployPost.pl").text,
     resourceName: '$[pool]',
     shell: 'ec-perl',
-    workingDirectory: '$[directory]'
+    workingDirectory: '$[/myJob/CWD]'
 
 }
