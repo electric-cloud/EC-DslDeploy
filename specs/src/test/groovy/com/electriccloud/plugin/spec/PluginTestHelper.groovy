@@ -17,6 +17,8 @@ import com.electriccloud.spec.*
 
 class PluginTestHelper extends PluginSpockTestSupport {
   static def automationTestsContextRun = System.getenv ('AUTOMATION_TESTS_CONTEXT_RUN') ?: ''
+  static def defaultPool = System.getenv('DSL_DEPLOY_POOL') ?: 'local'
+  static def password = System.getProperty("COMMANDER_PASSWORD", "changeme")
 
   def redirectLogs(String parentProperty = '/myJob') {
     def propertyLogName = parentProperty + '/debug_logs'

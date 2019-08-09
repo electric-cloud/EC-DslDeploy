@@ -29,7 +29,7 @@ class NMB27865 extends PluginTestHelper {
           procedureName: "installDslFromDirectory",
           actualParameter: [
             directory: "$plugDir/$pName-$pVersion/lib/dslCode/$jira",
-            pool: 'local'
+            pool: "$defaultPool"
           ]
         )""")
     then:

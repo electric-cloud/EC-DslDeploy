@@ -48,7 +48,7 @@ class deployArtifact extends PluginTestHelper {
           actualParameter: [
             artName: "EC-DslDeploy:sample",
             artVersion: "1.0.0",
-            pool: 'local',
+            pool: "$defaultPool",
             allNodes: 'false'
           ]
         )""")
