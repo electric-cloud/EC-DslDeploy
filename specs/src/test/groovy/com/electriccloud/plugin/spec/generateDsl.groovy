@@ -1,7 +1,9 @@
 package com.electriccloud.plugin.spec
 
+import spock.lang.Ignore
 import spock.lang.Shared
 
+@Ignore
 class generateDsl extends PluginTestHelper {
     static String pName='EC-DslDeploy'
     static String jira="CEV-19608"
