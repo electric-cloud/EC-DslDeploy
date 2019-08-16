@@ -86,7 +86,7 @@ class dslDeploy extends PluginTestHelper {
           procedureName: "installDslFromDirectory",
           actualParameter: [
             directory: "$plugDir/$pName-$pVersion/lib/dslCode/sample",
-            pool: 'local'
+            pool: "$defaultPool"
           ]
         )""")
     then: "job succeeds"

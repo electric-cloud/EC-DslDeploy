@@ -41,6 +41,12 @@ task wrapper(type: Wrapper) {
     gradleVersion = '4.9' //version required
 }
 
+task copyTestResources(type: Copy) {
+    from "${projectDir}/src/test/resources"
+    into "${buildDir}/classes/test"
+}
+processTestResources.dependsOn copyTestResources
+
 test {
     systemProperty 'com.athaydes.spockframework.report.showCodeBlocks', true
 
@@ -60,4 +66,5 @@ test {
     if (destination) {
         systemProperty 'com.athaydes.spockframework.report.outputDir', destination
     }
+
 }
