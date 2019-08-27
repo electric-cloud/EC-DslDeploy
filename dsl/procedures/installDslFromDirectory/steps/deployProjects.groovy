@@ -27,7 +27,8 @@ if (pDir.exists()) {
     println "Processing project $basename"
     def params = [
         new ActualParameter('projName', basename),
-        new ActualParameter('projDir', projDir.absolutePath.toString().replace('\\', '/'))
+        new ActualParameter('projDir', projDir.absolutePath.toString().replace('\\', '/')),
+        new ActualParameter('overwrite', '$[overwrite]')
     ]
 
     ef.createJobStep(

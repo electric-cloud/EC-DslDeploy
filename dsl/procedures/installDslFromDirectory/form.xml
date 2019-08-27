@@ -31,5 +31,12 @@
     <value>local</value>
     <documentation>Server pool to use for a cluster setup.</documentation>
   </formElement>
-
+  <formElement>
+    <type>entry</type>
+    <label>Overwrite mode</label>
+    <property>overwrite</property>
+    <required>0</required>
+    <value>0</value>
+    <documentation>Overwrite mode, remove nonexistent in DSL elements.</documentation>
+  </formElement>
 </editor>

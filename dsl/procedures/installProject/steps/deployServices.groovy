@@ -20,11 +20,12 @@ $[/myProject/scripts/summaryString]
 // Variables available for use in DSL code
 def projectName = '$[projName]'
 def projectDir  = '$[projDir]'
+def overwrite = '$[overwrite]'
 def counters
 
 project projectName, {
   counters = loadObjects("service", projectDir, "/projects/$projectName",
-    [projectName: projectName, projectDir: projectDir]
+    [projectName: projectName, projectDir: projectDir], overwrite
   )
 }
 

@@ -66,5 +66,13 @@ documentation : Help text for the parameter
     <documentation>If you have local workspace, you want to check this option so
       the artifact retrieve is performed on all nodes.</documentation>
   </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Overwrite mode</label>
+    <property>overwrite</property>
+    <required>0</required>
+    <value>0</value>
+    <documentation>Overwrite mode, remove nonexistent in DSL elements</documentation>
+  </formElement>
 	<!--Add more parameters here-->
 </editor>

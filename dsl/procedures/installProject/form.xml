@@ -1,16 +1,24 @@
 <editor>
-  <formElement>
-      <type>entry</type>
-      <label>Project Name</label>
-      <property>projName</property>
-      <required>1</required>
-      <documentation>Name of the project to install</documentation>
-  </formElement>
-  <formElement>
-      <type>entry</type>
-      <label>Project directory</label>
-      <property>projDir</property>
-      <required>1</required>
-      <documentation>project directory</documentation>
-  </formElement>
+    <formElement>
+        <type>entry</type>
+        <label>Project Name</label>
+        <property>projName</property>
+        <required>1</required>
+        <documentation>Name of the project to install</documentation>
+    </formElement>
+    <formElement>
+        <type>entry</type>
+        <label>Project directory</label>
+        <property>projDir</property>
+        <required>1</required>
+        <documentation>project directory</documentation>
+    </formElement>
+    <formElement>
+        <type>entry</type>
+        <label>Overwrite mode</label>
+        <property>overwrite</property>
+        <required>0</required>
+        <value>0</value>
+        <documentation>Overwrite mode, remove nonexistent in DSL elements</documentation>
+    </formElement>
 </editor>

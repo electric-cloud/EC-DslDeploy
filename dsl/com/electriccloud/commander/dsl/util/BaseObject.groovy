@@ -59,7 +59,7 @@ abstract class BaseObject extends DslDelegatingScript {
     return found
   }
 
-  def loadProject(String projectDir, String projectName) {
+  def loadProject(String projectDir, String projectName, String overwriteMode = "0") {
     // load the project.groovy if it exists
     // println "Entering loadProject"
     // println "  Name:  $projectName"
@@ -70,7 +70,7 @@ abstract class BaseObject extends DslDelegatingScript {
     if (dslFile?.exists()) {
       println "Processing project file projects/$projectName/${dslFile.name}"
       def proj=evalInlineDsl(dslFile.toString(),
-                            [projectName: projectName, projectDir: projectDir])
+                            [projectName: projectName, projectDir: projectDir], overwriteMode)
       counter ++
     } else {
       println "No project.groovy found"
@@ -114,11 +114,11 @@ abstract class BaseObject extends DslDelegatingScript {
         - bindingMap: a list of properties to pass dow to evaluate the DSL
                       in context. Typically objectName and objectDir
      ######################################################################## */
-  def loadObject(String dslFile, Map bindingMap = [:]) {
+  def loadObject(String dslFile, Map bindingMap = [:], String overwriteMode = "0") {
     // println "Load Object:"
     // println "  dslFile: $dslFile"
     // println "  map: " + bindingMap.toMapString(100)
-    return evalInlineDsl(dslFile, bindingMap)
+    return evalInlineDsl(dslFile, bindingMap, overwriteMode)
   }
 
   /* ########################################################################
@@ -131,7 +131,7 @@ abstract class BaseObject extends DslDelegatingScript {
      ######################################################################## */
   def loadObjects(String objType, String topDir,
                   String objPath = "/",
-                  Map bindingMap = [:]) {
+                  Map bindingMap = [:], String overwriteMode = "0") {
 
     // println "Entering loadObjects"
     // println "  Type:  $objType"
@@ -156,7 +156,7 @@ abstract class BaseObject extends DslDelegatingScript {
         println "Processing $objType file $objPath/$plural/$objName/${dslFile.name}"
         bindingMap[(objType+"Name")] = objName     //=> procedureName
         bindingMap[(objType+"Dir")]  = objDir      //=> procedureDir
-        def obj=loadObject(dslFile.absolutePath, bindingMap)
+        def obj=loadObject(dslFile.absolutePath, bindingMap, overwriteMode)
         nbObjs ++
 
         // Load nested properties
@@ -214,7 +214,7 @@ abstract class BaseObject extends DslDelegatingScript {
 
 
   // Helper function to load another dsl script and evaluate it in-context
-  def evalInlineDsl(String dslFile, Map bindingMap) {
+  def evalInlineDsl(String dslFile, Map bindingMap, String overwriteMode = "0") {
     // println "evalInlineDsl: $dslFile"
     // println "  Map: " + bindingMap
     CompilerConfiguration cc = new CompilerConfiguration();
@@ -225,6 +225,11 @@ abstract class BaseObject extends DslDelegatingScript {
     GroovyShell sh = new GroovyShell(this.scriptClassLoader, bindingMap? new Binding(bindingMap) : new Binding(), cc);
     DelegatingScript script = (DelegatingScript)sh.parse(new File(dslFile))
     script.setDelegate(this.delegate);
+    // add bindingMap to DslDelegate to deal with collections removing in 'overwrite' mode
+    if (overwriteMode.toBoolean()) {
+      script.getDelegate().getBinding().setVariable("bindingMap", bindingMap)
+      script.getDelegate().getBinding().setVariable("overwrite", overwriteMode.toBoolean())
+    }
     return script.run();
   }
 
