@@ -38,7 +38,7 @@ class deployArtifact extends PluginTestHelper {
   // Check sample
   def "sample upload from artifact"() {
     given: "a DSL code artifact"
-      publishArtifactVersion("EC-DslDeploy:sample", '1.0.0', "$codeDir/lib/dslCode/sample")
+      publishArtifactVersion("EC-DslDeploy:sample2", '1.0.2', "$codeDir/lib/dslCode/sample")
 
     when: "the procedure runs"
       def result= runProcedureDsl("""
@@ -46,8 +46,8 @@ class deployArtifact extends PluginTestHelper {
           projectName: "/plugins/$pName/project",
           procedureName: "installDsl",
           actualParameter: [
-            artName: "EC-DslDeploy:sample",
-            artVersion: "1.0.0",
+            artName: "EC-DslDeploy:sample2",
+            artVersion: "1.0.2",
             pool: "$defaultPool",
             allNodes: 'false'
           ]
