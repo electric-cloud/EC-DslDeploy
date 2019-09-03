@@ -100,7 +100,7 @@ class PluginTestHelper extends PluginSpockTestSupport {
     def stderr = new StringBuilder()
     def process = command.execute()
     process.consumeProcessOutput(stdout, stderr)
-    process.waitForOrKill(50 * 1000)
+    process.waitForOrKill(100 * 1000)
     logger.debug("STDOUT: $stdout")
     logger.debug("STDERR: $stderr")
     logger.debug("Exit code: ${process.exitValue()}")
