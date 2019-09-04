@@ -141,8 +141,8 @@ class PluginTestHelper extends PluginSpockTestSupport {
     runCommand(publishCommand)
   }
 
-
-  def retrieveArtifactVersion(String artifactName, String version, String dir) {
+  def retrieveArtifactVersion(String artifactName, String version, String dir)
+  {
     String commanderServer = System.getProperty("COMMANDER_SERVER") ?: 'localhost'
     String username = System.getProperty('COMMANDER_USER') ?: 'admin'
     String password = System.getProperty('COMMANDER_PASSWORD') ?: 'changeme'
@@ -150,9 +150,11 @@ class PluginTestHelper extends PluginSpockTestSupport {
     assert commanderHome: "Env COMMANDER_HOME must be provided"
 
     String ectoolPath
-    if (System.properties['os.name'].toLowerCase().contains('windows')) {
+    if (System.properties['os.name'].toLowerCase().
+        contains('windows')) {
       ectoolPath = "bin/ectool.exe"
-    } else {
+    }
+    else {
       ectoolPath = "bin/ectool"
     }
     File ectool = new File(commanderHome, ectoolPath)
@@ -165,6 +167,16 @@ class PluginTestHelper extends PluginSpockTestSupport {
 
     String retrieveCommand = "${command} retrieveArtifactVersions --artifactVersionName ${artifactName}:${version} --toDirectory ${dir} "
     runCommand(retrieveCommand)
+  }
+
+  def deleteProjects = { projectsMap, foreground = true ->
+    projectsMap?.each { key, value ->
+      waitUntil {
+        dsl """
+                        deleteProject projectName: '$value', foreground: '$foreground'
+                    """
+      }
+    }
   }
 
 }
