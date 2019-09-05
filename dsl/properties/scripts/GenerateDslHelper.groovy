@@ -55,6 +55,11 @@ class GenerateDslHelper {
             toDirectory.mkdirs()
         }
 
+        // store full path to the directory in a job property:
+        electricFlow.setProperty(propertyName: 'directoryFullPath',
+                value: toDirectory.getAbsolutePath(), jobId: '$[/myJob/id]')
+
+        //
         def structure = electricFlow.getObjectDslStructure(objectType: objectType, objectName: objectName)
         println JsonOutput.prettyPrint(JsonOutput.toJson(structure))
 

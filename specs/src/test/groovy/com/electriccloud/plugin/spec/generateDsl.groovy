@@ -3,7 +3,7 @@ package com.electriccloud.plugin.spec
 import spock.lang.Ignore
 import spock.lang.Shared
 
-@Ignore
+//@Ignore
 class generateDsl extends PluginTestHelper {
     static String pName='EC-DslDeploy'
     static String jira="CEV-19608"
@@ -15,9 +15,11 @@ class generateDsl extends PluginTestHelper {
 
     def doSetupSpec() {
         dsl """ deleteProject(projectName: "$jira") """
+        dslFile "generate_dsl_test_procedure.dsl"
         pVersion = getP("/plugins/$pName/pluginVersion")
         plugDir = getP("/server/settings/pluginsDirectory")
-        dslDir = new File('build/dsl').getAbsolutePath().replaceAll("\\\\", "/")
+
+
     }
 
     def doCleanupSpec() {
@@ -28,22 +30,25 @@ class generateDsl extends PluginTestHelper {
      * includeChildrenInSameFile = true
      */
     def "generate DSL for project with procedures with includeAllChildren=true, childrenInSameFile=true"() {
+        dslDir='build/dsl1'
         given: dslFile("project_with_procedure.dsl", args)
 
         when: 'run generate Dsl procedure'
         def result= runProcedureDsl("""
         runProcedure(
-          projectName: "/plugins/$pName/project",
-          procedureName: "generateDslToDirectory",
+          projectName: "generateDslTestProject",
+          procedureName: "generateDslAndPublish",
           actualParameter: [
-            directory: "$dslDir",
-            pool: "$defaultPool",
+            directory: "dslCode1",
             objectType: 'project',
             objectName: "$jira",
             includeAllChildren: '1',
             includeChildrenInSameFile: '1',
             suppressDefaults: '1',
-            suppressParent: '1'
+            suppressParent: '1',
+            artifactName: 'dsl:dslCode1',
+            artifactVersionVersion: '1.0',
+            runResourceName: '$defaultPool'
           ]
         )""")
         then:
@@ -51,6 +56,10 @@ class generateDsl extends PluginTestHelper {
         def outcome=getJobProperty("outcome", result.jobId)
         assert outcome == "success"
 
+        when:
+        // retrieve artifact
+        retrieveArtifactVersion("dsl:dslCode1", "1.0", dslDir)
+        then:
         //
         File projDir = new File (dslDir, "projects/" + jira)
         assert projDir.exists()
@@ -96,27 +105,32 @@ project 'CEV-19608', {
 
         cleanup:
         deleteProjects([projectName: jira], false)
+        dsl 'deleteArtifact(artifactName: "dsl:dslCode1")'
+        new File(dslDir).deleteDir()
     }
 
     /**
      * check empty childrenInDifferentFile and default includeChildrenInSameFile (false)
      */
     def "generate DSL for project with procedures with includeAllChildren=true, all children in diff files"() {
+        dslDir='build/dsl2'
         given: dslFile("project_with_procedure.dsl", args)
 
         when: 'run generate Dsl procedure'
         def result= runProcedureDsl("""
         runProcedure(
-          projectName: "/plugins/$pName/project",
-          procedureName: "generateDslToDirectory",
+          projectName: "generateDslTestProject",
+          procedureName: "generateDslAndPublish",
           actualParameter: [
-            directory: "$dslDir",
-            pool: "$defaultPool",
+            directory: "dslCode2",
             objectType: 'project',
             objectName: "$jira",
             includeAllChildren: '1',
             suppressDefaults: '1',
-            suppressParent: '1'
+            suppressParent: '1',
+            artifactName: 'dsl:dslCode2',
+            artifactVersionVersion: '1.0',
+            runResourceName: '$defaultPool'
           ]
         )""")
         then:
@@ -124,6 +138,10 @@ project 'CEV-19608', {
         def outcome=getJobProperty("outcome", result.jobId)
         assert outcome == "success"
 
+        when:
+        // retrieve artifact
+        retrieveArtifactVersion("dsl:dslCode2", "1.0", dslDir)
+        then:
         //
         File projDir = new File (dslDir, "projects/" + jira)
         assert projDir.exists()
@@ -216,35 +234,45 @@ step 's1', {
 
         cleanup:
         deleteProjects([projectName: jira], false)
+        dsl 'deleteArtifact(artifactName: "dsl:dslCode2")'
+        new File(dslDir).deleteDir()
     }
 
     /**
      * use childrenInDifferentFile='procedures.*'
      */
     def "generate DSL for project with procedures with includeAllChildren=true, all children in diff files 2"() {
+        dslDir = 'build/dsl3'
         given: dslFile("project_with_procedure.dsl", args)
 
         when: 'run generate Dsl procedure'
         def result= runProcedureDsl("""
         runProcedure(
-          projectName: "/plugins/$pName/project",
-          procedureName: "generateDslToDirectory",
+          projectName: "generateDslTestProject",
+          procedureName: "generateDslAndPublish",
           actualParameter: [
-            directory: "$dslDir",
-            pool: "$defaultPool",
+            directory: "dslCode3",
             objectType: 'project',
             objectName: "$jira",
             includeAllChildren: '1',
             childrenInDifferentFile:'procedures.*',
             suppressDefaults: '1',
-            suppressParent: '1'
+            suppressParent: '1',
+            artifactName: 'dsl:dslCode3',
+            artifactVersionVersion: '1.0',
+            runResourceName: '$defaultPool'
           ]
         )""")
+
         then:
         assert result.jobId
         def outcome=getJobProperty("outcome", result.jobId)
         assert outcome == "success"
 
+        when:
+        // retrieve artifact
+        retrieveArtifactVersion("dsl:dslCode3", "1.0", dslDir)
+        then:
         //
         File projDir = new File (dslDir, "projects/" + jira)
         assert projDir.exists()
@@ -302,25 +330,31 @@ procedure 'proc2'
 
         cleanup:
         deleteProjects([projectName: jira], false)
+        dsl 'deleteArtifact(artifactName: "dsl:dslCode3")'
+        new File(dslDir).deleteDir()
     }
 
     def "generate DSL for project with procedures with includeAllChildren=true, procedures in diff files"() {
+        dslDir = 'build/dsl4'
         given: dslFile("project_with_procedure.dsl", args)
 
         when: 'run generate Dsl procedure'
         def result= runProcedureDsl("""
         runProcedure(
-          projectName: "/plugins/$pName/project",
-          procedureName: "generateDslToDirectory",
+          projectName: "generateDslTestProject",
+          procedureName: "generateDslAndPublish",
           actualParameter: [
-            directory: "$dslDir",
-            pool: "$defaultPool",
+            directory: "dslCode4",
             objectType: 'project',
             objectName: "$jira",
             includeAllChildren: '1',
             childrenInDifferentFile: 'procedures',
             suppressDefaults: '1',
-            suppressParent: '1'
+            suppressParent: '1',
+            artifactName: 'dsl:dslCode4',
+            artifactVersionVersion: '1.0',
+            runResourceName: '$defaultPool'
+         
           ]
         )""")
         then:
@@ -328,6 +362,10 @@ procedure 'proc2'
         def outcome=getJobProperty("outcome", result.jobId)
         assert outcome == "success"
 
+        when:
+        // retrieve artifact
+        retrieveArtifactVersion("dsl:dslCode4", "1.0", dslDir)
+        then:
         //
         File projDir = new File (dslDir, "projects/" + jira)
         assert projDir.exists()
@@ -402,9 +440,12 @@ procedure 'proc2', {
 
         cleanup:
         deleteProjects([projectName: jira], false)
+        dsl 'deleteArtifact(artifactName: "dsl:dslCode4")'
+        new File(dslDir).deleteDir()
     }
 
     def "generate DSL for project with procedures - no read privilege on proc2"() {
+        dslDir = 'build/dsl5'
         given: dslFile("project_with_procedure.dsl", args)
         dsl """createAclEntry (projectName: '$pName-$pVersion',
                           principalType: 'user', principalName: 'limited_user',
@@ -414,23 +455,30 @@ procedure 'proc2', {
         assertLogin("limited_user", "changeme")
         def result= runProcedureDsl("""
         runProcedure(
-          projectName: "/plugins/$pName/project",
-          procedureName: "generateDslToDirectory",
+          projectName: "generateDslTestProject",
+          procedureName: "generateDslAndPublish",
           actualParameter: [
-            directory: "$dslDir",
-            pool: "$defaultPool",
+            directory: "dslDir5",
             objectType: 'project',
             objectName: "$jira",
             includeAllChildren: '1',
             childrenInDifferentFile: 'procedures',
             suppressDefaults: '1',
-            suppressParent: '1'
+            suppressParent: '1',
+            artifactName: 'dsl:dslCode5',
+            artifactVersionVersion: '1.0',
+            runResourceName: '$defaultPool'
           ]
         )""")
         then:
         assert result.jobId
         def outcome=getJobProperty("outcome", result.jobId)
         assert outcome == "success"
+
+        when:
+        // retrieve artifact
+        retrieveArtifactVersion("dsl:dslCode5", "1.0", dslDir)
+        then:
 
         //
         File projDir = new File (dslDir, "projects/" + jira)
@@ -461,6 +509,8 @@ project 'CEV-19608'
         deleteProjects([projectName: jira], false)
         dsl """deleteAclEntry (projectName: '$pName-$pVersion',
                           principalType: 'user', principalName: 'limited_user')"""
+        dsl 'deleteArtifact(artifactName: "dsl:dslCode5")'
+        new File(dslDir).deleteDir()
     }
 
 
@@ -470,26 +520,34 @@ project 'CEV-19608'
      * @return
      */
     def "generate DSL for project with procedure, application and pipeline - includeChildren is empty"() {
+        dslDir = 'build/dsl6'
         given: dslFile("project_with_app_procedure_pipeline.dsl", args)
 
         when: 'run generate Dsl procedure'
         def result= runProcedureDsl("""
         runProcedure(
-          projectName: "/plugins/$pName/project",
-          procedureName: "generateDslToDirectory",
+          projectName: "generateDslTestProject",
+          procedureName: "generateDslAndPublish",
           actualParameter: [
             directory: "$dslDir",
-            pool: "$defaultPool",
             objectType: 'project',
             objectName: "$jira",
             suppressDefaults: '1',
-            suppressParent: '1'
+            suppressParent: '1',
+            artifactName: 'dsl:dslCode6',
+            artifactVersionVersion: '1.0',
+            runResourceName: '$defaultPool'
           ]
         )""")
         then:
         assert result.jobId
         def outcome=getJobProperty("outcome", result.jobId)
         assert outcome == "success"
+        //
+        when:
+        // retrieve artifact
+        retrieveArtifactVersion("dsl:dslCode6", "1.0", dslDir)
+        then:
 
         //
         File projDir = new File (dslDir, "projects/" + jira)
@@ -510,7 +568,8 @@ project 'CEV-19608'
 
         cleanup:
         deleteProjects([projectName: jira], false)
-
+        dsl 'deleteArtifact(artifactName: "dsl:dslCode6")'
+        new File(dslDir).deleteDir()
     }
 
 
@@ -520,28 +579,35 @@ project 'CEV-19608'
      * @return
      */
     def "generate DSL for project with procedure, application and pipeline - include applications and pipelines"() {
+        dslDir = 'build/dsl7'
         given: dslFile("project_with_app_procedure_pipeline.dsl", args)
 
         when: 'run generate Dsl procedure'
         def result= runProcedureDsl("""
         runProcedure(
-          projectName: "/plugins/$pName/project",
-          procedureName: "generateDslToDirectory",
+          projectName: "generateDslTestProject",
+          procedureName: "generateDslAndPublish",
           actualParameter: [
-            directory: "$dslDir",
-            pool: "$defaultPool",
+            directory: "dslDir7",
             objectType: 'project',
             objectName: "$jira",
             suppressDefaults: '1',
             suppressParent: '1',
-            includeChildren: 'applications, pipelines'
+            includeChildren: 'applications, pipelines',
+            artifactName: 'dsl:dslCode7',
+            artifactVersionVersion: '1.0',
+            runResourceName: '$defaultPool'
           ]
         )""")
         then:
         assert result.jobId
         def outcome=getJobProperty("outcome", result.jobId)
         assert outcome == "success"
-
+//
+        when:
+        // retrieve artifact
+        retrieveArtifactVersion("dsl:dslCode7", "1.0", dslDir)
+        then:
         //
         File projDir = new File (dslDir, "projects/" + jira)
         assert projDir.exists()
@@ -662,7 +728,8 @@ component 'component1', {
 
         cleanup:
         deleteProjects([projectName: jira], false)
-
+        dsl 'deleteArtifact(artifactName: "dsl:dslCode7")'
+        new File(dslDir).deleteDir()
     }
 
     private void assertFile(File file, String content) {
