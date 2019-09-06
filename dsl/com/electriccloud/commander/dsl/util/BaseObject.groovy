@@ -43,6 +43,7 @@ abstract class BaseObject extends DslDelegatingScript {
     File getObjectDSLFile(File objDir, String objType) {
     // println "Checking $objType in ${objDir.name}"
     File found=null
+    this.getBinding().setVariable("pluginDeployMode", true)
     objDir.eachFileMatch(FileType.FILES, ~/(?i)^.*\.(groovy|dsl)/) { dslFile ->
       // println "Processing ${dslFile.name}"
       if (dslFile.name ==~ /(?i)${objType}\.(groovy|dsl)/) {
@@ -65,12 +66,11 @@ abstract class BaseObject extends DslDelegatingScript {
     // println "  Name:  $projectName"
     // println "  dir  : $projectDir"
     def counter=0
-
-    File dslFile=getObjectDSLFile(new File(projectDir), "project");
+    File dslFile=getObjectDSLFile(new File(projectDir), "project")
     if (dslFile?.exists()) {
       println "Processing project file projects/$projectName/${dslFile.name}"
       def proj=evalInlineDsl(dslFile.toString(),
-                            [projectName: projectName, projectDir: projectDir], overwriteMode)
+                            [projectName: projectName, projectDir: projectDir], overwriteMode, true)
       counter ++
     } else {
       println "No project.groovy found"
@@ -131,7 +131,7 @@ abstract class BaseObject extends DslDelegatingScript {
      ######################################################################## */
   def loadObjects(String objType, String topDir,
                   String objPath = "/",
-                  Map bindingMap = [:], String overwriteMode = "0") {
+                  Map bindingMap = [:], String overwriteMode = "0", Boolean pluginDeployMode = true) {
 
     // println "Entering loadObjects"
     // println "  Type:  $objType"
@@ -142,8 +142,8 @@ abstract class BaseObject extends DslDelegatingScript {
 
     def counters=[:]
     def nbObjs=0
-    def plural=pluralForm(objType)
-    // lookking for "objects" directory i.e. "procedures", "personas"
+    def plural=getPluralForm(objType)
+    // looking for "objects" directory i.e. "procedures", "personas"
     File dir = new File(topDir, plural)
     if (dir.exists()) {
       def dlist=[]
@@ -190,6 +190,7 @@ abstract class BaseObject extends DslDelegatingScript {
           pipeline :   ['stage'],
           process:     ['processStep'],
           procedure:   ['step'],
+          release :    ['pipeline', 'deployerApplication', 'deployerService'],
           service:     ['container', 'process'],
           stage:       ['task']
         ]
@@ -214,7 +215,7 @@ abstract class BaseObject extends DslDelegatingScript {
 
 
   // Helper function to load another dsl script and evaluate it in-context
-  def evalInlineDsl(String dslFile, Map bindingMap, String overwriteMode = "0") {
+  def evalInlineDsl(String dslFile, Map bindingMap, String overwriteMode = "0", Boolean pluginDeployMode = true) {
     // println "evalInlineDsl: $dslFile"
     // println "  Map: " + bindingMap
     CompilerConfiguration cc = new CompilerConfiguration();
@@ -230,6 +231,7 @@ abstract class BaseObject extends DslDelegatingScript {
       script.getDelegate().getBinding().setVariable("bindingMap", bindingMap)
       script.getDelegate().getBinding().setVariable("overwrite", overwriteMode.toBoolean())
     }
+    script.getDelegate().getBinding().setVariable("pluginDeployMode", pluginDeployMode)
     return script.run();
   }
 
@@ -291,5 +293,14 @@ abstract class BaseObject extends DslDelegatingScript {
 
   public def getDelegate(){
     this.delegate
+  }
+  
+  def getPluralForm(String objType){
+    this.getBinding().setVariable("pluginDeployMode", true)
+    if (objType == "process") {
+      return 'processes'
+    } else {
+      return objType + 's'
+    }
   }
 }

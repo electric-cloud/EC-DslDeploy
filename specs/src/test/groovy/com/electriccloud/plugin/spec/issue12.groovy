@@ -1,6 +1,7 @@
 package com.electriccloud.plugin.spec
 import spock.lang.*
 
+@Ignore("ignore until latest server is not deployer")
 class issue12 extends PluginTestHelper {
   static String pName='EC-DslDeploy'
   @Shared String pVersion
