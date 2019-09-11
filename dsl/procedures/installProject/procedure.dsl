@@ -19,6 +19,10 @@ procedure procName, {
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployWorkflowDefinitions.groovy").text,
     shell: dslShell
 
+    step 'deployEnvironmentTemplates',
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployEnvironmentTemplates.groovy").text,
+    shell: dslShell
+
 	step 'deployEnvironments',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployEnvironments.groovy").text,
     shell: dslShell
