@@ -2,7 +2,6 @@ package com.electriccloud.plugin.spec
 
 import spock.lang.*
 
-@Ignore("Temporary, till CEV-23253 will be checked in")
 class overwrite_installDslFromDirectory extends PluginTestHelper {
     static String pName = 'EC-DslDeploy'
     @Shared
