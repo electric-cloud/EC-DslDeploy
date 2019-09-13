@@ -38,9 +38,9 @@ class deploy_multiple_pipelines
             projName: 'pipeline_project'
           ]
         )""")
-        then: "job succeeds"
+        then: "job completes with warning as no metadata.json for ordered children"
         assert p.jobId
-        assert getJobProperty("outcome", p.jobId) == "success"
+        assert getJobProperty("outcome", p.jobId) == "warning"
 
         def pipelines = dslWithXmlResponse("getPipelines projectName: '$projName'")
 

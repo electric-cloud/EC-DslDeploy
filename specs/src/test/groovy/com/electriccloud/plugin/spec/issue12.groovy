@@ -37,9 +37,9 @@ class issue12 extends PluginTestHelper {
             pool: "$defaultPool"
           ]
         )""")
-    then: "job succeeds"
+    then: "job completes with warnings because of metadata.json absence"
       assert p.jobId
-      assert getJobProperty("outcome", p.jobId) == "success"
+      assert getJobProperty("outcome", p.jobId) == "warning"
 
      // check master component
      then: "master component exist"

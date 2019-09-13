@@ -26,6 +26,7 @@ package com.electriccloud.commander.dsl.util
 
 import groovy.io.FileType
 import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import groovy.transform.Field
 import java.io.File
 
@@ -33,8 +34,21 @@ import org.codehaus.groovy.control.CompilerConfiguration
 import com.electriccloud.commander.dsl.DslDelegate
 import com.electriccloud.commander.dsl.DslDelegatingScript
 
+import java.util.logging.Logger
+
 
 abstract class BaseObject extends DslDelegatingScript {
+
+  private final static Logger logger = Logger.getLogger("")
+
+  private static final String METADATA_FILE = "metadata.json"
+
+  private static final Collection<String> ORDERED_CHILD_ENTITY_TYPES =
+          Arrays.asList("catalogItems", "deployerApplications", "deployerServices",
+                  "steps", "reportingFilters", "stages", "stateDefinitions", "tasks",
+                  "widgets");
+
+  def jsonSlurper = new JsonSlurper()
 
   // return the object.groovy or object.dsl
   //    AKA project.groovy, procedure.dsl, pipeline.groovy, ...
@@ -146,71 +160,96 @@ abstract class BaseObject extends DslDelegatingScript {
     // looking for "objects" directory i.e. "procedures", "personas"
     File dir = new File(topDir, plural)
     if (dir.exists()) {
+
+      // load metadata file if present
+      def metadataFile = new File(dir, METADATA_FILE)
+      def metadata = [:]
+      if (metadataFile.exists()) {
+
+        metadata = jsonSlurper.parseText(metadataFile.text)
+      }
       def dlist=[]
-      // sort object alphabetically
       dir.eachDir {dlist << it }
-      dlist.sort({it.name}).each {
-        def objName=it.name
-        def objDir=it.absolutePath
-        File dslFile=getObjectDSLFile(it, objType)
-        println "Processing $objType file $objPath/$plural/$objName/${dslFile.name}"
-        bindingMap[(objType+"Name")] = objName     //=> procedureName
-        bindingMap[(objType+"Dir")]  = objDir      //=> procedureDir
-        def obj=loadObject(dslFile.absolutePath, bindingMap, overwriteMode)
-        nbObjs ++
+      if (ORDERED_CHILD_ENTITY_TYPES.contains(plural) &&  dlist.size() > 1 && !metadata.order) {
+        logger.warning('No order found in metadata.json for ordered entity type %objName. Objects will be loaded in alphabetical order.')
+        setProperty(propertyName: "outcome", value: "warning")
+      }
 
-        // Load nested properties
-        def aclDir=new File(it, 'acls')
-        if (aclDir.directory) {
-          println "Found acls for $objPath/$plural/$objName"
-          "${objType}" objName, {
-            loadAcls(aclDir, "$objPath/$plural/$objName", bindingMap)
-          }
-        }  else {
-          println "  No acls directory for $objType $objName"
+      if (metadata.order) {
+        metadata.order.each {
+          // load in specified order
+          File objDir = new File(dir, it)
+          loadObjectFromDirectory(objDir, objType, objPath, plural, bindingMap, overwriteMode, nbObjs, counters)
         }
-
-        // Load nested properties
-        def propDir=new File(it, 'properties')
-        if (propDir.directory) {
-          "${objType}" objName, {
-            loadNestedProperties("$objPath/$plural/$objName", propDir)
-          }
-        }  else {
-          println "  No properties directory for $objType $objName"
-        }
-
-        def children = [
-          application: ['applicationTier', 'process', 'service', 'tierMap', 'environmentTemplateTierMap'],
-          applicationTier: ['component'],
-          catalog:     ['catalogItem'],
-          component:   ['process'],
-          dashboard:   ['widget', 'reportingFilter'],
-          environment: ['cluster', 'environmentTier'],
-          pipeline :   ['stage'],
-          process:     ['processStep'],
-          procedure:   ['step'],
-          release :    ['pipeline', 'deployerApplication', 'deployerService'],
-          service:     ['container', 'process'],
-          stage:       ['task']
-        ]
-        // load subObjects loadObjects (from local structure)
-        if (children.containsKey(objType)) {
-          // println "Found children: "
-          children[objType].each { child ->
-            // println "  processing $child"
-            def childrenCounter
-            "${objType}" objName, {
-              childrenCounter=loadObjects(child, objDir,
-                "$objPath/${objType}s/$objName", bindingMap)
-            }
-            counters << childrenCounter
-          }
+      } else {
+        // sort object alphabetically
+        dlist.sort({ it.name }).each {
+          loadObjectFromDirectory(it, objType, objPath, plural, bindingMap, overwriteMode, nbObjs, counters)
         }
       }
     }   // directory for "objects" exists
     counters.put(objType, nbObjs)
     return counters
+  }
+
+  def loadObjectFromDirectory(def childDir, String objType, String objPath, plural, Map bindingMap, String overwriteMode, int nbObjs, counters) {
+    def objName = childDir.name
+    def objDir = childDir.absolutePath
+    File dslFile = getObjectDSLFile(childDir, objType)
+    println "Processing $objType file $objPath/$plural/$objName/${dslFile.name}"
+    bindingMap[(objType + "Name")] = objName     //=> procedureName
+    bindingMap[(objType + "Dir")] = objDir      //=> procedureDir
+    def obj = loadObject(dslFile.absolutePath, bindingMap, overwriteMode)
+    nbObjs++
+
+    // Load nested properties
+    def aclDir = new File(childDir, 'acls')
+    if (aclDir.directory) {
+      println "Found acls for $objPath/$plural/$objName"
+      "${objType}" objName, {
+        loadAcls(aclDir, "$objPath/$plural/$objName", bindingMap)
+      }
+    } else {
+      println "  No acls directory for $objType $objName"
+    }
+
+    // Load nested properties
+    def propDir = new File(childDir, 'properties')
+    if (propDir.directory) {
+      "${objType}" objName, {
+        loadNestedProperties("$objPath/$plural/$objName", propDir)
+      }
+    } else {
+      println "  No properties directory for $objType $objName"
+    }
+
+    def children = [
+            application    : ['applicationTier', 'process', 'service', 'tierMap', 'environmentTemplateTierMap'],
+            applicationTier: ['component'],
+            catalog        : ['catalogItem'],
+            component      : ['process'],
+            dashboard      : ['widget', 'reportingFilter'],
+            environment    : ['cluster', 'environmentTier'],
+            pipeline       : ['stage'],
+            process        : ['processStep'],
+            procedure      : ['step'],
+            release        : ['pipeline', 'deployerApplication', 'deployerService'],
+            service        : ['container', 'process'],
+            stage          : ['task']
+    ]
+    // load subObjects loadObjects (from local structure)
+    if (children.containsKey(objType)) {
+      // println "Found children: "
+      children[objType].each { child ->
+        // println "  processing $child"
+        def childrenCounter
+        "${objType}" objName, {
+          childrenCounter = loadObjects(child, objDir,
+                  "$objPath/${objType}s/$objName", bindingMap)
+        }
+        counters << childrenCounter
+      }
+    }
   }     // loadObjects
 
 

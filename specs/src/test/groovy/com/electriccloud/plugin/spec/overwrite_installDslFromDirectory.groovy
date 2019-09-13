@@ -33,9 +33,9 @@ class overwrite_installDslFromDirectory extends PluginTestHelper {
             pool: 'local'
           ]
         )""")
-        then: "job succeeds"
+        then: "job completed with warnings"
         assert p.jobId
-        assert getJobProperty("outcome", p.jobId) == "success"
+        assert getJobProperty("outcome", p.jobId) == "warning"
 
         when: "add content to pipeline"
         dsl """
@@ -67,9 +67,9 @@ class overwrite_installDslFromDirectory extends PluginTestHelper {
             overwrite: '1'
           ]
         )""")
-        then: "job succeeds"
+        then: "job compeled with warnings"
         assert p2.jobId
-        assert getJobProperty("outcome", p2.jobId) == "success"
+        assert getJobProperty("outcome", p2.jobId) == "warning"
 
         then: "stage not exists"
         println "Checking new stage is not exists"
