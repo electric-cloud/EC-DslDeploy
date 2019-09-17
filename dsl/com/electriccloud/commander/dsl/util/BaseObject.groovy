@@ -228,7 +228,7 @@ abstract class BaseObject extends DslDelegatingScript {
             applicationTier: ['component'],
             catalog        : ['catalogItem'],
             component      : ['process'],
-            dashboard      : ['widget', 'reportingFilter'],
+            dashboard      : ['reportingFilter', 'widget'],
             environment    : ['cluster', 'environmentTier'],
             gate           : ['task'],
             pipeline       : ['stage'],
@@ -236,7 +236,8 @@ abstract class BaseObject extends DslDelegatingScript {
             procedure      : ['step'],
             release        : ['pipeline', 'deployerApplication', 'deployerService'],
             service        : ['container', 'process'],
-            stage          : ['gate', 'task']
+            stage          : ['gate', 'task'],
+            widget         : ['reportingFilter', 'widgetFilterOverride']
     ]
     // load subObjects loadObjects (from local structure)
     if (children.containsKey(objType)) {
@@ -260,7 +261,8 @@ abstract class BaseObject extends DslDelegatingScript {
     // println "  Map: " + bindingMap
     CompilerConfiguration cc = new CompilerConfiguration();
     cc.setScriptBaseClass(InnerDelegatingScript.class.getName());
-    //println "Class loader class name: ${this.scriptClassLoader.class.name}"
+    //println "Class loader class name: ${th
+    // is.scriptClassLoader.class.name}"
     // NMB-27865: Use the same groovy class loader that was used for evaluating
     // the DSL passed to evalDsl.
     GroovyShell sh = new GroovyShell(this.scriptClassLoader, bindingMap? new Binding(bindingMap) : new Binding(), cc);
