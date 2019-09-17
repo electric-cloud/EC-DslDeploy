@@ -230,12 +230,13 @@ abstract class BaseObject extends DslDelegatingScript {
             component      : ['process'],
             dashboard      : ['widget', 'reportingFilter'],
             environment    : ['cluster', 'environmentTier'],
+            gate           : ['task'],
             pipeline       : ['stage'],
             process        : ['processStep'],
             procedure      : ['step'],
             release        : ['pipeline', 'deployerApplication', 'deployerService'],
             service        : ['container', 'process'],
-            stage          : ['task']
+            stage          : ['gate', 'task']
     ]
     // load subObjects loadObjects (from local structure)
     if (children.containsKey(objType)) {
