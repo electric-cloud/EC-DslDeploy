@@ -126,7 +126,7 @@
     <label>Children in Different Files</label>
     <property>childrenInDifferentFile</property>
     <required>0</required>
-    <documentation>Comma-separated list of patterns to include, like pipeline, procedures.*, applications.applicationTiers.components</documentation>
+    <documentation>Comma-separated list of patterns to include, like pipelines, procedures.*, applications.applicationTiers.components</documentation>
   </formElement>
 
 </editor>

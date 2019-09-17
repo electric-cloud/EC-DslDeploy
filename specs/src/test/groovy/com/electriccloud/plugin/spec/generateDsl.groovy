@@ -572,7 +572,6 @@ project 'CEV-19608'
     }
 
 
-    @Ignore
     /**
      * includeChildren='applications, pipelines'
      * result: application and pipelines, and all nested objects in different files. procedure is absent

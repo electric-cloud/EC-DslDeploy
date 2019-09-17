@@ -57,13 +57,14 @@ class GenerateDslHelper {
             toDirectory.mkdirs()
         }
 
+        println "Target directory for generated DSL: " + toDirectory.getAbsolutePath() + "\n"
+
         // store full path to the directory in a job property:
         electricFlow.setProperty(propertyName: 'directoryFullPath',
                 value: toDirectory.getAbsolutePath(), jobId: '$[/myJob/id]')
 
         //
         def structure = electricFlow.getObjectDslStructure(objectType: objectType, objectName: objectName)
-        println JsonOutput.prettyPrint(JsonOutput.toJson(structure))
 
         if (structure && structure.object) {
             def obj = structure.object
@@ -126,7 +127,8 @@ class GenerateDslHelper {
         File objDslFile = new File (objDir, obj.type + ".groovy")
         if (topLevel && includeAllChildren && includeChildrenInSameFile) {
 
-            println String.format("generate DSL for the '%s' %s and all it's nested objects in a same file", obj.name, obj.type)
+            println String.format("generate DSL for the '%s' %s and all it's nested objects in a same file %s",
+                    obj.name, obj.type, objDslFile.getAbsolutePath())
 
             //All in one file including all commands
             objDslFile << electricFlow.generateDsl(path: obj.path, suppressNulls: suppressNulls, withAcls: includeAcls,
@@ -174,7 +176,7 @@ class GenerateDslHelper {
 
         // generate DSL for a current object
 
-        println String.format("Generate DSL for '%s' %s.", obj.name, obj.type)
+        println String.format("Generate DSL for '%s' %s in %s.", obj.name, obj.type, objDslFile.getAbsolutePath())
         def dsl = electricFlow.generateDsl(path: obj.path,
                 includeChildren: includeChildrenValue,
                 suppressNulls: suppressNulls,
