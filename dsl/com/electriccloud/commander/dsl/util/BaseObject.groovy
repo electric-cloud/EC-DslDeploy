@@ -60,15 +60,17 @@ abstract class BaseObject extends DslDelegatingScript {
     this.getBinding().setVariable("pluginDeployMode", true)
     objDir.eachFileMatch(FileType.FILES, ~/(?i)^.*\.(groovy|dsl)/) { dslFile ->
       // println "Processing ${dslFile.name}"
-      if (dslFile.name ==~ /(?i)${objType}\.(groovy|dsl)/) {
-        if (found) {
-          println "Multiple files match the ${objType}.groovy or ${objType}.dsl"
+      if (dslFile) {
+        if (dslFile.name ==~ /(?i)${objType}\.(groovy|dsl)/) {
+          if (found) {
+            println "Multiple files match the ${objType}.groovy or ${objType}.dsl"
+            setProperty(propertyName: "outcome", value: "warning")
+          }
+          found = dslFile
+        } else {
+          println "Ignoring incorrect file  ${dslFile.name} in ${objDir.name}"
           setProperty(propertyName: "outcome", value: "warning")
         }
-        found =  dslFile
-      }  else {
-         println "Ignoring incorrect file  ${dslFile.name} in ${objDir.name}"
-         setProperty(propertyName: "outcome", value: "warning")
       }
     }
     return found
@@ -81,7 +83,7 @@ abstract class BaseObject extends DslDelegatingScript {
     // println "  dir  : $projectDir"
     def counter=0
     File dslFile=getObjectDSLFile(new File(projectDir), "project")
-    if (dslFile?.exists()) {
+    if (dslFile && dslFile?.exists()) {
       println "Processing project file projects/$projectName/${dslFile.name}"
       def proj=evalInlineDsl(dslFile.toString(),
                             [projectName: projectName, projectDir: projectDir], overwriteMode, true)
@@ -179,12 +181,14 @@ abstract class BaseObject extends DslDelegatingScript {
         metadata.order.each {
           // load in specified order
           File objDir = new File(dir, it)
-          loadObjectFromDirectory(objDir, objType, objPath, plural, bindingMap, overwriteMode, nbObjs, counters)
+          loadObjectFromDirectory(objDir, objType, objPath, plural, bindingMap, overwriteMode, counters)
+          nbObjs++
         }
       } else {
         // sort object alphabetically
         dlist.sort({ it.name }).each {
-          loadObjectFromDirectory(it, objType, objPath, plural, bindingMap, overwriteMode, nbObjs, counters)
+          loadObjectFromDirectory(it, objType, objPath, plural, bindingMap, overwriteMode, counters)
+          nbObjs++
         }
       }
     }   // directory for "objects" exists
@@ -192,15 +196,18 @@ abstract class BaseObject extends DslDelegatingScript {
     return counters
   }
 
-  def loadObjectFromDirectory(def childDir, String objType, String objPath, plural, Map bindingMap, String overwriteMode, int nbObjs, counters) {
+  def loadObjectFromDirectory(def childDir, String objType, String objPath, plural, Map bindingMap, String overwriteMode, counters) {
     def objName = childDir.name
     def objDir = childDir.absolutePath
     File dslFile = getObjectDSLFile(childDir, objType)
+    if (dslFile == null) {
+      return
+    }
     println "Processing $objType file $objPath/$plural/$objName/${dslFile.name}"
     bindingMap[(objType + "Name")] = objName     //=> procedureName
     bindingMap[(objType + "Dir")] = objDir      //=> procedureDir
     def obj = loadObject(dslFile.absolutePath, bindingMap, overwriteMode)
-    nbObjs++
+
 
     // Load nested properties
     def aclDir = new File(childDir, 'acls')
