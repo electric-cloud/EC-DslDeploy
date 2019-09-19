@@ -346,10 +346,13 @@ abstract class BaseObject extends DslDelegatingScript {
   
   def getPluralForm(String objType){
     this.getBinding().setVariable("pluginDeployMode", true)
-    if (objType == "process") {
-      return 'processes'
-    } else {
-      return objType + 's'
+    switch (objType){
+      case "process" :
+          return 'processes'
+      case "personaCategory" :
+          return 'personaCategories'
+      default:
+          return objType + 's'
     }
   }
 }

@@ -1,9 +1,12 @@
 def pluralForm(String objType) {
-  if (objType == "process") {
-    return 'processes'
-  } else {
-    return objType + 's'
-  }
+  switch (objType) {
+    case "process":
+      return 'processes'
+    case "personaCategory":
+      return 'personaCategories'
+    default:
+      return objType + 's'
+    }
 }
 
 def summaryString (def counters) {
