@@ -19,14 +19,38 @@ procedure procName,
     workingDirectory: '$[/myJob/CWD]',
     shell: dslShell
 
-  step 'deployUsers',
-    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployUsers.dsl").text,
+  step 'deployPersonaPages',
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployPersonaPages.dsl").text,
+    resourceName: '$[pool]',
+    workingDirectory: '$[/myJob/CWD]',
+    shell: dslShell
+
+  step 'deployPersonaCategories',
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployPersonaCategories.dsl").text,
     resourceName: '$[pool]',
     workingDirectory: '$[/myJob/CWD]',
     shell: dslShell
 
   step 'deployPersonas',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployPersonas.dsl").text,
+    resourceName: '$[pool]',
+    workingDirectory: '$[/myJob/CWD]',
+    shell: dslShell
+
+  step 'deployUsers',
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployUsers.dsl").text,
+    resourceName: '$[pool]',
+    workingDirectory: '$[/myJob/CWD]',
+    shell: dslShell
+
+  step 'deployGroups',
+     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployGroups.dsl").text,
+     resourceName: '$[pool]',
+     workingDirectory: '$[/myJob/CWD]',
+     shell: dslShell
+
+  step 'deployReportObjectTypes',
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployReportObjectTypes.dsl").text,
     resourceName: '$[pool]',
     workingDirectory: '$[/myJob/CWD]',
     shell: dslShell
