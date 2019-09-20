@@ -1,0 +1,2 @@
+
+project 'resourceTemplate_project'
