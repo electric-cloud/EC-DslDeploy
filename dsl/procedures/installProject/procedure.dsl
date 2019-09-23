@@ -15,6 +15,10 @@ procedure procName, {
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployProcedures.dsl").text,
     shell: dslShell
 
+	step 'deployResourceTemplates',
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deployResourceTemplates.dsl").text,
+    shell: dslShell
+
 	step 'deployWorkflowDefinitions',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployWorkflowDefinitions.groovy").text,
     shell: dslShell
@@ -45,6 +49,10 @@ procedure procName, {
 
 	step 'deployReleases',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployReleases.groovy").text,
+    shell: dslShell
+
+	step 'deploySchedules',
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/deploySchedules.dsl").text,
     shell: dslShell
 
 	step 'deployCatalogs',
