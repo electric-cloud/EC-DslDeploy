@@ -153,4 +153,75 @@ class overwrite_installProject extends PluginTestHelper {
         assert getTierResult.contains("NoSuchApplicationTier")
     }
 
+    def "overwrite_installProject with catalogs"(){
+        given: "the overwrite_installProject catalog code"
+        when: "Load DSL Code"
+        def p = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installProject",
+          actualParameter: [
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_catalog/projects/overwrite_installProject",
+            projName: 'overwrite_installProject'
+          ]
+        )""")
+        then: "job succeeds"
+        assert p.jobId
+        assert getJobProperty("outcome", p.jobId) == "success"
+
+        and: "store catalog id"
+        def catalog = dsl"""getCatalog(projectName: 'overwrite_installProject', catalogName: 'testCatalog')"""
+        def catalogId = catalog?.catalog?.catalogId
+
+        and: "store catalog item id"
+        def catalogItem = dsl"""getCatalogItem(projectName: 'overwrite_installProject', catalogName: 'testCatalog', catalogItemName: 'testItem')"""
+        assert catalogItem
+        def catalogItemId = catalogItem?.catalogItem?.catalogItemId
+
+        when: "add catalog item to catalog"
+        dsl """createCatalogItem(projectName: 'overwrite_installProject', catalogName: 'testCatalog', catalogItemName: 'testItem2')"""
+
+        then: "new catalog item is created"
+        def newCatalogItem = dsl """getCatalogItem(projectName: 'overwrite_installProject', catalogName: 'testCatalog', catalogItemName: 'testItem2')"""
+        assert newCatalogItem
+
+        then: "add property to catalog"
+        def newProperty = dsl """createProperty(propertyName: 'testCatalogProperty2', projectName: 'overwrite_installProject', catalogName: 'testCatalog')"""
+        assert newProperty
+
+        when: "Load DSL Code with overwrite = 1"
+        def p2 = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installProject",
+          actualParameter: [
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_catalog/projects/overwrite_installProject",
+            projName: 'overwrite_installProject',
+            overwrite: '1'
+          ]
+        )""")
+        then: "job succeeds"
+        assert p2.jobId
+        assert getJobProperty("outcome", p2.jobId) == "success"
+
+        then: "only one catalog remained in project"
+        def catalogs = dsl """getCatalogs(projectName: 'overwrite_installProject')"""
+        assert catalogs?.catalog?.size == 1
+        def remainedCatalog = catalogs?.catalog[0]
+
+        then: "catalog entity UUID did not change"
+        assert remainedCatalog?.catalogId == catalogId
+
+        then: "added property was overwritten"
+        def properties = dsl """getProperties (projectName: 'overwrite_installProject', catalogName: 'testCatalog' )"""
+        assert properties?.propertySheet?.property?.size == 1
+
+        then: "only one catalog item remained"
+        def catalogItems = dsl """getCatalogItems(projectName: 'overwrite_installProject', catalogName: 'testCatalog')"""
+        assert catalogItems?.catalogItem?.size == 1
+        def remainedCatalogItem = catalogItems?.catalogItem[0]
+
+        then: "catalog item UUID did not change"
+        assert remainedCatalogItem?.catalogItemId == catalogItemId
+    }
 }
