@@ -236,7 +236,7 @@ abstract class BaseObject extends DslDelegatingScript {
     }
 
     def children = [
-            application    : ['applicationTier', 'process', 'service', 'tierMap', 'environmentTemplateTierMap'],
+            application    : ['applicationTier', 'service', 'process', 'tierMap', 'environmentTemplateTierMap', 'snapshot'],
             applicationTier: ['component'],
             catalog        : ['catalogItem'],
             component      : ['process'],
@@ -247,9 +247,9 @@ abstract class BaseObject extends DslDelegatingScript {
             process        : ['processStep'],
             procedure      : ['step'],
             release        : ['pipeline', 'deployerApplication', 'deployerService'],
-            service        : ['container', 'process'],
+            service        : ['container', 'port', 'process', 'environmentMap', 'snapshot'],
             stage          : ['gate', 'task'],
-            task           :  ['task'],
+            task           : ['task'],
             widget         : ['reportingFilter', 'widgetFilterOverride']
     ]
     // load subObjects loadObjects (from local structure)
