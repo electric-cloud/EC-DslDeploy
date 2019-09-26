@@ -177,19 +177,24 @@ abstract class BaseObject extends DslDelegatingScript {
         setProperty(propertyName: "outcome", value: "warning")
       }
 
-      if (metadata.order) {
-        metadata.order.each {
-          // load in specified order
-          File objDir = new File(dir, it)
-          loadObjectFromDirectory(objDir, objType, objPath, plural, bindingMap, overwriteMode, counters)
-          nbObjs++
+      try {
+        if (metadata.order) {
+          metadata.order.each {
+            // load in specified order
+            File objDir = new File(dir, it)
+            loadObjectFromDirectory(objDir, objType, objPath, plural, bindingMap, overwriteMode, counters)
+            nbObjs++
+          }
+        } else {
+          // sort object alphabetically
+          dlist.sort({ it.name }).each {
+            loadObjectFromDirectory(it, objType, objPath, plural, bindingMap, overwriteMode, counters)
+            nbObjs++
+          }
         }
-      } else {
-        // sort object alphabetically
-        dlist.sort({ it.name }).each {
-          loadObjectFromDirectory(it, objType, objPath, plural, bindingMap, overwriteMode, counters)
-          nbObjs++
-        }
+      } catch (Exception e) {
+        logger.error(e);
+        throw e;
       }
     }   // directory for "objects" exists
     counters.put(objType, nbObjs)
@@ -244,6 +249,7 @@ abstract class BaseObject extends DslDelegatingScript {
             release        : ['pipeline', 'deployerApplication', 'deployerService'],
             service        : ['container', 'process'],
             stage          : ['gate', 'task'],
+            task           :  ['task'],
             widget         : ['reportingFilter', 'widgetFilterOverride']
     ]
     // load subObjects loadObjects (from local structure)
