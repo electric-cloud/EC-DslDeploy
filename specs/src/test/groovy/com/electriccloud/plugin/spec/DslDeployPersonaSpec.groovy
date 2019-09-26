@@ -96,14 +96,14 @@ class DslDeployPersonaSpec
         then: "check user was created"
         def user = dsl """getUser(userName : '$userName')"""
         assert user?.user?.personaName.size == 2
-        assert user?.user?.personaName[0].equals("vip1")
-        assert user?.user?.personaName[1].equals("vip2")
+        assert "vip1" in user?.user?.personaName
+        assert "vip2" in user?.user?.personaName
 
         then: "check group was created"
         def group = dsl """getGroup(groupName : '$groupName')"""
         assert group?.group?.personaName.size == 2
-        assert group?.group?.personaName[0].equals("vip1")
-        assert group?.group?.personaName[1].equals("vip2")
+        assert "vip1" in group?.group?.personaName
+        assert "vip2" in group?.group?.personaName
 
         cleanup:
         dsl """deletePersona (personaName: '$personaName1')"""
