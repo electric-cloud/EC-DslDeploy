@@ -26,6 +26,7 @@ dependencies {
     compile 'com.electriccloud:ec-specs-plugins-core:1.9.1'
     compile 'com.jayway.restassured:rest-assured:2.4.0'
     compile 'org.apache.ant:ant:1.9.4'
+    compile 'xom:xom:1.2.5'
 
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
     compile group: 'net.rcarz', name: 'jira-client', version: '0.5'
