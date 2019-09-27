@@ -110,27 +110,22 @@ class overwrite_installProject extends PluginTestHelper {
                                          )"""
         dsl """createEmailNotifier(projectName: '$projName',
                                          procedureName: 'testProcedure', 
-                                         stepName: 'testProcedureStep', 
+                                         stepName: 'testProcedureStep',
                                          notifierName: 'newNotifier', 
-                                         formattingTemplate: 'Default', 
+                                         formattingTemplate: 'Default',
                                          destinations: 'a@a.a'
                                          )"""
 
         then: "new email notifiers exist"
         def newProcedNotifier = dsl"""getEmailNotifier(projectName: '$projName',
-                                         procedureName: 'testProcedure', 
-                                         stepName: 'testProcedureStep', 
-                                         notifierName: 'newNotifier', 
-                                         formattingTemplate: 'Default', 
-                                         destinations: 'a@a.a'
+                                         procedureName: 'testProcedure',
+                                         notifierName: 'newNotifier'
                                          )"""
         assert newProcedNotifier
         def newStepNotifier = dsl"""getEmailNotifier(projectName: '$projName',
                                          procedureName: 'testProcedure', 
-                                         stepName: 'testProcedureStep', 
-                                         notifierName: 'newNotifier', 
-                                         formattingTemplate: 'Default', 
-                                         destinations: 'a@a.a'
+                                         stepName: 'testProcedureStep',
+                                         notifierName: 'newNotifier'
                                          )"""
         assert newStepNotifier
 
@@ -193,7 +188,7 @@ class overwrite_installProject extends PluginTestHelper {
                                                          stepName: 'testProcedureStep'
                                                          )"""
         assert stepNotifiers?.emailNotifier?.size == 1
-        assert stepNotifiers?.emailNotifier[0]?.notifierName == 'testEmailNotifier'
+        assert stepNotifiers?.emailNotifier[0]?.notifierName == 'testStepNotifier'
 
     }
 
@@ -206,7 +201,7 @@ class overwrite_installProject extends PluginTestHelper {
           projectName: "/plugins/$pName/project",
           procedureName: "installProject",
           actualParameter: [
-            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_procedure/projects/$projName",
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_workflowDefinition/projects/$projName",
             projName: '$projName'
           ]
         )""")
@@ -217,12 +212,12 @@ class overwrite_installProject extends PluginTestHelper {
         //add new property to workflow definition
         when: "new property is added to workflowDefintion"
         dsl """createProperty(projectName: '$projName',
-                                    workflowDefinitionName: 'wfd',
+                                    workflowDefinitionName: 'test_wfd',
                                     propertyName: 'testProperty2'
                                     )"""
         then: "property exists"
         def newWorkflowProp = """getProperty(projectName: '$projName',
-                                    workflowDefinitionName: 'wfd',
+                                    workflowDefinitionName: 'test_wfd',
                                     propertyName: 'testProperty2'
                                     )"""
         assert newWorkflowProp
@@ -230,24 +225,138 @@ class overwrite_installProject extends PluginTestHelper {
         //add new transtiton to existing state definition
         when: "new transition definition is added"
         dsl """createTransitionDefinition(projectName: '$projName',
-                                                workflowDefinitonName: 'wfd',
-                                                transitionDefinitonName: 'newTransition',
+                                                workflowDefinitionName: 'test_wfd',
+                                                transitionDefinitionName: 'newTransition',
                                                 stateDefinitionName: 'start',
                                                 targetState: 'start'
                                                 )"""
         then: "new transition definition exists"
         def newTrans = dsl """getTransitionDefinition(projectName: '$projName',
-                                                workflowDefinitonName: 'wfd',
-                                                transitionDefinitonName: 'newTransition',
-                                                stateDefinitionName: 'start'
-                                                )"""
+                                                           workflowDefinitionName: 'test_wfd',
+                                                           transitionDefinitionName: 'newTransition',
+                                                           stateDefinitionName: 'start',
+                                                           targetState: 'start'
+                                                           )"""
         assert newTrans
+
         //add new emailNotifier to existing state definition
+        when: "new email notifier is added to existing state definiton"
+        dsl """createEmailNotifier(projectName: '$projName',
+                                         workflowDefinitionName: 'test_wfd',
+                                         stateDefinitionName: 'start', 
+                                         notifierName: 'newNotifier', 
+                                         formattingTemplate: 'Default',
+                                         destinations: 'a@a.a'
+                                         )"""
+        then: "new notifier exists"
+        def newNotifier = dsl"""getEmailNotifier(projectName: '$projName',
+                                                     workflowDefinitionName: 'test_wfd',
+                                                     notifierName: 'newNotifier',
+                                                     stateDefinitionName: 'start'
+                                                     )"""
+        assert newNotifier
+
         //add new formalParameter to existing state definition
+        when: "new formal parameter is added to existing state definition"
+        dsl"""createFormalParameter(projectName: '$projName',
+                                          workflowDefinitionName: 'test_wfd',
+                                          formalParameterName: 'newFormal',
+                                          stateDefinitionName: 'start'
+                                          )"""
+        then: "new formal parameter exists"
+        def newFormal = dsl"""getFormalParameter(projectName: '$projName',
+                                                         workflowDefinitionName: 'test_wfd',
+                                                         formalParameterName: 'newFormal',
+                                                         stateDefinitionName: 'start'
+                                                         )"""
+        assert newFormal
+
         //add new property to existing state definition
+        when: "new property is added to workflowDefintion"
+        dsl """createProperty(projectName: '$projName',
+                                    workflowDefinitionName: 'test_wfd',
+                                    stateDefinitionName: 'start',
+                                    propertyName: 'testProperty2'
+                                    )"""
+        then: "property exists"
+        def newStateProp = dsl """getProperty(projectName: '$projName',
+                                    workflowDefinitionName: 'test_wfd',
+                                    stateDefinitionName: 'start',
+                                    propertyName: 'testProperty2'
+                                    )"""
+        assert newStateProp
 
         //add new state definition to worklow definiton
+        when: "new state definition is added to workflow definition"
+        dsl """createStateDefinition (projectName: '$projName',
+                                            workflowDefinitionName: 'test_wfd',
+                                            stateDefinitionName: 'newState'
+                                            )"""
+        then: "new state definition exists"
+        def newState = dsl """getStateDefinition (projectName: '$projName',
+                                                       workflowDefinitionName: 'test_wfd',
+                                                       stateDefinitionName: 'newState'
+                                                       )"""
+        assert newState
 
+        when: "Load DSL Code with overwrite = 1"
+        def p2 = runProcedureDsl("""
+                runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installProject",
+          actualParameter: [
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_workflowDefinition/projects/$projName",
+            projName: '$projName',
+            overwrite: '1'
+          ]
+        )""")
+        then: "job succeeds"
+        assert p2.jobId
+        assert getJobProperty("outcome", p2.jobId) == "success"
+
+        then: "workflow definition has only two state definitions"
+        def stateDefinitions = dsl """getStateDefinitions(projectName: '$projName',
+                                                             workflowDefinitionName: 'test_wfd')"""
+        assert stateDefinitions?.stateDefinition?.size == 2
+        assert stateDefinitions?.stateDefinition[0]?.stateDefinitionName == 'start'
+        assert stateDefinitions?.stateDefinition[1]?.stateDefinitionName == 'finish'
+
+        then: "workflow propery was cleaned up"
+        def wfdProperties = dsl"""getProperties(projectName: '$projName',
+                                                    workflowDefinitionName: 'test_wfd'
+                                                    )"""
+        assert wfdProperties?.propertySheet?.property[0]?.propertyName == 'testWorkflowProperty'
+
+        then: "added transition definition was cleaned up"
+        def transitions = dsl"""getTransitionDefinitions(projectName: '$projName',
+                                                             workflowDefinitionName: 'test_wfd',
+                                                             stateDefinitionName: 'start'
+                                                             )"""
+        assert transitions?.transitionDefinition?.size == 1
+        assert transitions?.transitionDefinition[0].transitionDefinitionName == 'transition1'
+
+        then: "added email notifier was cleaned up"
+        def notifiers = dsl"""getEmailNotifiers(projectName: 'overwrite_installProject',                                                workflowDefinitionName: 'test_wfd',
+                                      stateDefinitionName: 'start'
+                                      )"""
+        assert notifiers?.emailNotifier?.size == 1
+        assert notifiers?.emailNotifier[0]?.notifierName == 'testNotifier'
+
+        then: "added formal parameter was cleaned up"
+        def formals = dsl"""getFormalParameters(projectName: '$projName',
+                                                         workflowDefinitionName: 'test_wfd',
+                                                         stateDefinitionName: 'start'
+                                                         )"""
+        assert formals?.formalParameter?.size ==1
+        assert formals?.formalParameter[0].formalParameterName == 'testParameter'
+
+        then: "added stated definition property was cleaned up"
+        def stateProps = dsl """getProperties(projectName: '$projName',
+                                    workflowDefinitionName: 'test_wfd',
+                                    stateDefinitionName: 'start'
+                                    )"""
+        assert stateProps?.propertySheet?.property?.size == 2
+        assert stateProps?.propertySheet?.property[1]?.propertyName == 'testStartProperty'
     }
 
     // overwrite with pipeline
