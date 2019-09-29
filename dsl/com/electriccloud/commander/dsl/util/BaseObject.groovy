@@ -245,11 +245,12 @@ abstract class BaseObject extends DslDelegatingScript {
             gate           : ['task'],
             pipeline       : ['stage'],
             process        : ['processStep'],
-            procedure      : ['step'],
+            procedure      : ['step', 'emailNotifier'],
             release        : ['pipeline', 'deployerApplication', 'deployerService'],
             service        : ['container', 'port', 'process', 'environmentMap', 'snapshot'],
             stage          : ['gate', 'task'],
             task           : ['task'],
+            step           : ['emailNotifier'],
             widget         : ['reportingFilter', 'widgetFilterOverride']
     ]
     // load subObjects loadObjects (from local structure)
