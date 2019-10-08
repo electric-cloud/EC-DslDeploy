@@ -19,10 +19,11 @@ import com.electriccloud.commander.dsl.util.BaseObject
 $[/myProject/scripts/summaryString]
 
 def absDir='$[/myJob/CWD]'
+def overwrite = '$[overwrite]'
 File resDir=new File(absDir, 'resources')
 
 if (resDir.exists()) {
-  def counters=loadObjects('resource', absDir)
+  def counters=loadObjects('resource', absDir, "/", [:], overwrite, true)
   def nb=counters['resource']
   setProperty(propertyName: "summary", value: summaryString(counters))
 } else {
