@@ -18,10 +18,11 @@ import com.electriccloud.commander.dsl.util.BaseObject
 $[/myProject/scripts/summaryString]
 
 def absDir='$[/myJob/CWD]'
+def overwrite = '$[overwrite]'
 File dir=new File(absDir, "personas")
 
 if (dir.exists()) {
-  def counters=loadObjects('persona', absDir)
+  def counters=loadObjects('persona', absDir, "/", [:], overwrite, true)
   setProperty(propertyName: "summary", value: summaryString(counters))
 } else {
   setProperty(propertyName:"summary", value:"No personas")
