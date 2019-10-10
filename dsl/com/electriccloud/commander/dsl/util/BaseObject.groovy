@@ -284,6 +284,7 @@ abstract class BaseObject extends DslDelegatingScript {
     script.setDelegate(this.delegate);
     // add bindingMap to DslDelegate to deal with collections removing in 'overwrite' mode
     if (overwriteMode.toBoolean()) {
+      println "  Add binding map to DSLDelegate vars: " + bindingMap
       script.getDelegate().getBinding().setVariable("bindingMap", bindingMap)
       script.getDelegate().getBinding().setVariable("overwrite", overwriteMode.toBoolean())
     }

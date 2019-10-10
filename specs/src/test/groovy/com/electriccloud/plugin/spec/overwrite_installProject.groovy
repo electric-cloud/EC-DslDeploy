@@ -38,6 +38,29 @@ class overwrite_installProject extends PluginTestHelper {
         assert p.jobId
         assert getJobProperty("outcome", p.jobId) == "success"
 
+        when: "add procedure fields"
+        dsl """modifyProcedure(
+            projectName: '$projName', 
+            procedureName: 'testProcedure',
+            description: 'new value',
+            jobNameTemplate: 'new value',
+            resourceName: 'new value',
+            timeLimit: '10', 
+            timeLimitUnits: 'seconds',
+            workspaceName: 'new value'
+        )"""
+
+        then: "procedure fields are not empty"
+        def procWithFields = dsl """getProcedure(
+            projectName: '$projName', 
+            procedureName: 'testProcedure'
+        )"""
+        assert procWithFields.procedure.description != ''
+        assert procWithFields.procedure.resourceName != ''
+        assert procWithFields.procedure.jobNameTemplate != ''
+        assert procWithFields.procedure.workspaceName != ''
+        assert procWithFields.procedure.timeLimit != ''
+
         when: "procedure step is added"
         dsl """createStep(projectName: '$projName', 
                                 procedureName: 'testProcedure',
@@ -190,8 +213,19 @@ class overwrite_installProject extends PluginTestHelper {
         assert stepNotifiers?.emailNotifier?.size == 1
         assert stepNotifiers?.emailNotifier[0]?.notifierName == 'testStepNotifier'
 
-    }
+        and: "procedure fields are empty"
+        def procWithoutFields = dsl """getProcedure(
+            projectName: '$projName', 
+            procedureName: 'testProcedure'
+        )"""
+        assert procWithoutFields.procedure.description == ''
+        assert procWithoutFields.procedure.resourceName == ''
+        assert procWithoutFields.procedure.jobNameTemplate == ''
+        assert procWithoutFields.procedure.workspaceName == ''
+        assert procWithoutFields.procedure.timeLimit == ''
 
+
+    }
 
     def "overwrite_installProject with workflowDefinition"(){
         given: "the overwrite_installProject application code"
@@ -561,4 +595,116 @@ class overwrite_installProject extends PluginTestHelper {
         then: "catalog item UUID did not change"
         assert remainedCatalogItem?.catalogItemId == catalogItemId
     }
+
+    def "overwrite_installProject with environment"() {
+        given: "the overwrite_installProject code"
+        when: "Load DSL Code"
+        def p = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installProject",
+          actualParameter: [
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_environment/projects/overwrite_installProject",
+            projName: 'overwrite_installProject'
+          ]
+        )""")
+        then: "job completed"
+        waitUntil {
+            assert p.jobId
+            assert getJobProperty("outcome", p.jobId) == "success" || getJobProperty("outcome", p.jobId) == "warning"
+        }
+
+        when: "add fields to cluster"
+        def changedCluster = dsl """
+        modifyCluster(
+          projectName: "$projName",
+          environmentName: "e1",
+          clusterName: "c1",
+          description: "new value"
+        )"""
+
+        then: "Cluster changed"
+        assert changedCluster
+        assert changedCluster.cluster.description == 'new value'
+
+        when: "Create new cluster"
+        def newCluster = dsl """
+        createCluster(
+          projectName: "$projName",
+          environmentName: "e1",
+          clusterName: "newCluster"
+        )"""
+
+        then: "Cluster created"
+        assert newCluster
+        assert newCluster.cluster.clusterName == 'newCluster'
+
+        when: "Create new environment tier"
+        def newTier = dsl """
+        createEnvironmentTier(
+          projectName: "$projName",
+          environmentName: "e1",
+          environmentTierName: "newTier"
+        )"""
+
+        then: "Tier created"
+        assert newTier
+        assert newTier.environmentTier.environmentTierName == 'newTier'
+
+        when: "add fields to environment"
+        def changedEnv = dsl """
+        modifyEnvironment(
+          projectName: "$projName",
+          environmentName: "e1",
+          description: "new value"
+        )"""
+
+        then: "Env changed"
+        assert changedEnv
+        assert changedEnv.environment.description == 'new value'
+        assert changedEnv.environment.clusterCount == '2'
+        assert changedEnv.environment.tierCount == '2'
+
+        when: "Load DSL Code with overwrite = 1"
+        def p2 = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installProject",
+          actualParameter: [
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_environment/projects/overwrite_installProject",
+            projName: 'overwrite_installProject',
+            overwrite: '1'
+          ]
+        )""")
+        then: "job completed"
+        assert p2.jobId
+        assert getJobProperty("outcome", p2.jobId) == "success" || getJobProperty("outcome", p2.jobId) == "warning"
+
+        when: "check env state"
+        def changedEnv2 = dsl """
+        getEnvironment(
+          projectName: "$projName",
+          environmentName: "e1"
+        )"""
+
+        then: "description is empty"
+        assert changedEnv2
+        assert changedEnv2.environment.description == ''
+        assert changedEnv2.environment.clusterCount == '1'
+        assert changedEnv2.environment.tierCount == '1'
+
+
+        when: "check cluster description"
+        def changedCluster2 = dsl """
+            getCluster(
+              projectName: "$projName",
+              environmentName: "e1",
+              clusterName: "c1"
+        )"""
+
+        then: "description is empty"
+        assert changedCluster2
+        assert changedCluster2.cluster.description == ''
+    }
+
 }
