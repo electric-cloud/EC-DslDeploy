@@ -707,4 +707,168 @@ class overwrite_installProject extends PluginTestHelper {
         assert changedCluster2.cluster.description == ''
     }
 
+    def "overwrite_installProject with component"(){
+        given: "the overwrite_installProject code"
+        when: "Load DSL Code"
+        def p = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installProject",
+          actualParameter: [
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_component/projects/overwrite_installProject",
+            projName: 'overwrite_installProject'
+          ]
+        )""")
+        then: "job completed"
+        waitUntil {
+            assert p.jobId
+            assert getJobProperty("outcome", p.jobId) == "success" || getJobProperty("outcome", p.jobId) == "warning"
+        }
+
+        when: "modify component fields"
+
+        def modifiedComponent = dsl """
+        modifyComponent(
+            projectName: '$projName',
+            componentName : 'comp_name1',
+            description: 'this is new description'
+            )"""
+
+        then: "component was modified"
+        assert modifiedComponent.component.description == 'this is new description'
+
+        when: "modify component process fields"
+        def modifiedComponentProcess = dsl """
+        modifyProcess(
+                projectName: '$projName',
+                componentName : 'comp_name1',
+                processName: 'proc_name1',
+                timeLimit: '15',
+                timeLimitUnits: 'hours',
+                description: 'this is new description'
+            )"""
+
+        then: "component process was modified"
+        assert modifiedComponentProcess.process.description == 'this is new description'
+        assert modifiedComponentProcess.process.timeLimit == '15'
+        assert modifiedComponentProcess.process.timeLimitUnits == 'hours'
+
+        when: "modify component process step fields"
+        def modifiedComponentProcessStep = dsl """
+        modifyProcessStep(
+            projectName: '$projName',
+            componentName : 'comp_name1',
+            processName: 'proc_name1',
+            processStepName: 'step1',
+            timeLimit: '15',
+            timeLimitUnits: 'hours',
+            workspaceName: 'atatata',
+            description: 'this is new description'
+            )"""
+
+        then: 'component process step was modified'
+        assert modifiedComponentProcessStep.processStep.description == 'this is new description'
+        assert modifiedComponentProcessStep.processStep.timeLimit == '15'
+        assert modifiedComponentProcessStep.processStep.timeLimitUnits == 'hours'
+        assert modifiedComponentProcessStep.processStep.workspaceName == 'atatata'
+
+        when: "add component process"
+        dsl """
+        createProcess(
+            projectName: '$projName',
+            componentName : 'comp_name1',
+            processName: 'tempProcess'
+        )
+        """
+        then: 'new process was added'
+        def tempProcess = dsl """
+        getProcess(
+            projectName: '$projName',
+            componentName : 'comp_name1',
+            processName: 'tempProcess'
+        )
+        """
+        assert tempProcess
+
+        when: "add component process step to existing process"
+        dsl """createProcessStep(
+            projectName: '$projName',
+            componentName : 'comp_name1',
+            processName: 'proc_name1',
+            processStepName: 'tempStep'
+            )
+        """
+
+        then: 'process step was added'
+        def tempProcessStep = dsl """
+        getProcessStep(
+            projectName: '$projName',
+            componentName : 'comp_name1',
+            processName: 'proc_name1',
+            processStepName: 'tempStep'
+        )
+        """
+        assert tempProcessStep
+
+        when: "Load DSL Code with overwrite = 1"
+        def p2 = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installProject",
+          actualParameter: [
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_component/projects/overwrite_installProject",
+            projName: 'overwrite_installProject',
+            overwrite: '1'
+          ]
+        )""")
+        then: "job completed"
+        assert p2.jobId
+        assert getJobProperty("outcome", p2.jobId) == "success" || getJobProperty("outcome", p2.jobId) == "warning"
+
+        then: 'component fields were cleared'
+        def component = dsl """
+        getComponent(
+            projectName: '$projName',
+            componentName : 'comp_name1'
+        )
+        """
+        assert component.component.description == ''
+
+        then: 'new component process was deleted'
+        def componentProcess = dsl """
+        getProcess(
+            projectName: '$projName',
+            componentName : 'comp_name1',
+            processName: 'proc_name1'
+                )"""
+        assert componentProcess
+        assert componentProcess.process.timeLimit == ''
+        assert componentProcess.process.timeLimitUnits == 'minutes'
+        assert componentProcess.process.workspaceName == null
+        assert component.component.processCount == '1'
+
+        then: 'new process step was deleted'
+        def componentProcessStep = dsl """
+       getProcessStep(
+            projectName: '$projName',
+            componentName : 'comp_name1',
+            processName: 'proc_name1',
+            processStepName: 'step1'
+       ) 
+       """
+        assert componentProcessStep.processStep.timeLimit == ''
+        assert componentProcessStep.processStep.timeLimitUnits == 'minutes'
+        assert componentProcessStep.processStep.workspaceName == null
+
+        def processSteps = dsl """
+        getProcessSteps(
+            projectName: 'overwrite_installProject',
+            componentName : 'comp_name1',
+            processName: 'proc_name1'
+        )
+        """
+        assert processSteps.processStep.size() == 2
+        assert processSteps.processStep[0].processStepName == 'step1'
+        assert processSteps.processStep[1].processStepName == 'step2'
+    }
 }
