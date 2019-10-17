@@ -253,17 +253,32 @@ abstract class BaseObject extends DslDelegatingScript {
             step           : ['emailNotifier'],
             widget         : ['reportingFilter', 'widgetFilterOverride']
     ]
+
     // load subObjects loadObjects (from local structure)
     if (children.containsKey(objType)) {
-      // println "Found children: "
-      children[objType].each { child ->
-        // println "  processing $child"
-        def childrenCounter
-        "${objType}" objName, {
-          childrenCounter = loadObjects(child, objDir,
-                  "$objPath/${objType}s/$objName", bindingMap)
+
+      // skip overwrite mode for parent object when
+      // handle children
+      if (bindingMap.get('skipOverwrite') == null) {
+        bindingMap.put('skipOverwrite', new HashSet<String>())
+      }
+      // special case for task to support group subtasks
+      String objKey = objType != 'task' ? objType : objType + '-' + objName
+      ((Set<String>)bindingMap.get('skipOverwrite')).add(objKey)
+      try {
+        // println "Found children: "
+        children[objType].each { child ->
+          // println "  processing $child"
+          def childrenCounter
+          "${objType}" objName, {
+            childrenCounter = loadObjects(child, objDir,
+                    "$objPath/${objType}s/$objName", bindingMap)
+          }
+          counters << childrenCounter
         }
-        counters << childrenCounter
+      } finally {
+        // allow overwrite mode for parent type
+        ((Set<String>) bindingMap.get('skipOverwrite')).remove(objKey)
       }
     }
   }     // loadObjects
