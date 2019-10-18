@@ -267,7 +267,6 @@ abstract class BaseObject extends DslDelegatingScript {
 
       // load subObjects loadObjects (from local structure)
       if (children.containsKey(objType)) {
-
         // println "Found children: "
         children[objType].each { child ->
           // println "  processing $child"
@@ -278,7 +277,6 @@ abstract class BaseObject extends DslDelegatingScript {
           }
           counters << childrenCounter
         }
-
       }
     } finally {
       // allow overwrite mode for parent type
