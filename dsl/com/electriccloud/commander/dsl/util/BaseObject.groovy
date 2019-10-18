@@ -193,6 +193,7 @@ abstract class BaseObject extends DslDelegatingScript {
           }
         }
       } catch (Exception e) {
+         e.printStackTrace();
         logger.error(e);
         throw e;
       }
@@ -214,58 +215,58 @@ abstract class BaseObject extends DslDelegatingScript {
     def obj = loadObject(dslFile.absolutePath, bindingMap, overwriteMode)
 
 
-    // Load nested properties
-    def aclDir = new File(childDir, 'acls')
-    if (aclDir.directory) {
-      println "Found acls for $objPath/$plural/$objName"
-      "${objType}" objName, {
-        loadAcls(aclDir, "$objPath/$plural/$objName", bindingMap)
-      }
-    } else {
-      println "  No acls directory for $objType $objName"
+    // skip overwrite mode for parent object when
+    // handle children
+    if (bindingMap.get('skipOverwrite') == null) {
+      bindingMap.put('skipOverwrite', new HashSet<String>())
     }
+    // special case for task to support group subtasks
+    String objKey = objType != 'task' ? objType : objType + '-' + objName
+    ((Set<String>)bindingMap.get('skipOverwrite')).add(objKey)
 
-    // Load nested properties
-    def propDir = new File(childDir, 'properties')
-    if (propDir.directory) {
-      "${objType}" objName, {
-        loadNestedProperties("$objPath/$plural/$objName", propDir)
+    try {
+      // Load nested properties
+      def aclDir = new File(childDir, 'acls')
+      if (aclDir.directory) {
+        println "Found acls for $objPath/$plural/$objName"
+        "${objType}" objName, {
+          loadAcls(aclDir, "$objPath/$plural/$objName", bindingMap)
+        }
+      } else {
+        println "  No acls directory for $objType $objName"
       }
-    } else {
-      println "  No properties directory for $objType $objName"
-    }
 
-    def children = [
-            application    : ['applicationTier', 'service', 'process', 'tierMap', 'environmentTemplateTierMap', 'snapshot'],
-            applicationTier: ['component'],
-            catalog        : ['catalogItem'],
-            component      : ['process'],
-            dashboard      : ['reportingFilter', 'widget'],
-            environment    : ['cluster', 'environmentTier'],
-            gate           : ['task'],
-            pipeline       : ['stage'],
-            process        : ['processStep'],
-            procedure      : ['step', 'emailNotifier'],
-            release        : ['pipeline', 'deployerApplication', 'deployerService'],
-            service        : ['container', 'port', 'process', 'environmentMap', 'snapshot'],
-            stage          : ['gate', 'task'],
-            task           : ['task'],
-            step           : ['emailNotifier'],
-            widget         : ['reportingFilter', 'widgetFilterOverride']
-    ]
-
-    // load subObjects loadObjects (from local structure)
-    if (children.containsKey(objType)) {
-
-      // skip overwrite mode for parent object when
-      // handle children
-      if (bindingMap.get('skipOverwrite') == null) {
-        bindingMap.put('skipOverwrite', new HashSet<String>())
+      // Load nested properties
+      def propDir = new File(childDir, 'properties')
+      if (propDir.directory) {
+        "${objType}" objName, {
+          loadNestedProperties("$objPath/$plural/$objName", propDir)
+        }
+      } else {
+        println "  No properties directory for $objType $objName"
       }
-      // special case for task to support group subtasks
-      String objKey = objType != 'task' ? objType : objType + '-' + objName
-      ((Set<String>)bindingMap.get('skipOverwrite')).add(objKey)
-      try {
+
+      def children = [
+              application    : ['applicationTier', 'service', 'process', 'tierMap', 'environmentTemplateTierMap', 'snapshot'],
+              applicationTier: ['component'],
+              catalog        : ['catalogItem'],
+              component      : ['process'],
+              dashboard      : ['reportingFilter', 'widget'],
+              environment    : ['cluster', 'environmentTier'],
+              gate           : ['task'],
+              pipeline       : ['stage'],
+              process        : ['processStep'],
+              procedure      : ['step', 'emailNotifier'],
+              release        : ['pipeline', 'deployerApplication', 'deployerService'],
+              service        : ['container', 'port', 'process', 'environmentMap', 'snapshot'],
+              stage          : ['gate', 'task'],
+              task           : ['task'],
+              step           : ['emailNotifier'],
+              widget         : ['reportingFilter', 'widgetFilterOverride']
+      ]
+
+      // load subObjects loadObjects (from local structure)
+      if (children.containsKey(objType)) {
         // println "Found children: "
         children[objType].each { child ->
           // println "  processing $child"
@@ -276,10 +277,10 @@ abstract class BaseObject extends DslDelegatingScript {
           }
           counters << childrenCounter
         }
-      } finally {
-        // allow overwrite mode for parent type
-        ((Set<String>) bindingMap.get('skipOverwrite')).remove(objKey)
       }
+    } finally {
+      // allow overwrite mode for parent type
+      ((Set<String>) bindingMap.get('skipOverwrite')).remove(objKey)
     }
   }     // loadObjects
 
