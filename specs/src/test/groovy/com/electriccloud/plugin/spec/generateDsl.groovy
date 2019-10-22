@@ -63,7 +63,7 @@ class generateDsl extends PluginTestHelper {
         File projDir = new File (dslDir, "projects/" + jira)
         assert projDir.exists()
 
-        File projectFile = new File (projDir, 'project.groovy')
+        File projectFile = new File (projDir, 'project.dsl')
         assert projectFile.exists()
         assert """
 project 'CEV-19608', {
@@ -145,7 +145,7 @@ project 'CEV-19608', {
         File projDir = new File (dslDir, "projects/" + jira)
         assert projDir.exists()
 
-        assertFile(new File(projDir, 'project.groovy'), """
+        assertFile(new File(projDir, 'project.dsl'), """
 project 'CEV-19608'
 """)
         assert new File(projDir, "procedures").exists()
@@ -154,7 +154,7 @@ project 'CEV-19608'
         File proc1 = new File (projDir, "procedures/proc1")
         assert proc1.exists()
 
-        assertFile(new File(proc1, "procedure.groovy"), """
+        assertFile(new File(proc1, "procedure.dsl"), """
 procedure 'proc1', {
   resourceName = 'test'
 }
@@ -168,7 +168,7 @@ procedure 'proc1', {
         File s1Dir = new File(proc1, "steps/s1")
         assert s1Dir.exists()
 
-        assertFile(new File(s1Dir, "step.groovy"),
+        assertFile(new File(s1Dir, "step.dsl"),
                 """import java.io.File
 
 
@@ -180,7 +180,7 @@ step 's1', {
         //
         File s2Dir = new File(proc1, "steps/s2")
         assert s2Dir.exists()
-        assertFile(new File(s2Dir, "step.groovy"),
+        assertFile(new File(s2Dir, "step.dsl"),
                 """import java.io.File
 
 
@@ -192,7 +192,7 @@ step 's2', {
         //
         File s3Dir = new File(proc1, "steps/s3")
         assert s3Dir.exists()
-        assertFile(new File(s3Dir, "step.groovy"),
+        assertFile(new File(s3Dir, "step.dsl"),
                 """import java.io.File
 
 
@@ -206,7 +206,7 @@ step 's3', {
         File proc2 = new File (projDir, "procedures/proc2")
         assert proc2.exists()
 
-        assertFile(new File(proc2, "procedure.groovy"), """
+        assertFile(new File(proc2, "procedure.dsl"), """
 procedure 'proc2'
 """)
         assert new File(proc2, "steps").exists()
@@ -216,7 +216,7 @@ procedure 'proc2'
         File p2s1Dir = new File(proc2, "steps/s1")
         assert p2s1Dir.exists()
 
-        assertFile(new File(p2s1Dir, "step.groovy"),
+        assertFile(new File(p2s1Dir, "step.dsl"),
                 """import java.io.File
 
 
@@ -276,7 +276,7 @@ step 's1', {
         File projDir = new File (dslDir, "projects/" + jira)
         assert projDir.exists()
 
-        assertFile(new File(projDir, 'project.groovy'), """
+        assertFile(new File(projDir, 'project.dsl'), """
 project 'CEV-19608'
 """)
         assert new File(projDir, "procedures").exists()
@@ -285,7 +285,7 @@ project 'CEV-19608'
         File proc1 = new File (projDir, "procedures/proc1")
         assert proc1.exists()
 
-        assertFile(new File(proc1, "procedure.groovy"), """
+        assertFile(new File(proc1, "procedure.dsl"), """
 procedure 'proc1', {
   resourceName = 'test'
 }
@@ -297,22 +297,22 @@ procedure 'proc1', {
 
         //
         assert new File(proc1, "steps/s1").exists()
-        assert new File(proc1, "steps/s1/step.groovy").exists()
+        assert new File(proc1, "steps/s1/step.dsl").exists()
 
         //
         assert new File(proc1, "steps/s2").exists()
-        assert new File(proc1, "steps/s2/step.groovy").exists()
+        assert new File(proc1, "steps/s2/step.dsl").exists()
 
         //
         assert new File(proc1, "steps/s3").exists()
-        assert new File(proc1, "steps/s3/step.groovy").exists()
+        assert new File(proc1, "steps/s3/step.dsl").exists()
 
 
         // start proc2 procedure
         File proc2 = new File (projDir, "procedures/proc2")
         assert proc2.exists()
 
-        assertFile(new File(proc2, "procedure.groovy"), """
+        assertFile(new File(proc2, "procedure.dsl"), """
 procedure 'proc2'
 """)
         assert new File(proc2, "steps").exists()
@@ -320,7 +320,7 @@ procedure 'proc2'
 
         //
         assert new File(proc2, "steps/s1").exists()
-        assert new File(proc2, "steps/s1/step.groovy").exists()
+        assert new File(proc2, "steps/s1/step.dsl").exists()
 
         // properties
         assert new File(projDir, "properties").exists()
@@ -369,7 +369,7 @@ procedure 'proc2'
         File projDir = new File (dslDir, "projects/" + jira)
         assert projDir.exists()
 
-        assertFile(new File(projDir, 'project.groovy'), """
+        assertFile(new File(projDir, 'project.dsl'), """
 project 'CEV-19608'
 """)
         assert new File(projDir, "procedures").exists()
@@ -378,7 +378,7 @@ project 'CEV-19608'
         File proc1 = new File (projDir, "procedures/proc1")
         assert proc1.exists()
 
-        assertFile(new File(proc1, "procedure.groovy"),
+        assertFile(new File(proc1, "procedure.dsl"),
                 """import java.io.File
 
 
@@ -415,7 +415,7 @@ procedure 'proc1', {
         File proc2 = new File (projDir, "procedures/proc2")
         assert proc2.exists()
 
-        assertFile(new File(proc2, "procedure.groovy"),
+        assertFile(new File(proc2, "procedure.dsl"),
                 """import java.io.File
 
 
@@ -483,7 +483,7 @@ procedure 'proc2', {
         File projDir = new File (dslDir, "projects/" + jira)
         assert projDir.exists()
 
-        assertFile(new File(projDir, 'project.groovy'), """
+        assertFile(new File(projDir, 'project.dsl'), """
 project 'CEV-19608'
 """)
         assert new File(projDir, "procedures").exists()
@@ -491,7 +491,7 @@ project 'CEV-19608'
         // start proc1 procedure
         File proc1 = new File (projDir, "procedures/proc1")
         assert proc1.exists()
-        assert new File(proc1, "procedure.groovy").exists()
+        assert new File(proc1, "procedure.dsl").exists()
 
 
         // proc2 procedure
@@ -552,7 +552,7 @@ project 'CEV-19608'
         File projDir = new File (dslDir, "projects/" + jira)
         assert projDir.exists()
 
-        assertFile(new File(projDir, 'project.groovy'), """
+        assertFile(new File(projDir, 'project.dsl'), """
 project 'CEV-19608'
 """)
         assert !new File(projDir, "procedures").exists()
@@ -611,7 +611,7 @@ project 'CEV-19608'
         File projDir = new File (dslDir, "projects/" + jira)
         assert projDir.exists()
 
-        assertFile(new File(projDir, 'project.groovy'), """
+        assertFile(new File(projDir, 'project.dsl'), """
 project 'CEV-19608'
 """)
         assert !new File(projDir, "procedures").exists()
@@ -620,7 +620,7 @@ project 'CEV-19608'
         // check pipeline1
         File pipeDir = new File (projDir, "pipelines/pipeline1")
         assert pipeDir.exists()
-        assertFile(new File (pipeDir, "pipeline.groovy"), """
+        assertFile(new File (pipeDir, "pipeline.dsl"), """
 pipeline 'pipeline1', {
 
   formalParameter 'ec_stagesToRun', {
@@ -639,7 +639,7 @@ pipeline 'pipeline1', {
         assert stageDir.exists()
 
         //
-        assertFile(new File(stageDir, "stage.groovy"), """
+        assertFile(new File(stageDir, "stage.dsl"), """
 stage 'stage1'
 """)
         assert new File(stageDir, "gates").exists()
@@ -652,7 +652,7 @@ stage 'stage1'
 
         File taskDir = new File (stageDir, "tasks/cmd")
         assert taskDir.exists()
-        assertFile(new File(taskDir, "task.groovy"), """import java.io.File
+        assertFile(new File(taskDir, "task.dsl"), """import java.io.File
 
 
 task 'cmd', {
@@ -678,7 +678,7 @@ task 'cmd', {
 
         File appDir = new File(projDir, "applications/app1")
         assert appDir.exists()
-        assertFile(new File(appDir, "application.groovy"), """
+        assertFile(new File(appDir, "application.dsl"), """
 application 'app1'
 """)
         assert new File(appDir, "applicationTiers").exists()
@@ -686,14 +686,14 @@ application 'app1'
         // applicationTier
         File appTierDir = new File(appDir, "applicationTiers/Tier 1")
         assert appTierDir.exists()
-        assertFile(new File(appTierDir, "applicationTier.groovy"), """
+        assertFile(new File(appTierDir, "applicationTier.dsl"), """
 applicationTier 'Tier 1'
 """)
         assert new File(appTierDir, "components").exists()
         // component
         File compDir = new File(appTierDir, "components/component1")
         assert compDir.exists()
-        assertFile(new File(compDir, "component.groovy"), """
+        assertFile(new File(compDir, "component.dsl"), """
 component 'component1', {
   pluginKey = 'EC-Artifact'
 }
@@ -704,7 +704,7 @@ component 'component1', {
         // process
         File processDir = new File(compDir, "processes/component_process")
         assert processDir.exists()
-        File compProcessFile = new File (processDir, "process.groovy")
+        File compProcessFile = new File (processDir, "process.dsl")
         assert compProcessFile.exists()
         String compProcessDsl = compProcessFile.text
         assert compProcessDsl.contains("import java.io.File")
@@ -718,7 +718,7 @@ component 'component1', {
         assert new File(appDir, "processes").exists()
         File appProcDir = new File(appDir, "processes/app_process")
         assert appProcDir.exists()
-        File appProcFile = new File(appProcDir, "process.groovy")
+        File appProcFile = new File(appProcDir, "process.dsl")
         assert appProcFile.exists()
         String appProcDsl = appProcFile.text
         assert appProcDsl.contains("import java.io.File")

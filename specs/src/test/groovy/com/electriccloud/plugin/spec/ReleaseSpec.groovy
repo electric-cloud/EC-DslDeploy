@@ -3,7 +3,6 @@ package com.electriccloud.plugin.spec
 import spock.lang.Ignore
 import spock.lang.Shared
 
-@Ignore("ignore until latest server is not deployer")
 class ReleaseSpec
     extends PluginTestHelper {
     static String pName = 'EC-DslDeploy'
@@ -49,7 +48,7 @@ class ReleaseSpec
         )""")
         then: "job succeeds"
         assert p.jobId
-        assert getJobProperty("outcome", p.jobId) == "success"
+        assert getJobProperty("outcome", p.jobId) == "warning"
 
         deleteProjects(projects, false)
     }
