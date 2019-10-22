@@ -124,7 +124,7 @@ class GenerateDslHelper {
     def handleObject(def obj, def objDir,
                      boolean topLevel = false) {
 
-        File objDslFile = new File (objDir, obj.type + ".groovy")
+        File objDslFile = new File (objDir, obj.type + ".dsl")
         if (topLevel && includeAllChildren && includeChildrenInSameFile) {
 
             println String.format("generate DSL for the '%s' %s and all it's nested objects in a same file %s",

@@ -89,7 +89,7 @@ abstract class BaseObject extends DslDelegatingScript {
                             [projectName: projectName, projectDir: projectDir], overwriteMode, true)
       counter ++
     } else {
-      println "No project.groovy found"
+      println "No project.groovy or project.dsl found"
     }
     return counter
   }
