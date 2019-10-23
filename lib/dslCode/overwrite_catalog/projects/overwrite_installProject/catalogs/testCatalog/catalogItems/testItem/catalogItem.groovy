@@ -1,17 +1,7 @@
 
 catalogItem 'testItem', {
-  description = '''<xml>
-  <title>
-    
-  </title>
-
-  <htmlData>
-    <![CDATA[
-      
-    ]]>
-  </htmlData>
-</xml>'''
-  buttonLabel = 'LOL'
+  description = 'original description'
+  buttonLabel = 'Original Label'
   dslParamForm = ''
   dslString = ''
   iconUrl = 'icon-catalog-item.svg'

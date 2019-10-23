@@ -1,2 +1,4 @@
 
-catalog 'testCatalog'
+catalog 'testCatalog', {
+    description = 'original description'
+}
