@@ -643,7 +643,44 @@ class overwrite_installProject extends PluginTestHelper {
         )"""
         assert newTier.applicationTier.applicationTierName == "newTier"
 
-        when: "Load DSL Code with overwrite = 1"
+        when: 'add component and process for component1, and process step for process1'
+        dsl """
+        project  '$projName', {  
+            application 'app1', {
+                applicationTier 'Tier 1', {
+                    component 'new', {
+                        pluginKey = 'EC-Artifact'
+                    }
+                    
+                    component 'component1', {
+                        description = 'new'
+                        process 'new', {
+                             processType = 'DEPLOY'
+                        }
+                        process 'process1', {
+                            processStep 'new', {
+                                notificationTemplate = 'ec_default_manual_process_step_notification_template'
+                                processStepType = 'manual'
+                                assignee = 'admin'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        """
+
+        then: "Check the application tier is present"
+        def newComponent = dsl """
+         getComponent(
+          projectName: "$projName",
+          applicationName: "app1",
+          componentName: "new"
+        )"""
+        assert newComponent.component.componentName == "new"
+
+
+        and: "Load DSL Code with overwrite = 1"
         def p2 = runProcedureDsl("""
         runProcedure(
           projectName: "/plugins/$pName/project",
@@ -671,6 +708,39 @@ class overwrite_installProject extends PluginTestHelper {
 
         assert getTierResult
         assert getTierResult.contains("NoSuchApplicationTier")
+
+        //
+        def getComponentResult = dslWithXmlResponse("""
+        getComponent(
+          projectName: "$projName",
+          applicationName: "app1",
+          componentName: "new"
+        )""", null, [ignoreStatusCode: true])
+
+        assert getComponentResult &&  getComponentResult.contains("NoSuchComponent")
+
+        //
+        def getComponentProcRes = dslWithXmlResponse("""
+        getProcess(
+          projectName: "$projName",
+          componentApplicationName: "app1",
+          componentName: "component1",
+          processName: "new"
+        )""", null, [ignoreStatusCode: true])
+
+        assert getComponentProcRes &&  getComponentProcRes.contains("NoSuchProcess")
+
+        //
+        def getComponentProcStepRes = dslWithXmlResponse("""
+        getProcessStep(
+          projectName: "$projName",
+          componentApplicationName: "app1",
+          componentName: "component1",
+          processName: "process1",
+          processStepName: "new"
+        )""", null, [ignoreStatusCode: true])
+
+        assert getComponentProcStepRes &&  getComponentProcStepRes.contains("NoSuchProcessStep")
     }
 
     def "overwrite_installProject with catalogs"(){
