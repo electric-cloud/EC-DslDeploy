@@ -26,7 +26,7 @@ project projectName, {
 }
 
 if (counter == 0) {
-  setProperty(propertyName: "summary", value: "No project.groovy found")
+  setProperty(propertyName: "summary", value: "No project.groovy or project.dsl found")
   setProperty(propertyName: "outcome", value: "warning")
 }
 return ""
