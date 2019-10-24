@@ -3,35 +3,36 @@ package com.electriccloud.plugin.spec
 import spock.lang.Shared
 
 class DslDeployPersonaSpec
-    extends PluginTestHelper {
+    extends PluginTestHelper
+{
     static String pName = 'EC-DslDeploy'
     @Shared
     String pVersion
     @Shared
     String plugDir
+    def personaPageName1 = 'myPersonaPage1'
+    def personaPageName2 = 'myPersonaPage2'
+    def personaPageName3 = 'myPersonaPage3'
 
-    def doSetupSpec() {
+    def personaCategoryName1 = 'myPersonaCategory1'
+    def personaCategoryName2 = 'myPersonaCategory2'
+    def personaCategoryName3 = 'myPersonaCategory3'
+
+    def personaName1 = 'vip1'
+    def personaName2 = 'vip2'
+
+    def userName = 'testUser'
+    def groupName = 'testGroup'
+
+    def doSetupSpec()
+    {
         pVersion = getP("/plugins/$pName/pluginVersion")
         plugDir = getP("/server/settings/pluginsDirectory")
     }
 
-    def "deploy presona, personaPage, personaCategory, user, group"(){
-
-        def personaPageName1 = 'myPersonaPage1'
-        def personaPageName2 = 'myPersonaPage2'
-        def personaPageName3 = 'myPersonaPage3'
-
-        def personaCategoryName1 = 'myPersonaCategory1'
-        def personaCategoryName2 = 'myPersonaCategory2'
-        def personaCategoryName3 = 'myPersonaCategory3'
-
-        def personaName1 = 'vip1'
-        def personaName2 = 'vip2'
-
-        def userName = 'testUser'
-        def groupName  = 'testGroup'
-
-        given: "the top level objects code (presona, personaPage, personaCategory, user, group)"
+    def "deploy presona, personaPage, personaCategory, user, group"()
+    {
+         given: "the top level objects code (persona, personaPage, personaCategory, user, group)"
         when: "Load DSL Code"
         def p = runProcedureDsl("""
         runProcedure(
@@ -78,7 +79,8 @@ class DslDeployPersonaSpec
         then: "check personas were created"
         def persona1 = dsl """getPersona(personaName : '$personaName1')"""
         assert persona1?.persona?.personaDetail?.size == 2
-        assert persona1?.persona?.personaDetail[0]?.personaCategoryName.equals('myPersonaCategory1')
+        assert persona1?.persona?.personaDetail[0]?.personaCategoryName.equals(
+            'myPersonaCategory1')
         assert persona1?.persona?.personaDetail[0]?.personaPages?.personaPage?.size == 1
         assert persona1?.persona?.personaDetail[0]?.personaPages?.personaPage[0]?.personaPageName.equals("myPersonaPage1")
         assert persona1?.persona?.personaDetail[1]?.personaPages?.personaPage?.size == 2
@@ -87,7 +89,8 @@ class DslDeployPersonaSpec
 
         def persona2 = dsl """getPersona(personaName : '$personaName2')"""
         assert persona2?.persona?.personaDetail?.size == 1
-        assert persona2?.persona?.personaDetail[0]?.personaCategoryName.equals('myPersonaCategory3')
+        assert persona2?.persona?.personaDetail[0]?.personaCategoryName.equals(
+            'myPersonaCategory3')
         assert persona2?.persona?.personaDetail[0]?.personaPages?.personaPage?.size == 3
         assert persona2?.persona?.personaDetail[0]?.personaPages?.personaPage[0]?.personaPageName.equals("myPersonaPage1")
         assert persona2?.persona?.personaDetail[0]?.personaPages?.personaPage[1]?.personaPageName.equals("myPersonaPage2")
@@ -104,8 +107,10 @@ class DslDeployPersonaSpec
         assert group?.group?.personaName.size == 2
         assert "vip1" in group?.group?.personaName
         assert "vip2" in group?.group?.personaName
+    }
 
-        cleanup:
+    def doCleanupSpec()
+    {
         dsl """deletePersona (personaName: '$personaName1')"""
         dsl """deletePersona (personaName: '$personaName2')"""
         dsl """deletePersonaCategory (personaCategoryName: '$personaCategoryName1')"""
@@ -116,7 +121,5 @@ class DslDeployPersonaSpec
         dsl """deletePersonaPage (personaPageName: '$personaPageName3')"""
         dsl """deleteGroup (groupName: '$groupName')"""
         dsl """deleteUser (userName: '$userName')"""
-
     }
-
 }

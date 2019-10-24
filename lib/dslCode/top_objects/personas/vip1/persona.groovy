@@ -1,6 +1,7 @@
 
 persona 'vip1', {
-
+  description = 'original description'
+  
   personaDetail {
     personaCategoryName = 'myPersonaCategory1'
     personaPage = [

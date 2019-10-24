@@ -762,11 +762,28 @@ class overwrite_installProject extends PluginTestHelper {
         and: "store catalog id"
         def catalog = dsl"""getCatalog(projectName: 'overwrite_installProject', catalogName: 'testCatalog')"""
         def catalogId = catalog?.catalog?.catalogId
+        assert catalog?.catalog?.description == 'original description'
 
         and: "store catalog item id"
         def catalogItem = dsl"""getCatalogItem(projectName: 'overwrite_installProject', catalogName: 'testCatalog', catalogItemName: 'testItem')"""
         assert catalogItem
         def catalogItemId = catalogItem?.catalogItem?.catalogItemId
+        assert catalogItem?.catalogItem?.description == 'original description'
+        assert catalogItem?.catalogItem?.buttonLabel == 'Original Label'
+
+        and: "modify catalog fields values"
+        def modifiedCatalog = dsl """modifyCatalog(projectName: 'overwrite_installProject', catalogName: 'testCatalog', description: 'new description')"""
+        assert modifiedCatalog.catalog.description == 'new description'
+
+        and: "modify catalog item fields values"
+        def modifiedCatalogItem = dsl"""modifyCatalogItem(
+                            projectName: 'overwrite_installProject',
+                            catalogName: 'testCatalog', 
+                            catalogItemName: 'testItem',
+                            description: 'new description',
+                            buttonLabel: 'new label')"""
+        assert modifiedCatalogItem?.catalogItem?.description == 'new description'
+        assert modifiedCatalogItem?.catalogItem?.buttonLabel == 'new label'
 
         when: "add catalog item to catalog"
         dsl """createCatalogItem(projectName: 'overwrite_installProject', catalogName: 'testCatalog', catalogItemName: 'testItem2')"""
@@ -801,6 +818,7 @@ class overwrite_installProject extends PluginTestHelper {
 
         then: "catalog entity UUID did not change"
         assert remainedCatalog?.catalogId == catalogId
+        assert remainedCatalog?.description == 'original description'
 
         then: "added property was overwritten"
         def properties = dsl """getProperties (projectName: 'overwrite_installProject', catalogName: 'testCatalog' )"""
@@ -813,6 +831,8 @@ class overwrite_installProject extends PluginTestHelper {
 
         then: "catalog item UUID did not change"
         assert remainedCatalogItem?.catalogItemId == catalogItemId
+        assert remainedCatalogItem?.description == 'original description'
+        assert remainedCatalogItem?.buttonLabel == 'Original Label'
     }
 
     def "overwrite_installProject with environment"() {

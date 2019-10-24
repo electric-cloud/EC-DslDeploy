@@ -1,3 +1,6 @@
-resource 'resource22',
-  hostName: 'localhost'
+resource 'resource22', {
+    hostName: 'localhost'
+    hostType = 'CONCURRENT'
+}
+
 
