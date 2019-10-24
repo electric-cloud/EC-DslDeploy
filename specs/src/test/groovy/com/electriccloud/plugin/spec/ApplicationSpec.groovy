@@ -35,7 +35,7 @@ class ApplicationSpec
    """
   }
 
-  // CEV-23521
+  // Check sample
   def "deploy application with tierMaps and environmentTemplateTierMaps"() {
     given: "application dsl code"
     when: "Load DSL Code"
@@ -65,7 +65,7 @@ class ApplicationSpec
       assert envMappings?.environmentTemplateTierMap?.size == 3
    }
 
-  //
+  // CEV-23521
   def "deploy application with all types of children and overwrite mode"() {
     projName = 'proj_name'
     given: "application dsl code"
