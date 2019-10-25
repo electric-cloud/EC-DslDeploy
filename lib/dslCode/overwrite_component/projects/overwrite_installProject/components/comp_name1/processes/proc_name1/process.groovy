@@ -1,6 +1,10 @@
 
 process 'proc_name1', {
-  processType = 'DEPLOY'
+  description = 'original description'
+  processType = 'UNDEPLOY'
+  smartUndeployEnabled = '0'
+  timeLimit = '15'
+  timeLimitUnits = 'seconds'
 
   formalParameter 'param1', {
     orderIndex = '1'
@@ -16,10 +20,13 @@ process 'proc_name1', {
   }
 
   processStep 'step1', {
+    description = 'original description'
     dependencyJoinType = 'and'
     notificationEnabled = '1'
     notificationTemplate = 'ec_default_manual_process_step_notification_template'
     processStepType = 'manual'
+    timeLimit = '10'
+    timeLimitUnits = 'seconds'
     assignee = [
       'admin',
     ]

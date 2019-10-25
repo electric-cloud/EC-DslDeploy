@@ -1044,6 +1044,37 @@ class overwrite_installProject extends PluginTestHelper {
             assert getJobProperty("outcome", p.jobId) == "success" || getJobProperty("outcome", p.jobId) == "warning"
         }
 
+        then: "validate component fields"
+        def component = dsl """getComponent(projectName: '$projName',
+                                                componentName: 'comp_name1')"""
+
+        assert component?.component?.description == 'original description'
+
+        then: "validate component process fields"
+        def compProcess = dsl """
+        modifyProcess(
+                projectName: '$projName',
+                componentName : 'comp_name1',
+                processName: 'proc_name1')"""
+
+        assert compProcess?.process?.description == 'original description'
+        assert compProcess?.process?.timeLimit == '15'
+        assert compProcess?.process?.timeLimitUnits == 'seconds'
+        assert compProcess?.process?.processType == 'UNDEPLOY'
+        assert compProcess?.process?.workingDirectory == 'tmp'
+
+        then: "validate component process step fields"
+        def compProcessStep = dsl """getProcessStep(
+            projectName: '$projName',
+            componentName : 'comp_name1',
+            processName: 'proc_name1',
+            processStepName: 'step1'
+            )"""
+
+        assert compProcessStep?.processStep?.description == 'original description'
+        assert compProcessStep?.processStep?.timeLimit == '10'
+        assert compProcessStep?.processStep?.timeLimitUnits == 'seconds'
+
         when: "modify component fields"
 
         def modifiedComponent = dsl """
@@ -1064,13 +1095,17 @@ class overwrite_installProject extends PluginTestHelper {
                 processName: 'proc_name1',
                 timeLimit: '15',
                 timeLimitUnits: 'hours',
-                description: 'this is new description'
+                description: 'this is new description',
+                processType: 'DEPLOY',
+                workingDirectory: 'new tmp'
             )"""
 
         then: "component process was modified"
         assert modifiedComponentProcess.process.description == 'this is new description'
         assert modifiedComponentProcess.process.timeLimit == '15'
         assert modifiedComponentProcess.process.timeLimitUnits == 'hours'
+        assert modifiedComponentProcess?.process?.processType == 'DEPLOY'
+        assert modifiedComponentProcess?.process?.workingDirectory == 'new tmp'
 
         when: "modify component process step fields"
         def modifiedComponentProcessStep = dsl """
@@ -1145,40 +1180,42 @@ class overwrite_installProject extends PluginTestHelper {
         assert getJobProperty("outcome", p2.jobId) == "success" || getJobProperty("outcome", p2.jobId) == "warning"
 
         then: 'component fields were cleared'
-        def component = dsl """
+        def overrideComponent = dsl """
         getComponent(
             projectName: '$projName',
             componentName : 'comp_name1'
         )
         """
-        assert component.component.description == ''
+        assert overrideComponent.component.description == 'original description'
+        //temp process was deleted
+        assert overrideComponent.component.processCount == '1'
 
-        then: 'new component process was deleted'
-        def componentProcess = dsl """
-        getProcess(
-            projectName: '$projName',
-            componentName : 'comp_name1',
-            processName: 'proc_name1'
-                )"""
-        assert componentProcess
-        assert componentProcess.process.timeLimit == ''
-        assert componentProcess.process.timeLimitUnits == 'minutes'
-        assert componentProcess.process.workspaceName == null
-        assert component.component.processCount == '1'
+        then: "validate component process fields"
+        def overwriteProcess = dsl """
+        modifyProcess(
+                projectName: '$projName',
+                componentName : 'comp_name1',
+                processName: 'proc_name1')"""
 
-        then: 'new process step was deleted'
-        def componentProcessStep = dsl """
-       getProcessStep(
+        assert overwriteProcess?.process?.description == 'original description'
+        assert overwriteProcess?.process?.timeLimit == '15'
+        assert overwriteProcess?.process?.timeLimitUnits == 'seconds'
+        assert overwriteProcess?.process?.processType == 'UNDEPLOY'
+        assert overwriteProcess?.process?.workingDirectory == 'tmp'
+
+        then: "validate component process step fields"
+        def overwriteprocessStep = dsl """getProcessStep(
             projectName: '$projName',
             componentName : 'comp_name1',
             processName: 'proc_name1',
             processStepName: 'step1'
-       ) 
-       """
-        assert componentProcessStep.processStep.timeLimit == ''
-        assert componentProcessStep.processStep.timeLimitUnits == 'minutes'
-        assert componentProcessStep.processStep.workspaceName == null
+            )"""
 
+        assert overwriteprocessStep?.processStep?.description == 'original description'
+        assert overwriteprocessStep?.processStep?.timeLimit == '10'
+        assert overwriteprocessStep?.processStep?.timeLimitUnits == 'seconds'
+
+        then: 'new process step was deleted'
         def processSteps = dsl """
         getProcessSteps(
             projectName: 'overwrite_installProject',
