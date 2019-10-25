@@ -228,6 +228,9 @@ class overwrite_installProject extends PluginTestHelper {
     }
 
     def "overwrite_installProject with workflowDefinition"(){
+
+        String wfdName = 'test_wfd'
+
         given: "the overwrite_installProject application code"
         when: "Load DSL Code"
         def p = runProcedureDsl("""
@@ -242,6 +245,29 @@ class overwrite_installProject extends PluginTestHelper {
         then: "job succeeds"
         assert p.jobId
         assert getJobProperty("outcome", p.jobId) == "success"
+
+        then: "validate workflowDefiniton"
+        def wfd = dsl """getWorkflowDefinition(projectName: '$projName',
+                                                    workflowDefinitionName: '$wfdName')"""
+        assert wfd.workflowDefinition.description == 'original description'
+        assert wfd.workflowDefinition.workflowNameTemplate == 'original template'
+
+        then: "validate state definitions"
+        def startDefinition = dsl """getStateDefinition(projectName: '$projName',
+                                                    workflowDefinitionName: '$wfdName',
+                                                    stateDefinitionName: 'start')"""
+        assert startDefinition?.stateDefinition?.description == 'original description'
+        assert startDefinition?.stateDefinition?.startable == '0'
+
+        then: "validate transition definition"
+        def transition = dsl """getTransitionDefinition(projectName: '$projName',
+                                                    workflowDefinitionName: '$wfdName',
+                                                    stateDefinitionName: 'start',
+                                                    transitionDefinitionName: 'transition1')"""
+
+        assert transition?.transitionDefinition?.description == 'original description'
+        assert transition?.transitionDefinition?.trigger == 'manual'
+        assert transition?.transitionDefinition?.condition == '1'
 
         //add new property to workflow definition
         when: "new property is added to workflowDefintion"
@@ -333,6 +359,36 @@ class overwrite_installProject extends PluginTestHelper {
                                                        )"""
         assert newState
 
+        then: "modify workflow defintion fields"
+        def modifiedWfd = dsl """modifyWorkflowDefinition(projectName: '$projName',
+                                                              workflowDefinitionName: '$wfdName',
+                                                              description: 'new description',
+                                                              workflowNameTemplate: 'new template')"""
+        assert modifiedWfd?.workflowDefinition?.description == 'new description'
+        assert modifiedWfd.workflowDefinition.workflowNameTemplate == 'new template'
+
+        then: "modify state definition fields"
+        def modifiedStateDefinition = dsl """modifyStateDefinition(projectName: '$projName',
+                                                                      workflowDefinitionName: '$wfdName',
+                                                                      stateDefinitionName: 'start',
+                                                                      description: 'new description',
+                                                                      startable: '1')"""
+        assert modifiedStateDefinition?.stateDefinition?.description == 'new description'
+        assert modifiedStateDefinition?.stateDefinition?.startable == '1'
+
+        then: "modify transition definition fields"
+        def modifiedTransition = dsl """modifyTransitionDefinition(projectName: '$projName',
+                                                    workflowDefinitionName: '$wfdName',
+                                                    stateDefinitionName: 'start',
+                                                    transitionDefinitionName: 'transition1',
+                                                    description: 'new description',
+                                                    trigger: 'onEnter',
+                                                    condition: 'new')"""
+
+        assert modifiedTransition?.transitionDefinition?.description == 'new description'
+        assert modifiedTransition?.transitionDefinition?.trigger == 'onEnter'
+        assert modifiedTransition?.transitionDefinition?.condition == 'new'
+
         when: "Load DSL Code with overwrite = 1"
         def p2 = runProcedureDsl("""
                 runProcedure(
@@ -347,6 +403,30 @@ class overwrite_installProject extends PluginTestHelper {
         then: "job succeeds"
         assert p2.jobId
         assert getJobProperty("outcome", p2.jobId) == "success"
+
+        then: "validate ovewrite workflowDefiniton"
+        def overwriteWfd = dsl """getWorkflowDefinition(projectName: '$projName',
+                                                    workflowDefinitionName: '$wfdName')"""
+        assert overwriteWfd.workflowDefinition.description == 'original description'
+        assert overwriteWfd.workflowDefinition.workflowNameTemplate == 'original template'
+
+        then: "validate overwrite state definitions"
+        def overwriteStartDefinition = dsl """getStateDefinition(projectName: '$projName',
+                                                    workflowDefinitionName: '$wfdName',
+                                                    stateDefinitionName: 'start')"""
+        assert overwriteStartDefinition?.stateDefinition?.description == 'original description'
+        assert overwriteStartDefinition?.stateDefinition?.startable == '0'
+
+        then: "validate overwrite transition definition"
+        def overwriteTransition = dsl """getTransitionDefinition(projectName: '$projName',
+                                                    workflowDefinitionName: '$wfdName',
+                                                    stateDefinitionName: 'start',
+                                                    transitionDefinitionName: 'transition1')"""
+
+        assert overwriteTransition?.transitionDefinition?.description == 'original description'
+        assert overwriteTransition?.transitionDefinition?.trigger == 'manual'
+        assert overwriteTransition?.transitionDefinition?.condition == '1'
+
 
         then: "workflow definition has only two state definitions"
         def stateDefinitions = dsl """getStateDefinitions(projectName: '$projName',
