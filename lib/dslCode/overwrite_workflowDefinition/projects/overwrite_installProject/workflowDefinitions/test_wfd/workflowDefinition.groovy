@@ -1,8 +1,11 @@
 
 workflowDefinition 'test_wfd', {
-  workflowNameTemplate = ''
+  description = 'original description'
+  workflowNameTemplate = 'original template'
 
   stateDefinition 'start', {
+    description = 'original description'
+    startable = '0'
     subprocedure = 'Set Property'
     subproject = 'EC-Examples'
     substartingState = ''
@@ -94,7 +97,8 @@ Message body goes here.'''
   }
 
   transitionDefinition 'transition1', {
-    condition = ''
+    description = 'original description'
+    condition = '1'
     stateDefinitionName = 'start'
     targetState = 'finish'
     trigger = 'manual'
