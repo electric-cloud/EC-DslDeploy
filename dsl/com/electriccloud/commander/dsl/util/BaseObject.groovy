@@ -94,14 +94,14 @@ abstract class BaseObject extends DslDelegatingScript {
     return counter
   }
 
-  def loadProjectProperties(String projectDir, String projectName) {
+  def loadProjectProperties(String projectDir, String projectName, String overwrite = '0') {
     // println "Entering loadProjectPropreties"
     // println "  Name:  $projectName"
     // println "  dir  : $projectDir"
 
     def propDir=new File(projectDir, 'properties')
     if (propDir.directory) {
-      loadNestedProperties("/projects/$projectName", propDir)
+      loadNestedProperties("/projects/$projectName", propDir, overwrite)
     }  else {
       println "No properties directory for project $projectName"
     }
@@ -240,7 +240,7 @@ abstract class BaseObject extends DslDelegatingScript {
       def propDir = new File(childDir, 'properties')
       if (propDir.directory) {
         "${objType}" objName, {
-          loadNestedProperties("$objPath/$plural/$objName", propDir)
+          loadNestedProperties("$objPath/$plural/$objName", propDir, overwriteMode)
         }
       } else {
         println "  No properties directory for $objType $objName"
@@ -322,17 +322,20 @@ abstract class BaseObject extends DslDelegatingScript {
     }
   }
 
-  def loadNestedProperties(String propRoot, File propsDir) {
+  def loadNestedProperties(String propRoot, File propsDir, String overwrite = '0') {
     // println "Entering loadNestedProperties($propRoot," +  propsDir.toString() + ")"
+    def allProperties = []
     propsDir.eachFile { dir ->
       println "  parsing " + dir.toString()
       int extension = dir.name.lastIndexOf('.')
       int endIndex = extension > -1 ? extension : dir.name.length()
       String propName = dir.name.substring(0, endIndex)
       String propPath = "${propRoot}/${propName}"
+      allProperties<<propName
+
       if (dir.directory) {
         property propName, {
-          loadNestedProperties(propPath, dir)
+          loadNestedProperties(propPath, dir, overwrite)
         }
       } else {
         def exists = getProperty(propPath, suppressNoSuchPropertyException: true, expand: false)
@@ -342,7 +345,23 @@ abstract class BaseObject extends DslDelegatingScript {
           createProperty propertyName: propPath, value: dir.text
         }
       }
+
     }
+
+    if (overwrite == '1') {
+      //cleanup nonexistent properties
+      def propertySheet = getProperties path: propRoot
+
+      def properties = getProperties propertySheetId: propertySheet.propertySheetId
+
+      properties.property.each {
+        if (!allProperties.contains(it.name)) {
+          println "Delete property '${propRoot}/${it.name}'"
+          deleteProperty propertyName: "${propRoot}/${it.name}"
+        }
+      }
+    }
+
   }
 
   /**

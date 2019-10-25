@@ -1299,4 +1299,136 @@ class overwrite_installProject extends PluginTestHelper {
         assert processSteps.processStep[0].processStepName == 'step1'
         assert processSteps.processStep[1].processStepName == 'step2'
     }
+
+
+    def "overwrite_installProject properties"(){
+        given: "the overwrite_installProject code"
+        when: "Load DSL Code"
+        def p = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installProject",
+          actualParameter: [
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_project/projects/overwrite_properties",
+            projName: 'overwrite_properties'
+          ]
+        )""")
+        then: "job completed"
+        waitUntil {
+            assert p.jobId
+            assert getJobProperty("outcome", p.jobId) == "success" || getJobProperty("outcome", p.jobId) == "warning"
+        }
+
+        when: 'create new properties and modify existent'
+        dsl """
+            project 'overwrite_properties', {
+                pipeline 'pipe1', {
+                    property 'ec_pipe1', {
+                        ec_pipe1 = 'new'
+                        ec_pipe2 = 'new'
+                        
+                        property 'ec_pipe11', {
+                            ec_pipe11 = 'new'
+                            ec_pipe12 = 'new'
+                        }
+                    }
+                    property 'ec_pipe2', {
+                        property 'ec_pipe2', {
+                            value: 'new'
+                        }
+                        property 'ec_pipe1', {
+                            value: 'new'
+                        }
+                    }
+                
+                }
+                
+                
+                property 'ec_1', {
+                    ec_prop1 = 'new'
+                    ec_prop2 = 'new'
+                    property 'ec_11', {
+                        ec_prop11 = 'new'
+                        ec_prop12 = 'new'
+                        property 'ec_111', {
+                            ec_prop111 = 'new'
+                            ec_prop112 = 'new'
+                        }
+                    }    
+                }
+                
+                property 'ec2', {
+                    ec2_prop1 = 'new'
+                    ec2_prop2 = 'new'
+                }
+             }   
+"""
+
+        then: 'check the properties number'
+        def projPropResult = dsl "getProperties projectName: 'overwrite_properties'"
+        assert  projPropResult.propertySheet.property.size() == 2
+
+        def pipePropResult = dsl "getProperties projectName: 'overwrite_properties', pipelineName: 'pipe1'"
+        assert pipePropResult.propertySheet.property.size() == 2
+
+        when: "Load DSL Code in overwrite mode"
+        def p2 = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installProject",
+          actualParameter: [
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_project/projects/overwrite_properties",
+            projName: 'overwrite_properties',
+            overwrite: '1'
+          ]
+        )""")
+        then: "job completed"
+        waitUntil {
+            assert p2.jobId
+            assert getJobProperty("outcome", p2.jobId) == "success" || getJobProperty("outcome", p2.jobId) == "warning"
+        }
+
+        then: 'check properties'
+
+        def projPropResult2 = dsl "getProperties projectName: 'overwrite_properties'"
+        assert projPropResult2.propertySheet.property.size() == 2
+
+        def ec_1 = projPropResult.propertySheet.property.find{it.propertyName == 'ec_1'}
+
+        def ec_1Res = dsl "getProperties propertySheetId: '$ec_1.propertySheetId'"
+        assert ec_1Res.propertySheet.property.size() == 2
+
+        def ec_prop1 = ec_1Res.propertySheet.property.find{it.propertyName == 'ec_prop1'}
+        assert ec_prop1.value == '1'
+
+        def ec_11 = ec_1Res.propertySheet.property.find{it.propertyName == 'ec_11'}
+        def ec_11Res = dsl "getProperties propertySheetId: '$ec_11.propertySheetId'"
+        assert ec_11Res.propertySheet.property.size() == 2
+
+        def ec_prop11 =  ec_11Res.propertySheet.property.find{it.propertyName == 'ec_prop11'}
+        assert ec_prop11.value == '11'
+
+        def ec_111 = ec_11Res.propertySheet.property.find{it.propertyName == 'ec_111'}
+        def ec_111Res = dsl "getProperties propertySheetId: '$ec_111.propertySheetId'"
+        assert ec_111Res.propertySheet.property.size() == 1
+
+
+        def projPipeResult2 = dsl "getProperties projectName: 'overwrite_properties', pipelineName: 'pipe1'"
+        assert projPipeResult2.propertySheet.property.size() == 1
+
+        def ec_pipe1 = projPipeResult2.propertySheet.property.find{it.propertyName == 'ec_pipe1'}
+
+        def ec_pipe1Res = dsl "getProperties propertySheetId: '$ec_pipe1.propertySheetId'"
+        assert ec_pipe1Res.propertySheet.property.size() == 2
+
+        def ec_pipe1prop = ec_pipe1Res.propertySheet.property.find{it.propertyName == 'ec_pipe1'}
+        assert ec_pipe1prop.value == 'pipe1'
+
+        def ec_pipe11 =  ec_pipe1Res.propertySheet.property.find{it.propertyName == 'ec_pipe11'}
+
+        def ec_pipe11Res = dsl "getProperties propertySheetId: '$ec_pipe11.propertySheetId'"
+        assert ec_pipe11Res.propertySheet.property.size() == 1
+        assert ec_pipe11Res.propertySheet.property[0].value == 'pipe11'
+
+    }
 }

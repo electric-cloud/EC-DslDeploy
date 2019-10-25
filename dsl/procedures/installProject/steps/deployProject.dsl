@@ -21,7 +21,7 @@ def counter
 
 project projectName, {
   counter=loadProject(projectDir, projectName, overwrite)
-  loadProjectProperties(projectDir, projectName)
+  loadProjectProperties(projectDir, projectName, overwrite)
   loadProjectAcls(projectDir, projectName)
 }
 
