@@ -46,4 +46,8 @@ stage 'SIT', {
         subprocedure = 'RunCommand'
         taskType = 'COMMAND'
     }
+
+    acl {
+        inheriting = '1'
+    }
 }

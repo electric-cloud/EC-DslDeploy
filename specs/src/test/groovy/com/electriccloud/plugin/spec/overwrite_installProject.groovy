@@ -476,8 +476,13 @@ class overwrite_installProject extends PluginTestHelper {
     // overwrite with pipeline
     def "overwrite_installProject with pipeline"() {
         def newStageName = "newStage"
+        def newAclEntryName = "u2"
 
         given: "the overwrite_installProject code"
+        dslWithXmlResponse("""createUser( 
+            userName: "u2"
+         )""", null, [ignoreStatusCode: true])
+
         when: "Load DSL Code"
         def p = runProcedureDsl("""
         runProcedure(
@@ -491,6 +496,30 @@ class overwrite_installProject extends PluginTestHelper {
         then: "job completed with warnings"
         assert p.jobId
         assert getJobProperty("outcome", p.jobId) == "warning"
+
+        when: "add new aclEntry to project"
+        def newAclEntry = dsl """createAclEntry(
+            projectName: "$projName",
+            principalType: "user",
+            principalName: "$newAclEntryName"
+        )"""
+
+        then: "new acl entry exists"
+        assert newAclEntry
+        assert newAclEntry.aclEntry.principalName == newAclEntryName
+
+        when: "add new aclEntry to stage"
+        def newAclEntry2 = dsl """createAclEntry(
+            projectName: "$projName",
+            principalType: "user",
+            pipelineName: "p12",
+            stageName: "SIT",
+            principalName: "$newAclEntryName"
+        )"""
+
+        then: "new acl entry exists"
+        assert newAclEntry2
+        assert newAclEntry2.aclEntry.principalName == newAclEntryName
 
         when: "add stage to pipeline"
         dsl """
@@ -686,6 +715,49 @@ class overwrite_installProject extends PluginTestHelper {
         assert taskJA
         assert taskJA.task.taskName == "JA1 Deploy"
         assert taskJA.task.description == ""
+
+        then: "old aclEntry still exists"
+        def oldEntryResult1 = dsl """ getAclEntry(
+            projectName: "$projName",
+            principalType: "user",
+            principalName: "project: overwrite_installProject"
+        )"""
+        assert oldEntryResult1
+        assert oldEntryResult1.aclEntry.principalName == "project: overwrite_installProject"
+
+        and: "old aclEntry for pipeline still exists"
+        def oldEntryResult2 = dsl """ getAclEntry(
+            projectName: "$projName",
+            pipelineName: "p12",
+            principalType: "user",
+            principalName: "project: overwrite_installProject"
+        )"""
+        assert oldEntryResult2
+        assert oldEntryResult2.aclEntry.principalName == "project: overwrite_installProject"
+
+        then: "project aclEntry not exists"
+        def aclEntryResult =
+                dslWithXmlResponse("""
+        getAclEntry(
+            projectName: "$projName",
+            principalType: "user",
+            principalName: "$newAclEntryName"
+        )""", null, [ignoreStatusCode: true])
+        assert aclEntryResult
+        assert aclEntryResult.contains("NoSuchAclEntry")
+
+        then: "stage aclEntry not exists"
+        def aclEntryResult2 =
+                dslWithXmlResponse("""
+        getAclEntry(
+            projectName: "$projName",
+            principalType: "user",
+            pipelineName: "p12",
+            stageName: "SIT",
+            principalName: "$newAclEntryName"
+        )""", null, [ignoreStatusCode: true])
+        assert aclEntryResult2
+        assert aclEntryResult2.contains("NoSuchAclEntry")
     }
 
     // overwrite with application
