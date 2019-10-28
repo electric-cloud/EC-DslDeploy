@@ -101,7 +101,7 @@ abstract class BaseObject extends DslDelegatingScript {
 
     def propDir=new File(projectDir, 'properties')
     if (propDir.directory) {
-      loadNestedProperties("/projects/$projectName", propDir, overwrite)
+      loadNestedProperties("/projects/$projectName", propDir, overwrite, true)
     }  else {
       println "No properties directory for project $projectName"
     }
@@ -322,7 +322,7 @@ abstract class BaseObject extends DslDelegatingScript {
     }
   }
 
-  def loadNestedProperties(String propRoot, File propsDir, String overwrite = '0') {
+  def loadNestedProperties(String propRoot, File propsDir, String overwrite = '0', boolean projectRootProps=false) {
     // println "Entering loadNestedProperties($propRoot," +  propsDir.toString() + ")"
     def allProperties = []
     propsDir.eachFile { dir ->
@@ -348,7 +348,7 @@ abstract class BaseObject extends DslDelegatingScript {
 
     }
 
-    if (overwrite == '1') {
+    if (overwrite == '1' && !projectRootProps) {
       //cleanup nonexistent properties
       def propertySheet = getProperties path: propRoot
 
