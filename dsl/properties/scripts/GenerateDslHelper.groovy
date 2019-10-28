@@ -229,12 +229,14 @@ class GenerateDslHelper {
                 File file = new File(objTypeDir, it.name + '.' + fileRefInfo.extension)
                 String propertyPath = fileRefInfo.propertyPath
 
-                def property = electricFlow.getProperty(propertyName: propertyPath, expand: false)
+                try {
+                    def property = electricFlow.getProperty(propertyName: propertyPath, expand: false, suppressNoSuchPropertyException: true)
 
-                if (property && property.property ){
-                    file << property.property.value
-                    hasFileRefInFile = true
-                }
+                    if (property && property.property) {
+                        file << property.property.value
+                        hasFileRefInFile = true
+                    }
+                } catch (Exception ignore) {}
             }
 
             if (it.children && it.children.objectType) {
