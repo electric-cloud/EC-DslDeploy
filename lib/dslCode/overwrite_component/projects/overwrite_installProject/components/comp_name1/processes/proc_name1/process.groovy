@@ -5,6 +5,8 @@ process 'proc_name1', {
   smartUndeployEnabled = '0'
   timeLimit = '15'
   timeLimitUnits = 'seconds'
+  workingDirectory  = 'tmp'
+
 
   formalParameter 'param1', {
     orderIndex = '1'

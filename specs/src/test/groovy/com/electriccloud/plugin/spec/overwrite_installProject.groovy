@@ -165,7 +165,7 @@ class overwrite_installProject extends PluginTestHelper {
         )""")
         then: "job succeeds"
         assert p2.jobId
-        assert getJobProperty("outcome", p.jobId) == "success"
+        assert getJobProperty("outcome", p2.jobId) == "success"
 
         then: "procedure has one step"
         def steps  = dsl """getSteps(projectName: 'overwrite_installProject', procedureName: 'testProcedure')"""
@@ -1124,10 +1124,11 @@ class overwrite_installProject extends PluginTestHelper {
 
         then: "validate component process fields"
         def compProcess = dsl """
-        modifyProcess(
+        getProcess(
                 projectName: '$projName',
                 componentName : 'comp_name1',
-                processName: 'proc_name1')"""
+                processName: 'proc_name1'
+                )"""
 
         assert compProcess?.process?.description == 'original description'
         assert compProcess?.process?.timeLimit == '15'
