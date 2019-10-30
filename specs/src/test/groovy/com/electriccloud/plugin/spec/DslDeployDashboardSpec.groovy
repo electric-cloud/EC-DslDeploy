@@ -172,6 +172,7 @@ class DslDeployDashboardSpec
     def widgFilterOverride = dsl"""getWidgetFilterOverrides(projectName: '$projectName', dashboardName: 'Application Deployments', widgetName: 'DeploymentsFrequency')"""
     assert widgFilterOverride
     assert widgFilterOverride?.widgetFilterOverride?.size == 1
+    def widgFilterOverrideId = widgFilterOverride?.widgetFilterOverride?.widgetFilterOverrideId
 
     //
     when: 'modify data'
@@ -303,8 +304,7 @@ class DslDeployDashboardSpec
     def cleanedWidgFilterOverride = dsl"""getWidgetFilterOverrides(projectName: '$projectName', dashboardName: 'Application Deployments', widgetName: 'DeploymentsFrequency')"""
     assert cleanedWidgFilterOverride
     assert cleanedWidgFilterOverride?.widgetFilterOverride?.size == 1
-
-
+    assert cleanedWidgFilterOverride?.widgetFilterOverride?.widgetFilterOverrideId == widgFilterOverrideId
 
     cleanup:
     deleteProjects(projects, false)
