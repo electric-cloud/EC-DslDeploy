@@ -193,9 +193,7 @@ abstract class BaseObject extends DslDelegatingScript {
           }
         }
       } catch (Exception e) {
-         e.printStackTrace();
-        logger.error(e);
-        throw e;
+        println("Error: " + e.getMessage())
       }
     }   // directory for "objects" exists
     counters.put(objType, nbObjs)
@@ -333,18 +331,23 @@ abstract class BaseObject extends DslDelegatingScript {
       String propPath = "${propRoot}/${propName}"
       allProperties<<propName
 
-      if (dir.directory) {
-        property propName, {
-          loadNestedProperties(propPath, dir, overwrite)
-        }
-      } else {
-        def exists = getProperty(propPath, suppressNoSuchPropertyException: true, expand: false)
-        if (exists) {
-          modifyProperty propertyName: propPath, value: dir.text
+      try {
+        if (dir.directory) {
+          property propName, {
+            loadNestedProperties(propPath, dir, overwrite)
+          }
         } else {
-          createProperty propertyName: propPath, value: dir.text
+          def exists = getProperty(propPath, suppressNoSuchPropertyException: true, expand: false)
+          if (exists) {
+            modifyProperty propertyName: propPath, value: dir.text
+          } else {
+            createProperty propertyName: propPath, value: dir.text
+          }
         }
-      }
+      } catch (Exception e) {
+        println(String.format("Error: cannot load property %s", propPath, e.getMessage()))
+        setProperty(propertyName: "outcome", value: "warning")
+     }
 
     }
 

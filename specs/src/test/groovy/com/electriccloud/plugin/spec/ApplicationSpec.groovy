@@ -107,6 +107,14 @@ class ApplicationSpec
     def snapshots = dsl """getSnapshots(projectName: '$projName', applicationName: 'app1')"""
     assert snapshots?.snapshot?.size == 2
 
+    then: "check component properties"
+    def compProp = dsl "getProperty propertyName: '/projects/$projName/applications/app1/components/comp1/property1/prop2'"
+    assert compProp && compProp.property.value  == "TEST"
+
+    then: "check component process properties"
+    def compProcProp = dsl "getProperty propertyName: '/projects/$projName/applications/app1/components/comp1/processes/proc1/property1/prop3'"
+    assert compProcProp && compProcProp.property.value == "prop3"
+
     when: "Load DSL Code"
     def p2= runProcedureDsl("""
         runProcedure(
@@ -121,5 +129,13 @@ class ApplicationSpec
     then: "job succeeds"
     assert p2.jobId
     assert getJobProperty("outcome", p2.jobId) == "success"
+
+    then: "check component properties"
+    def compProp2 = dsl "getProperty propertyName: '/projects/$projName/applications/app1/components/comp1/property1/prop2'"
+    assert compProp2 && compProp2.property.value  == "TEST"
+
+    then: "check component process properties"
+    def compProcProp2 = dsl "getProperty propertyName: '/projects/$projName/applications/app1/components/comp1/processes/proc1/property1/prop3'"
+    assert compProcProp2 && compProcProp2.property.value == "prop3"
   }
 }
