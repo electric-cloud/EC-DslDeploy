@@ -1,6 +1,6 @@
 <plugin>
-  <author>L.Rochette</author>
-  <authorUrl>mailto:lrochette@electric-cloud.com</authorUrl>
+  <author>CloudBees</author>
+  <authorUrl>http://www.electric-cloud.com/support</authorUrl>
   <category>Utility</category>
   <commander-version min="6.0" />
   <depends min="1.4.0">EC-PluginManager</depends>
