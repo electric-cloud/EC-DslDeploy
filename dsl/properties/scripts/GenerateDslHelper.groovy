@@ -1,5 +1,3 @@
-import java.io.File
-import java.util.logging.Logger
 import groovy.json.JsonOutput
 
 class GenerateDslHelper {
@@ -14,6 +12,7 @@ class GenerateDslHelper {
     private File toDirectory
 
     private boolean includeAcls
+    private boolean includeAclsInDifferentFile
     private boolean includeAllChildren
     private List<String> includeChildren
     private boolean includeChildrenInSameFile
@@ -31,6 +30,7 @@ class GenerateDslHelper {
                       boolean suppressDefault,
                       boolean suppressParent,
                       boolean includeAcls,
+                      boolean includeAclsInDifferentFile,
                       boolean includeAllChildren,
                       boolean includeChildrenInSameFile,
                       String childrenInDifFile,
@@ -43,6 +43,7 @@ class GenerateDslHelper {
         toDirectory = new File(toDir)
 
         this.includeAcls = includeAcls
+        this.includeAclsInDifferentFile = includeAclsInDifferentFile
         this.includeChildrenInSameFile = includeChildrenInSameFile
         this.suppressNulls = suppressNulls
         this.suppressDefault = suppressDefault
@@ -174,6 +175,9 @@ class GenerateDslHelper {
 
         def includeChildrenValue = includeChildrenList.join(', ')
 
+        // if acl should be stored in separate file exclude it from DSL
+        boolean includeAcl = includeAcls && !includeAclsInDifferentFile
+
         // generate DSL for a current object
 
         println String.format("Generate DSL for '%s' %s in %s.", obj.name, obj.type, objDslFile.getAbsolutePath())
@@ -183,7 +187,7 @@ class GenerateDslHelper {
                 suppressDefaults: suppressDefault,
                 suppressChildren: true,
                 suppressParent: suppressParent,
-                withAcls: includeAcls,
+                withAcls: includeAcl,
                 useFileReferences: true).value
 
         if (hasFileRefInFile || obj.fileRefInfo && obj.fileRefInfo.size > 0) {
@@ -197,6 +201,25 @@ class GenerateDslHelper {
         // create property file structure if needed
         if (obj.propertiesOwner == '1' &&  !(includeAllChildren && includeChildrenInSameFile) /*&& propertiesInDifFile*/) {
             generateProperties(objDir, obj)
+        }
+
+        if (obj.aclsOwner && includeAclsInDifferentFile) {
+            def aclDsl = electricFlow.generateDsl(path: obj.path + "/acl",
+                    includeChildren: includeChildrenValue,
+                    suppressNulls: suppressNulls,
+                    suppressDefaults: suppressDefault,
+                    suppressChildren: true,
+                    suppressParent: suppressParent,
+                    withAcls: includeAcl,
+                    useFileReferences: true).value
+
+            File aclsDir = new File(objDir, 'acls')
+            aclsDir.mkdir()
+
+            File aclDslFile = new File (aclsDir, "acl.dsl")
+            println String.format("Generate ACL DSL for '%s' %s in %s.", obj.name, obj.type, aclDslFile.getAbsolutePath())
+
+            aclDslFile << aclDsl
         }
 
         // generate DSL for child entities in different files
@@ -417,6 +440,7 @@ class GenerateDslBuilder {
     //Optional parameters
     private String childrenInDifferentFile
     private boolean includeAcls
+    private boolean includeAclsInDifferentFile
     private boolean includeAllChildren
     private String includeChildren
     private boolean includeChildrenInSameFile
@@ -448,6 +472,7 @@ class GenerateDslBuilder {
                 suppressDefault,
                 suppressParent,
                 includeAcls,
+                includeAclsInDifferentFile,
                 includeAllChildren,
                 includeChildrenInSameFile,
                 childrenInDifferentFile,
@@ -467,6 +492,11 @@ class GenerateDslBuilder {
 
     GenerateDslBuilder includeAcls(boolean include) {
         includeAcls = include
+        return this
+    }
+
+    GenerateDslBuilder includeAclsInDifferentFile(boolean include) {
+        includeAclsInDifferentFile = include
         return this
     }
 

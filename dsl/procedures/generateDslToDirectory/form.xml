@@ -88,7 +88,18 @@
     <checkedValue>1</checkedValue>
     <uncheckedValue>0</uncheckedValue>
     <value>0</value>
-    <documentation>Include in the generated DSL ACLs for objects.</documentation>
+    <documentation>Include in ACLs for objects.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Include ACLs in different file</label>
+    <property>includeAclsInDifferentFile</property>
+    <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <value>0</value>
+    <documentation>Include ACLs for generated objects in different file.</documentation>
   </formElement>
 
   <formElement>
