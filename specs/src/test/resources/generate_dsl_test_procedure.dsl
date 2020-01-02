@@ -34,6 +34,14 @@ procedure 'generateDslAndPublish', {
     uncheckedValue = '0'
   }
 
+  formalParameter 'includeAclsInDifferentFile', defaultValue: '0', {
+    description = 'Include ACLs for generated objects in different file.'
+    checkedValue = '1'
+    label = 'Include ACLs in different file'
+    type = 'checkbox'
+    uncheckedValue = '0'
+  }
+
   formalParameter 'includeAllChildren', defaultValue: '0', {
     description = 'Include in the generated DSL all object children. If True - ignore value of \'Include Children\' parameter.'
     checkedValue = '1'
@@ -110,6 +118,7 @@ procedure 'generateDslAndPublish', {
     actualParameter 'childrenInDifferentFile', '$[childrenInDifferentFile]'
     actualParameter 'directory', '$[directory]'
     actualParameter 'includeAcls', '$[includeAcls]'
+    actualParameter 'includeAclsInDifferentFile', '$[includeAclsInDifferentFile]'
     actualParameter 'includeAllChildren', '$[includeAllChildren]'
     actualParameter 'includeChildren', '$[includeChildren]'
     actualParameter 'includeChildrenInSameFile', '$[includeChildrenInSameFile]'

@@ -743,9 +743,151 @@ component 'component1', {
         new File(dslDir).deleteDir()
     }
 
+    def "generate DSL for project with procedures with ACL in different file"() {
+        dslDir = 'build/dsl8'
+        File projDir
+        File appDir
+
+        def aclContent = '''
+acl {
+  inheriting = '1'
+
+  aclEntry 'user', principalName: 'limited_user', {
+    changePermissionsPrivilege = 'inherit'
+    executePrivilege = 'allow'
+    modifyPrivilege = 'allow'
+    readPrivilege = 'allow'
+  }
+}
+'''
+
+        given: dslFile("project_with_app_procedure_pipeline.dsl", args)
+
+        dsl """createAclEntry (projectName: '$pName-$pVersion',
+                          principalType: 'user', principalName: 'limited_user',
+                          readPrivilege: 'allow', modifyPrivilege: 'allow', executePrivilege: 'allow')"""
+
+        dsl """createAclEntry (projectName: '$jira',  procedureName: 'proc1',
+                          principalType: 'user', principalName: 'limited_user',
+                          readPrivilege: 'allow', modifyPrivilege: 'allow', executePrivilege: 'allow')"""
+
+        dsl """createAclEntry (projectName: '$jira',  applicationName: 'app1',  processName: 'app_process',
+                          principalType: 'user', principalName: 'limited_user',
+                          readPrivilege: 'allow', modifyPrivilege: 'allow', executePrivilege: 'allow')"""
+
+        dsl """breakAclInheritance (projectName: '$jira', applicationName: 'app1', applicationTierName: 'Tier 1')"""
+
+
+        when: 'run generate Dsl procedure'
+        def result= runProcedureDsl("""
+        runProcedure(
+          projectName: "generateDslTestProject",
+          procedureName: "generateDslAndPublish",
+          actualParameter: [
+            directory: "$dslDir",
+            objectType: 'project',
+            objectName: "$jira",
+            includeAllChildren: '1',
+            includeAcls: '1',
+            includeAclsInDifferentFile: '1',
+            suppressDefaults: '1',
+            suppressParent: '1',
+            artifactName: 'dsl:dslCode8',
+            artifactVersionVersion: '1.0',
+            runResourceName: '$defaultPool'
+          ]
+        )""")
+        then:
+        assert result.jobId
+        def outcome=getJobProperty("outcome", result.jobId)
+        assert outcome == "success"
+
+        when:
+        // retrieve artifact
+        retrieveArtifactVersion("dsl:dslCode8", "1.0", dslDir)
+
+        and: "check project and procedure ACL"
+
+        //
+        projDir = new File (dslDir, "projects/" + jira)
+        assert projDir.exists()
+
+        assertFile(new File(projDir, 'project.dsl'), """
+project 'CEV-19608'
+""")
+
+        def aclContent1 = '''
+acl {
+  inheriting = '1'
+
+  aclEntry 'user', principalName: 'project: CEV-19608', {
+    changePermissionsPrivilege = 'allow'
+    executePrivilege = 'allow'
+    modifyPrivilege = 'allow'
+    readPrivilege = 'allow'
+  }
+}
+'''
+        assertAcl(projDir, aclContent1)
+
+        assert new File(projDir, "procedures").exists()
+
+        // start proc1 procedure
+        File proc1 = new File (projDir, "procedures/proc1")
+        assert proc1.exists()
+        assert new File(proc1, "procedure.dsl").exists()
+
+        assertAcl(proc1, aclContent)
+
+        and: "check application tier ACL"
+
+        appDir = new File(projDir, "applications/app1")
+        assert appDir.exists()
+        assertFile(new File(appDir, "application.dsl"), """
+application 'app1'
+""")
+        assert new File(appDir, "applicationTiers").exists()
+
+        // applicationTier
+        File appTierDir = new File(appDir, "applicationTiers/Tier 1")
+        assert appTierDir.exists()
+
+        def aclContent2 = '''
+acl {
+  inheriting = '0\'
+}
+'''
+        assertAcl(appTierDir, aclContent2)
+
+        then: "check application process ACL"
+
+        assert new File(appDir, "processes").exists()
+        File appProcDir = new File(appDir, "processes/app_process")
+        assert appProcDir.exists()
+        assertAcl(appProcDir, aclContent)
+
+        cleanup:
+        assertLogin("admin", password)
+        deleteProjects([projectName: jira], false)
+        dsl """deleteAclEntry (projectName: '$pName-$pVersion',
+                          principalType: 'user', principalName: 'limited_user')"""
+        dsl 'deleteArtifact(artifactName: "dsl:dslCode8")'
+        new File(dslDir).deleteDir()
+    }
+
     private void assertFile(File file, String content) {
         assert file.exists()
         assert content.equals(file.text.replace("\r\n", "\n"))
+    }
+
+    private void assertAcl(File file, String content) {
+        File aclFolder = new File (file, "acls")
+        assert aclFolder && aclFolder.isDirectory()
+
+        File aclFile = aclFolder.listFiles().find()
+        assert aclFile && aclFile.isFile() && aclFile.name == "acl.dsl"
+
+        assertFile(aclFile, content)
     }
 
 }
