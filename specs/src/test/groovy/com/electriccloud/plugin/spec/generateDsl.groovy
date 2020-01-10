@@ -882,7 +882,7 @@ acl {
 
     private void assertAcl(File file, String content) {
         File aclFolder = new File (file, "acls")
-        assert aclFolder && aclFolder.isDirectory()
+        assert aclFolder
 
         File aclFile = aclFolder.listFiles().find()
         assert aclFile && aclFile.isFile() && aclFile.name == "acl.dsl"
