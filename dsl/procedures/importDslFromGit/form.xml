@@ -18,12 +18,6 @@
 <editor>
   <formElement>
     <type>entry</type>
-    <label>Destination Directory:</label>
-    <property>dest</property>
-    <documentation>Indicate the path where the source tree will be created (can be relative to the job's workspace).</documentation>
-  </formElement>
-  <formElement>
-    <type>entry</type>
     <label>Server Pool or Resource</label>
     <property>pool</property>
     <required>1</required>
@@ -45,6 +39,13 @@
     <documentation>The name of a saved SCM configuration.</documentation>
     <required>1</required>
     <configuration>1</configuration>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Git repository:</label>
+    <property>GitRepo</property>
+    <documentation>URL to the repository to pull from. ie: 'git://server/repo.git'.</documentation>
+    <required>1</required>
   </formElement>
   <formElement>
     <type>entry</type>
@@ -106,18 +107,20 @@
 
   <formElement>
     <type>entry</type>
-    <label>Git repository:</label>
-    <property>GitRepo</property>
-    <documentation>URL to the repository to pull from. ie: 'git://server/repo.git'.</documentation>
-    <required>1</required>
+    <label>Destination Directory:</label>
+    <property>dest</property>
+    <value>dsl</value>
+    <documentation>Indicate the path where the source tree will be created (can be relative to the job's workspace).</documentation>
   </formElement>
 
   <formElement>
-    <documentation>Results will be saved into this property/property sheet.</documentation>
-    <label>Result Property Sheet:</label>
-    <property>resultPropertySheet</property>
+    <type>checkbox</type>
+    <label>Cleanup?:</label>
+    <property>cleanup</property>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <initiallyChecked>0</initiallyChecked>
+    <documentation>This option will delete the destination directory with the source tree after the job execution.</documentation>
     <required>0</required>
-    <type>entry</type>
-    <value>/myJob/checkoutCode</value>
   </formElement>
 </editor>

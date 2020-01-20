@@ -3,6 +3,7 @@ import java.io.File
 def procName =  'generateDslToDirectory'
 procedure procName,
   {
+  jobNameTemplate = 'generate-dsl-to-directory-$[jobId]'
   resourceName= '$[pool]'
 
   step 'generateDsl', {
