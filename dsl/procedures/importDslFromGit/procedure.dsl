@@ -14,7 +14,7 @@ procedure procName, {
                         commit: '$[commit]',
                         config: '$[config]',
                         depth: '$[depth]',
-                        dest: '$[/javascript if(\'$[dest]\'.trim() != \'\') {\'$[dest]\'} else {\'dsl\'}]',
+                        dest: '$[dest]',
                         GitBranch: '$[GitBranch]',
                         GitRepo: '$[GitRepo]',
                         overwrite: '$[GitOverwrite]',

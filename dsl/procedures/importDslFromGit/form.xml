@@ -47,7 +47,7 @@
     <label>Overwrite mode</label>
     <property>overwrite</property>
     <required>0</required>
-    <value>0</value>
+    <value>1</value>
     <documentation>Overwrite mode, remove nonexistent in DSL elements.</documentation>
   </formElement>
   <formElement>
