@@ -4,14 +4,11 @@ def procName = 'importDslFromGit'
 procedure procName, {
     jobNameTemplate = 'import-dsl-from-git-$[jobId]'
 
-    step 'assignResource',
-        command: 'ectool setProperty /myJob/assignedResource $[/myResource]',
-        resourceName: '$[pool]'
-
     step 'checkoutDsl',
             subprocedure: 'CheckoutCode',
             subproject:'/plugins/ECSCM-Git/project',
-            resourceName: '$[pool]',
+            resourceName: '$[rsrcName]',
+            errorHandling: 'abortProcedure',
                 actualParameter: [
                         clone: '$[clone]',
                         commit: '$[commit]',
@@ -26,9 +23,10 @@ procedure procName, {
 
     step 'installFromDirectory',
             subprocedure: 'installDslFromDirectory',
+            errorHandling: 'abortProcedure',
             actualParameter: [
-                    directory: '$[/javascript if(\'$[dest]\'.trim() != \'\') {\'$[dest]\'} else {\'dsl\'}]',
-                    pool     : '$[pool]',
+                    directory: '$[dest]',
+                    pool     : '$[rsrcName]',
                     overwrite: '$[overwrite]'
             ]
 
@@ -39,7 +37,7 @@ procedure procName, {
         ]'''
         alwaysRun = '1'
         command = new File(pluginDir, "dsl/procedures/$procName/steps/cleanup.groovy").text
-        resourceName = '$[pool]'
+        resourceName = '$[rsrcName]'
         shell = 'ec-groovy'
       }
 }

@@ -18,11 +18,29 @@
 <editor>
   <formElement>
     <type>entry</type>
-    <label>Server Pool or Resource</label>
-    <property>pool</property>
+    <label>Server Resource</label>
+    <property>rsrcName</property>
     <required>1</required>
     <value>local</value>
-    <documentation>Server pool to use for a cluster setup.</documentation>
+    <documentation>The resource where the DSL files will be checked out from git and imported to the Flow server. The directory on this resource must be accessible from the Flow server.</documentation>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Destination Directory:</label>
+    <property>dest</property>
+    <required>1</required>
+    <value>dsl</value>
+    <documentation>The directory on the resource where the source tree will be created and from where the DSL files are read to be imported in Flow server. This directory must be accessible from the Flow server. In a clustered deployment, all Flow server nodes must have access to this directory.</documentation>
+  </formElement>
+  <formElement>
+    <type>checkbox</type>
+    <label>Cleanup?:</label>
+    <property>cleanup</property>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <initiallyChecked>0</initiallyChecked>
+    <documentation>This option will delete the destination directory with the source tree after the job execution.</documentation>
+    <required>0</required>
   </formElement>
   <formElement>
     <type>entry</type>
@@ -105,22 +123,4 @@
     <condition>${clone} == "1"</condition>
   </formElement>
 
-  <formElement>
-    <type>entry</type>
-    <label>Destination Directory:</label>
-    <property>dest</property>
-    <value>dsl</value>
-    <documentation>Indicate the path where the source tree will be created (can be relative to the job's workspace).</documentation>
-  </formElement>
-
-  <formElement>
-    <type>checkbox</type>
-    <label>Cleanup?:</label>
-    <property>cleanup</property>
-    <checkedValue>1</checkedValue>
-    <uncheckedValue>0</uncheckedValue>
-    <initiallyChecked>0</initiallyChecked>
-    <documentation>This option will delete the destination directory with the source tree after the job execution.</documentation>
-    <required>0</required>
-  </formElement>
 </editor>
