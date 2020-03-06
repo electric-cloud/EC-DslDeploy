@@ -83,9 +83,10 @@ class GenerateDslHelper {
 
     def handleObjectType (def objectTypeDetail, def parentDir) {
 
+        int size = objectTypeDetail?.objects?.object?.size()?:0
+
         println String.format("Generate DSL for %s (%d objects)",
-                objectTypeDetail.collectionName,
-                objectTypeDetail.objects.object.size)
+                objectTypeDetail.collectionName, size)
 
         childrenStack.push(
                 new EntityTypeDetail(objectTypeDetail.name, objectTypeDetail.collectionName))
@@ -118,7 +119,7 @@ class GenerateDslHelper {
     }
 
     static def anyObjectWithFileRef(def objTypeDetail) {
-        return objTypeDetail.objects.object.any {it.fileRefInfo && it.fileRefInfo.size > 0}
+        return objTypeDetail.objects.object.any {it.fileRefInfo?.size()?:0 > 0}
 
     }
 
@@ -190,7 +191,7 @@ class GenerateDslHelper {
                 withAcls: includeAcl,
                 useFileReferences: true).value
 
-        if (hasFileRefInFile || obj.fileRefInfo && obj.fileRefInfo.size > 0) {
+        if (hasFileRefInFile || obj.fileRefInfo?.size()?:0 > 0) {
             objDslFile << 'import java.io.File\n\n'
             dsl = dsl.replaceAll("'(new File\\(.*,.*\\).text)'", "\$1")
         }
@@ -246,7 +247,7 @@ class GenerateDslHelper {
 
         def hasFileRefInFile = false
         objectTypeDetail.objects.object.each {
-            if (it.fileRefInfo && it.fileRefInfo.size > 0) {
+            if (it.fileRefInfo?.size()?:0 > 0) {
                 objTypeDir.mkdirs()
                 def fileRefInfo = it.fileRefInfo[0]
                 File file = new File(objTypeDir, it.name + '.' + fileRefInfo.extension)
