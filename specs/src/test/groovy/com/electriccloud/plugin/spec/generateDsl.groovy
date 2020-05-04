@@ -1,6 +1,6 @@
 package com.electriccloud.plugin.spec
 
-import spock.lang.Ignore
+
 import spock.lang.Shared
 
 class generateDsl extends PluginTestHelper {
@@ -874,6 +874,66 @@ acl {
         dsl 'deleteArtifact(artifactName: "dsl:dslCode8")'
         new File(dslDir).deleteDir()
     }
+
+        def "generate DSL for project with AclOwner equal 0"() {
+        dslDir = 'build/dsl-NMB-29220'
+        def projName = 'NMB-29220'
+        def appName = 'TestApp'
+        def tierMapName = 'TierMap1'
+        args << [projectName: projName, tierMapName: tierMapName, appName: appName]
+        File projDir
+        File appDir
+
+        given:
+        dslFile("NMB-29220.dsl", args)
+        when: 'run generate Dsl procedure'
+        def result= runProcedureDsl("""
+                        runProcedure(
+                          projectName: "generateDslTestProject",
+                          procedureName: "generateDslAndPublish",
+                          actualParameter: [
+                            directory: "$dslDir",
+                            objectType: 'project',
+                            objectName: "$projName",
+                            includeAllChildren: '1',
+                            includeAcls: '1',
+                            includeAclsInDifferentFile: '1',
+                            suppressDefaults: '1',
+                            suppressParent: '1',
+                            artifactName: 'dsl:NMB-29220',
+                            artifactVersionVersion: '1.0',
+                            runResourceName: '$defaultPool'
+                          ]
+                        )""")
+        then:
+        assert result.jobId
+        def outcome=getJobProperty("outcome", result.jobId)
+        assert outcome == "success"
+
+        when:
+        retrieveArtifactVersion("dsl:NMB-29220", "1.0", dslDir)
+        projDir = new File (dslDir, "projects/" + projName)
+
+        and: "check project"
+        assert projDir.exists()
+        assertFile(new File(projDir, 'project.dsl'), "\nproject '$projName'\n")
+
+        and:"check directories were created"
+        appDir = new File(projDir, "applications/$appName")
+        assert appDir.exists()
+        assert new File(appDir, "acls").exists()
+        assert new File(appDir, "tierMaps").exists()
+
+        then: "check tierMap ACLs were NOT created"
+        assert new File(appDir, "tierMaps/$tierMapName").exists()
+        assert ! new File(appDir, "tierMaps/$tierMapName/acl").exists()
+
+        cleanup:
+        deleteProjects([projectName: projName], false)
+        dsl("deleteArtifact(artifactName: 'dsl:NMB-29220')")
+        new File(dslDir).deleteDir()
+    }
+
 
     private void assertFile(File file, String content) {
         assert file.exists()
