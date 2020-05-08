@@ -204,7 +204,7 @@ class GenerateDslHelper {
             generateProperties(objDir, obj)
         }
 
-        if (obj.aclsOwner && includeAclsInDifferentFile) {
+        if (obj.aclsOwner && obj.aclsOwner != '0' && includeAclsInDifferentFile) {
             def aclDsl = electricFlow.generateDsl(path: obj.path + "/acl",
                     includeChildren: includeChildrenValue,
                     suppressNulls: suppressNulls,
