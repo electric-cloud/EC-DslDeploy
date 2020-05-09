@@ -2,7 +2,7 @@ import java.io.File
 
 def procName = 'installDslFromDirectory'
 
-def dslShell = 'ectool --timeout $[/server/@PLUGIN_KEY@/timeout] evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl"'
+def dslShell = 'ectool --timeout $[/server/@PLUGIN_KEY@/timeout] evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl" --clientFiles "$[/myJob/CWD]"'
 
 procedure procName,
   jobNameTemplate: 'install-dsl-from-directory-$[jobId]',
