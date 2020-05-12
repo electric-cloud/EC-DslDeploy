@@ -2,12 +2,19 @@ import java.io.File
 
 def procName = 'installDslFromDirectory'
 
-def dslShell = 'ectool --timeout $[/server/@PLUGIN_KEY@/timeout] evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl" --clientFiles "$[/myJob/CWD]"'
+def dslShell = 'ectool --timeout $[/server/@PLUGIN_KEY@/timeout] evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl" $[additionalDslArguments]'
 
 procedure procName,
   jobNameTemplate: 'install-dsl-from-directory-$[jobId]',
   resourceName: '$[pool]',
 {
+  step 'setAdditionalDslArguments',
+    command: new File(pluginDir, "dsl/procedures/$procName/steps/setAdditionalDslArguments.pl").text,
+    resourceName: '$[pool]',
+    shell: 'ec-perl',
+    workingDirectory: '$[directory]',
+    postProcessor: 'postp'
+
   step 'deployMain',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployMain.pl").text,
     resourceName: '$[pool]',
