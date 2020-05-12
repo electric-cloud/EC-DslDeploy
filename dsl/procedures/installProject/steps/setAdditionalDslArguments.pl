@@ -20,7 +20,7 @@ my $resourceVersion = $xpath->findvalue("//version");
 $xpath = $ec->getServerStatus();
 my $serverVersion = $xpath->findvalue("//serverVersion/version");
 
-my @supportedVersionPatterns = ("1[0-9]\.", "2020\.[5-9]+", "2020\.[0-9]{2}", "202[1-9]");
+my @supportedVersionPatterns = ("[0-9]{2}\.", "2020\.[5-9]+", "2020\.[0-9]{2}", "202[1-9]");
 
 # Verify resource/agent and server versions
 my $resourceVersionMatched; 
