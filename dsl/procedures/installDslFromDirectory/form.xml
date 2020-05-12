@@ -39,4 +39,12 @@
     <value>0</value>
     <documentation>Overwrite mode, remove nonexistent in DSL elements.</documentation>
   </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Additional DSL Arguments</label>
+    <property>additionalDslArguments</property>
+    <required>0</required>
+    <expansionDeferred>1</expansionDeferred>
+    <documentation>Additional argument for evalDsl call.</documentation>
+  </formElement>
 </editor>
