@@ -101,7 +101,10 @@ abstract class BaseObject extends DslDelegatingScript {
 
     def propDir=new File(projectDir, 'properties')
     if (propDir.directory) {
-      loadNestedProperties("/projects/$projectName", propDir, overwrite, true)
+      def propertySheet = getProperties path: "/projects/$projectName"
+      def propSheetId = propertySheet.propertySheetId.toString()
+      loadNestedProperties("/projects/$projectName", propDir, overwrite,
+              propSheetId, true)
     }  else {
       println "No properties directory for project $projectName"
     }
@@ -237,8 +240,11 @@ abstract class BaseObject extends DslDelegatingScript {
       // Load nested properties
       def propDir = new File(childDir, 'properties')
       if (propDir.directory) {
+        def propertySheet = getProperties path: "$objPath/$plural/$objName"
+        def propSheetId = propertySheet.propertySheetId.toString()
         "${objType}" objName, {
-          loadNestedProperties("$objPath/$plural/$objName", propDir, overwriteMode)
+          loadNestedProperties("$objPath/$plural/$objName", propDir,
+                  overwriteMode, propSheetId)
         }
       } else {
         println "  No properties directory for $objType $objName"
@@ -320,8 +326,9 @@ abstract class BaseObject extends DslDelegatingScript {
     }
   }
 
-  def loadNestedProperties(String propRoot, File propsDir, String overwrite = '0', boolean projectRootProps=false) {
-    // println "Entering loadNestedProperties($propRoot," +  propsDir.toString() + ")"
+  def loadNestedProperties(String propRoot, File propsDir, String overwrite = '0',
+                           String pSheetId,
+                           boolean projectRootProps=false) {
     def allProperties = []
     propsDir.eachFile { dir ->
       println "  parsing " + dir.toString()
@@ -332,35 +339,42 @@ abstract class BaseObject extends DslDelegatingScript {
       allProperties<<propName
 
       try {
+        def existsProp = getProperty(objectId: "propertySheet-$pSheetId",
+                propertyName: propName)
+
         if (dir.directory) {
-          property propName, {
-            loadNestedProperties(propPath, dir, overwrite)
-          }
-        } else {
-          def exists = getProperty(propPath, suppressNoSuchPropertyException: true, expand: false)
-          if (exists) {
-            modifyProperty propertyName: propPath, value: dir.text
+          def propSheetId
+          if (existsProp) {
+            propSheetId = existsProp.propertySheetId
           } else {
-            createProperty propertyName: propPath, value: dir.text
+            def res = createProperty(objectId: "propertySheet-$pSheetId",
+                    propertyName: propName, propertyType:
+                    'sheet')
+            propSheetId = res.propertySheetId
+          }
+          loadNestedProperties(propPath, dir, overwrite, propSheetId)
+        } else {
+          if (existsProp) {
+            modifyProperty(propertyName: propName, value: dir.text,
+                    objectId: "propertySheet-$pSheetId")
+          } else {
+            createProperty( propertyName: propName, value: dir.text,
+                    objectId: "propertySheet-$pSheetId")
           }
         }
       } catch (Exception e) {
         println(String.format("Error: cannot load property %s", propPath, e.getMessage()))
         setProperty(propertyName: "outcome", value: "warning")
-     }
-
+      }
     }
 
     if (overwrite == '1' && !projectRootProps) {
       //cleanup nonexistent properties
-      def propertySheet = getProperties path: propRoot
-
-      def properties = getProperties propertySheetId: propertySheet.propertySheetId
-
+      def properties = getProperties propertySheetId: "$pSheetId"
       properties.property.each {
         if (!allProperties.contains(it.name)) {
           println "Delete property '${propRoot}/${it.name}'"
-          deleteProperty propertyName: "${propRoot}/${it.name}"
+          deleteProperty propertyName: "${it.name}", objectId: "propertySheet-$pSheetId"
         }
       }
     }

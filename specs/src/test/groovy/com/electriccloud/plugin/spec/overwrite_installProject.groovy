@@ -1432,4 +1432,144 @@ class overwrite_installProject extends PluginTestHelper {
         assert ec_pipe11Res.propertySheet.property[0].value == 'pipe11'
 
     }
+
+    /**
+     * CEV-24672: import of '/projects/Commander/release/counter' property
+     * failed
+     */
+    def "overwrite_installProject properties:conflict with intrinsic property"(){
+        def testProjName = 'CEV-24672';
+
+        given: "the overwrite_installProject code"
+        when: "Load DSL Code"
+        def p = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installProject",
+          actualParameter: [
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_project/projects/$testProjName",
+            projName: "$testProjName"
+          ]
+        )""")
+        then: "job completed"
+        waitUntil {
+            assert p.jobId
+            assert getJobProperty("outcome", p.jobId) == "success" || getJobProperty("outcome", p.jobId) == "warning"
+        }
+
+        def projPropResult = dsl "getProperties projectName: '$testProjName'"
+        assert  projPropResult.propertySheet.property.size() == 2
+
+        //
+        def release = projPropResult.propertySheet.property.find{it
+                .propertyName == 'release'}
+
+        def releaseRes = dsl "getProperties propertySheetId: '$release.propertySheetId'"
+        assert releaseRes.propertySheet.property.size() == 1
+        def r_counter_prop = releaseRes.propertySheet.property.find{
+            it.propertyName == 'counter'}
+        assert r_counter_prop.value == '10'
+        //
+        def procedure = projPropResult.propertySheet.property.find{it
+                .propertyName == 'procedure'}
+
+        def procedureRes = dsl "getProperties propertySheetId: '$procedure.propertySheetId'"
+        assert procedureRes.propertySheet.property.size() == 2
+        def p_counter_prop = procedureRes.propertySheet.property.find{
+            it.propertyName == 'counter'}
+        assert p_counter_prop.value == '20'
+        //
+        def test = procedureRes.propertySheet.property.find{it
+                .propertyName == 'test'}
+        def testRes = dsl "getProperties propertySheetId: '$test.propertySheetId'"
+        assert testRes.propertySheet.property.size() == 1
+        def dot_prop = testRes.propertySheet.property.find{
+            it.propertyName == 'property.with.dot'}
+        assert dot_prop.value == 'test'
+        //
+        def releaseResult = dsl "getProperties projectName: " +
+                "'$testProjName', releaseName: 'release1'"
+        assert releaseResult.propertySheet.property.size() == 2
+        //
+
+        when: 'create new properties'
+        dsl """
+            project 'CEV-24672', {
+                release 'release1', {
+                    property 'sheet1', {
+                        new_property = 'new'
+                    }
+                    property 'ec_pipe1', {
+                        ec_pipe1 = 'new'
+                        ec_pipe2 = 'new'
+                    }
+                    property 'new', {
+                        value: 'new'
+                    }
+                }
+                
+                prop1 = 'new'
+                property 'new-sheet', {
+                    prop2 = 'new'
+                }
+             }   
+"""
+
+        and: "Load DSL Code in overwrite mode"
+        def p2 = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installProject",
+          actualParameter: [
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_project/projects/$testProjName",
+            projName: '$testProjName',
+            overwrite: '1'
+          ]
+        )""")
+        then: "job completed"
+        waitUntil {
+            assert p2.jobId
+            assert getJobProperty("outcome", p2.jobId) == "success" || getJobProperty("outcome", p2.jobId) == "warning"
+        }
+
+        then: 'check properties'
+
+        def projPropResult2 = dsl "getProperties projectName: '$testProjName'"
+        assert  projPropResult2.propertySheet.property.size() == 4
+
+        //
+        def release2 = projPropResult2.propertySheet.property.find{it
+                .propertyName == 'release'}
+
+        def releaseRes2 =
+                dsl "getProperties propertySheetId: '$release2.propertySheetId'"
+        assert releaseRes2.propertySheet.property.size() == 1
+        def r_counter_prop2 = releaseRes2.propertySheet.property.find{
+            it.propertyName == 'counter'}
+        assert r_counter_prop2.value == '10'
+        //
+        def procedure2 = projPropResult.propertySheet.property.find{it
+                .propertyName == 'procedure'}
+
+        def procedureRes2 =
+                dsl "getProperties propertySheetId: '$procedure2.propertySheetId'"
+        assert procedureRes2.propertySheet.property.size() == 2
+        def p_counter_prop2 = procedureRes2.propertySheet.property.find{
+            it.propertyName == 'counter'}
+        assert p_counter_prop2.value == '20'
+        //
+        def test2 = procedureRes2.propertySheet.property.find{it
+                .propertyName == 'test'}
+        def testRes2 =
+                dsl "getProperties propertySheetId: '$test2.propertySheetId'"
+        assert testRes2.propertySheet.property.size() == 1
+        def dot_prop2 = testRes2.propertySheet.property.find{
+            it.propertyName == 'property.with.dot'}
+        assert dot_prop2.value == 'test'
+        //
+        def releaseResult2 = dsl "getProperties projectName: " +
+                "'$testProjName', releaseName: 'release1'"
+        assert releaseResult2.propertySheet.property.size() == 2
+
+    }
 }
