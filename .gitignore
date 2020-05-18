@@ -14,3 +14,4 @@ src/out
 *.iml
 EC-DslDeploy.jar
 .preflight
+.gradle

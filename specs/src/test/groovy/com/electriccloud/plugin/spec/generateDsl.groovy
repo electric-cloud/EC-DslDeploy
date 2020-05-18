@@ -967,7 +967,118 @@ acl {
         deleteProjects(projects, false)
     }
 
+    def "generate DSL for project with special symbols in names"() {
+        dslDir = 'build/spec_symbols'
+        def projName = 'new test Export'
+        def procName = 'A Procedure % \\ @'
+        def procStepName = 'step # 1'
+        def pipelineName = 'Verify QA / Notify'
+        def pipeStageName = 'Stage 1'
+        def pipeTaskName = 'task %1'
+        args << [projectName: projName,
+                 procedureName: procName,
+                 procStepName: procStepName,
+                 pipelineName: pipelineName,
+                 pipeStageName: pipeStageName,
+                 pipeTaskName: pipeTaskName]
+        def artifactName = 'dsl:spec_symbols'
+        File projDir
 
+        given:
+        dslFile("spec_symbols.dsl", args)
+        when: 'run generate Dsl procedure'
+        def result= runProcedureDsl("""
+                        runProcedure(
+                          projectName: "generateDslTestProject",
+                          procedureName: "generateDslAndPublish",
+                          actualParameter: [
+                            directory: "$dslDir",
+                            objectType: 'project',
+                            objectName: "$projName",
+                            includeAllChildren: '1',
+                            includeAcls: '0',
+                            includeAclsInDifferentFile: '0',
+                            suppressDefaults: '1',
+                            suppressParent: '1',
+                            artifactName: "$artifactName",
+                            artifactVersionVersion: '1.0',
+                            runResourceName: '$defaultPool'
+                          ]
+                        )""")
+        then:
+        assert result.jobId
+        def outcome=getJobProperty("outcome", result.jobId)
+        assert outcome == "success"
+
+        when:
+        retrieveArtifactVersion("$artifactName", "1.0", dslDir)
+        projDir = new File (dslDir, "projects/" + encode(projName))
+
+        and: "check project was created"
+        assert projDir.exists()
+        assertFile(new File(projDir, 'project.dsl'), "\nproject '$projName'\n")
+
+        and:"check procedures directory were created"
+        def encProcName = encode(procName)
+        def procDir = new File(projDir, "procedures/"  + encProcName)
+        assert procDir.exists()
+        assertFile(new File(procDir, 'procedure.dsl'), "\nprocedure 'A Procedure % \\\\ @'\n")
+        def procStepDir = new File(procDir, 'steps')
+        assert procStepDir.exists()
+        def encStepName = encode(procStepName)
+        def stepDir = new File(procStepDir, encStepName)
+        assert stepDir.exists()
+        assertFile(new File(stepDir, 'step.dsl'),
+            "import java.io.File\n\n\n"
+                + "step '$procStepName', {\n"
+                + "  command = new File(projectDir, \"./procedures/$encProcName/steps/$encStepName" + ".cmd\").text\n}\n")
+        assertFile(new File(procStepDir, encode(procStepName) + '.cmd'),
+            'echo Procedure is completed')
+
+        then:"check pipelines directories were created"
+        def encPipeName = encode(pipelineName)
+        def pipeDir = new File(projDir, "pipelines/"  + encPipeName)
+        assert pipeDir.exists()
+        assertFile(new File(pipeDir, 'pipeline.dsl'), "\n" +
+            "pipeline '$pipelineName', {\n\n"
+            + "  formalParameter 'ec_stagesToRun', {\n"
+            + "    expansionDeferred = '1'\n"
+            + "  }"
+            + "\n}\n")
+        def encStageName = encode(pipeStageName)
+        def pipeStageDir = new File(pipeDir, "stages/"  + encStageName)
+        assert pipeStageDir.exists()
+        assertFile(new File(pipeStageDir, 'stage.dsl'), "\nstage '$pipeStageName'\n")
+        def encTaskName = encode(pipeTaskName)
+        def taskDir = new File(pipeStageDir, "tasks/" + encTaskName)
+        assert taskDir.exists()
+        assertFile(new File(taskDir, 'task.dsl'),
+            'import java.io.File\n\n\n'
+                + "task '$pipeTaskName', {\n"
+                + '  actualParameter = [\n'
+                + "    \'commandToRun\': new File(projectDir, \"./pipelines/$encPipeName/stages/$encStageName/tasks/$encTaskName" + ".cmd\").text,\n  ]\n"
+                + '  subpluginKey = \'EC-Core\'\n'
+                + '  subprocedure = \'RunCommand\'\n'
+                + '  taskType = \'COMMAND\'\n' + '}\n')
+        assertFile(new File(pipeStageDir, "tasks/" + encTaskName + ".cmd"),
+            'echo task %1 completed')
+
+        cleanup:
+        deleteProjects([projectName: projName], false)
+        dsl("deleteArtifact(artifactName: '$artifactName')")
+        new File(dslDir).deleteDir()
+    }
+
+    private static String encode(String arg)
+    {
+        Map<String, String> ENCODE_MAP = ["/": "@2F", "\\": "@5C"] as HashMap
+        String result = arg
+        ENCODE_MAP.each {key, value ->
+            result = result.replace(key, value)
+        }
+        return result
+    }
+    
     private void assertFile(File file, String content) {
         assert file.exists()
         assert content.equals(file.text.replace("\r\n", "\n"))

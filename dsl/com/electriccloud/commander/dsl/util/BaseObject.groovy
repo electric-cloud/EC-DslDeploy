@@ -24,18 +24,12 @@
 ############################################################################ */
 package com.electriccloud.commander.dsl.util
 
-import groovy.io.FileType
-import groovy.json.JsonOutput
-import groovy.json.JsonSlurper
-import groovy.transform.Field
-import java.io.File
-
-import org.codehaus.groovy.control.CompilerConfiguration
 import com.electriccloud.commander.dsl.DslDelegate
 import com.electriccloud.commander.dsl.DslDelegatingScript
-
+import groovy.io.FileType
+import groovy.json.JsonSlurper
+import org.codehaus.groovy.control.CompilerConfiguration
 import java.util.logging.Logger
-
 
 abstract class BaseObject extends DslDelegatingScript {
 
@@ -47,6 +41,9 @@ abstract class BaseObject extends DslDelegatingScript {
           Arrays.asList("catalogItems", "deployerApplications", "deployerServices",
                   "steps", "reportingFilters", "stages", "stateDefinitions", "tasks",
                   "widgets");
+
+  private static final Map<String, String> ENCODE_MAP = ["/": "@2F", "\\": "@5C"] as HashMap
+  private static final Map<String, String> DECODE_MAP = ["@2F": "/", "@5C": "\\"] as HashMap
 
   def jsonSlurper = new JsonSlurper()
 
@@ -184,7 +181,12 @@ abstract class BaseObject extends DslDelegatingScript {
         if (metadata.order) {
           metadata.order.each {
             // load in specified order
-            File objDir = new File(dir, it)
+            File objDir = new File(dir, encode(it))
+            if (!objDir.exists()) {
+              println String.format("Trying '%s' since encoded was not found", it)
+              objDir = new File(dir, it)
+
+            }
             loadObjectFromDirectory(objDir, objType, objPath, plural, bindingMap, overwriteMode, counters)
             nbObjs++
           }
@@ -196,7 +198,7 @@ abstract class BaseObject extends DslDelegatingScript {
           }
         }
       } catch (Exception e) {
-        println("Error: " + e.getMessage())
+        println("Error: " + e)
       }
     }   // directory for "objects" exists
     counters.put(objType, nbObjs)
@@ -204,7 +206,8 @@ abstract class BaseObject extends DslDelegatingScript {
   }
 
   def loadObjectFromDirectory(def childDir, String objType, String objPath, plural, Map bindingMap, String overwriteMode, counters) {
-    def objName = childDir.name
+    //println "Entering loadObjectFromDirectory with: $childDir, $objType, $plural, $bindingMap"
+    def objName = decode(childDir.name)
     def objDir = childDir.absolutePath
     File dslFile = getObjectDSLFile(childDir, objType)
     if (dslFile == null) {
@@ -240,7 +243,7 @@ abstract class BaseObject extends DslDelegatingScript {
       // Load nested properties
       def propDir = new File(childDir, 'properties')
       if (propDir.directory) {
-        def propertySheet = getProperties path: "$objPath/$plural/$objName"
+        def propertySheet = getProperties path: "$objPath/$plural['$objName']"
         def propSheetId = propertySheet.propertySheetId.toString()
         "${objType}" objName, {
           loadNestedProperties("$objPath/$plural/$objName", propDir,
@@ -277,7 +280,7 @@ abstract class BaseObject extends DslDelegatingScript {
           def childrenCounter
           "${objType}" objName, {
             childrenCounter = loadObjects(child, objDir,
-                    "$objPath/${objType}s/$objName", bindingMap)
+                    "$objPath/${objType}s['$objName']", bindingMap)
           }
           counters << childrenCounter
         }
@@ -380,6 +383,25 @@ abstract class BaseObject extends DslDelegatingScript {
     }
 
   }
+
+  static String encode(String arg)
+  {
+    String result = arg
+    ENCODE_MAP.each {key, value ->
+      result = result.replace(key, value)
+    }
+    return result
+  }
+
+  static String decode(String arg)
+  {
+    String result = arg
+    DECODE_MAP.each {key, value ->
+          result = result.replace(key, value)
+        }
+    return result
+  }
+
 
   /**
    * NMB-27865: Intercept the DslDelegate

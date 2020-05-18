@@ -1,8 +1,13 @@
 import groovy.json.JsonOutput
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+import java.util.stream.Collectors
 
 class GenerateDslHelper {
 
     private static final String METADATA_FILE = "metadata.json"
+
+    private static final Map<String, String> ENCODE_MAP = ["/": "@2F", "\\": "@5C"] as HashMap
 
     //
     private def electricFlow
@@ -58,7 +63,7 @@ class GenerateDslHelper {
             toDirectory.mkdirs()
         }
 
-        println "Target directory for generated DSL: " + toDirectory.getAbsolutePath() + "\n"
+        println("Target directory for generated DSL: " + toDirectory.getAbsolutePath())
 
         // store full path to the directory in a job property:
         electricFlow.setProperty(propertyName: 'directoryFullPath',
@@ -69,7 +74,8 @@ class GenerateDslHelper {
 
         if (structure && structure.object) {
             def obj = structure.object
-            File objDir = new File (toDirectory, obj.path)
+            def encPath = obj.path.replace(obj.name, encode(obj.name))
+            File objDir = new File (toDirectory, encPath)
 
             if (objDir.exists()) {
                 objDir.deleteDir()
@@ -125,8 +131,8 @@ class GenerateDslHelper {
 
     def handleObject(def obj, def objDir,
                      boolean topLevel = false) {
-
-        File objDslFile = new File (objDir, obj.type + ".dsl")
+        //println String.format("handleObject: %s, %s", obj, objDir.path)
+        File objDslFile = new File (objDir, encode(obj.type + ".dsl"))
         if (topLevel && includeAllChildren && includeChildrenInSameFile) {
 
             println String.format("generate DSL for the '%s' %s and all it's nested objects in a same file %s",
@@ -194,6 +200,7 @@ class GenerateDslHelper {
         if (hasFileRefInFile || obj.fileRefInfo?.size()?:0 > 0) {
             objDslFile << 'import java.io.File\n\n'
             dsl = dsl.replaceAll("'(new File\\(.*,.*\\).text)'", "\$1")
+            dsl = encodePath(dsl)
         }
 
         objDslFile << dsl
@@ -231,6 +238,46 @@ class GenerateDslHelper {
         }
     }
 
+    private static String encodePath(String arg)
+    {
+        def filePattern = "new File\\(projectDir, \"\\.(/.+)\"\\)\\.text"
+
+        Matcher matcher = Pattern.compile(filePattern).matcher(arg)
+        def result = arg
+        while (matcher.find()) {
+            String path = matcher.group(1)
+
+            //replace /entities[name] parts with /entities/name simultaneously encoding
+            List<String> parts = new ArrayList<>()
+            matcher = Pattern.compile("/(.+?)\\[(.+?)]").matcher(path)
+            int matchEnd = 0
+            while (matcher.find()) {
+                parts.addAll(Arrays.stream(matcher.group(1).split("/"))
+                                   .map({p -> encode(p)})
+                                   .collect(Collectors.toList()))
+                parts.add(encode(matcher.group(2)))
+                matchEnd = matcher.end()
+            }
+            if (matchEnd < path.length() - 1) {
+                parts.addAll(Arrays.stream(path.substring(matchEnd + 1).split("/"))
+                                   .map({p -> encode(p)})
+                                   .collect(Collectors.toList()))
+            }
+
+            result = result.replace(path, '/' + String.join("/", parts))
+        }
+        return result
+    }
+
+    private static String encode(String arg)
+    {
+        String result = arg
+        ENCODE_MAP.each {key, value ->
+            result = result.replace(key, value)
+        }
+        return result
+    }
+
     private def createCommandFiles(List childrenToCheckFileRef, objDir, inSameFile) {
         def hasFileRefInFile
 
@@ -250,7 +297,7 @@ class GenerateDslHelper {
             if (it.fileRefInfo?.size()?:0 > 0) {
                 objTypeDir.mkdirs()
                 def fileRefInfo = it.fileRefInfo[0]
-                File file = new File(objTypeDir, it.name + '.' + fileRefInfo.extension)
+                File file = new File(objTypeDir, encode(it.name) + '.' + fileRefInfo.extension)
                 String propertyPath = fileRefInfo.propertyPath
 
                 try {
@@ -266,7 +313,7 @@ class GenerateDslHelper {
             if (it.children && it.children.objectType) {
                 for (def childType : it.children.objectType) {
 
-                    File objDir = new File(objTypeDir, it.name)
+                    File objDir = new File(objTypeDir, encode(it.name))
                     hasFileRefInFile = handleEntitiesWithFileRef(objDir, childType) || hasFileRefInFile
                 }
             }
@@ -289,11 +336,11 @@ class GenerateDslHelper {
     private void handleProperties(File propertiesDir, def properties) {
         for (def property :  properties) {
             if (property.propertySheet) {
-                File dir = new File(propertiesDir, property.propertyName)
+                File dir = new File(propertiesDir, encode(property.propertyName))
                 dir.mkdir()
                 handleProperties(dir, property.propertySheet.property)
             } else {
-                File file = new File(propertiesDir, property.propertyName + '.txt')
+                File file = new File(propertiesDir, encode(property.propertyName + '.txt'))
                 file << property.value
             }
         }
@@ -320,7 +367,7 @@ class GenerateDslHelper {
 
     def handleChildObject(def obj, def parentDir) {
 
-        def dirName = obj.name
+        def dirName = encode(obj.name)
         File objDir = new File (parentDir, dirName)
         objDir.mkdir()
         handleObject(obj, objDir, false)
@@ -349,7 +396,6 @@ class EntityTypeDetail {
         this.collectionName = collectionName
     }
 }
-
 
 class FileTemplateItem {
 

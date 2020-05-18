@@ -12,8 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
-import com.electriccloud.spec.*
+import com.electriccloud.spec.PluginSpockTestSupport
 
 class PluginTestHelper extends PluginSpockTestSupport {
   static def automationTestsContextRun = System.getenv ('AUTOMATION_TESTS_CONTEXT_RUN') ?: ''
@@ -165,7 +164,7 @@ class PluginTestHelper extends PluginSpockTestSupport {
     String command = "${ectool.absolutePath} --server $commanderServer "
     runCommand("${command} login ${username} ${password}")
 
-    String retrieveCommand = "${command} retrieveArtifactVersions --artifactVersionName ${artifactName}:${version} --toDirectory ${dir} "
+    String retrieveCommand = "${command} retrieveArtifactVersions --artifactVersionName ${artifactName}:${version} --toDirectory \"${dir}\" "
     runCommand(retrieveCommand)
   }
 
