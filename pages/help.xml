@@ -26,6 +26,9 @@
   <ul>
     <li><a href="#installDsl">installDsl</a></li>
     <li><a href="#installDslFromDirectory">installDslFromDirectory</a></li>
+    <li><a href="#installProject">installProject</a></li>
+    <li><a href="#generateDslToDirectory">generateDslToDirectory</a></li>
+    <li><a href="#importDslFromGit">importDslFromGit</a></li>
   </ul>
 
   <h1>Procedures</h1>
@@ -66,6 +69,11 @@
         covering all server node agents for the parameter above.<br />
         Default is "false"</td>
 	    </tr>
+      <tr>
+        <td>Overwrite mode</td>
+        <td>Select to enable overwrite mode. If the object exists, all attributes
+            and child objects are overwritten by the values in the DSL files.</td>
+        </tr>
     </tbody>
   </table>
 
@@ -90,11 +98,179 @@
 	      <td>The name of the pool or resource where the artifact will be
           retrieved. Use "." if you have retrieved in your workspace.</td>
 	    </tr>
+      <tr>
+        <td>Overwrite mode</td>
+        <td>Select to enable overwrite mode. If the object exists, all attributes
+            and child objects are overwritten by the values in the DSL files.</td>
+        </tr>
+      <tr>
+        <td>Additional DSL Arguments</td>
+        <td>Additional argument for evalDsl call, for
+            example --timeout or --debug.</td>
+        </tr>
     </tbody>
   </table>
 
   <img src="../../plugins/@PLUGIN_KEY@/images/help/installDslFromDirectory.png"
     	 alt="installDslFromDirectory parameters" />
+
+  <a name="installProject" id="installProject" />
+  <h3>installProject</h3>
+  <p>Deploy DSL file structure from a directory on your
+    ElectricFlow server as a project.<br />
+    The main purpose of the procedure to be a part of installDslFromDirectory
+    procedure.</p>
+  <table class="grid">
+    <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr>
+          <td class="required">Project Name</td>
+          <td>Name of the project to instal.</td>
+        </tr>
+        <tr>
+            <td class="required">Project directory</td>
+            <td>The location of the project DSL code on your Dev ElectricFlow
+              server.</td>
+        </tr>
+        <tr>
+            <td>Overwrite mode</td>
+            <td>Select to enable overwrite mode. If the object exists, all attributes
+                and child objects are overwritten by the values in the DSL files.</td>
+        </tr>
+        <tr>
+            <td>Additional DSL Arguments</td>
+            <td>Additional argument for evalDsl call, for
+                example --timeout or --debug.</td>
+        </tr>
+    </tbody>
+  </table>
+
+  <img src="../../plugins/@PLUGIN_KEY@/images/help/installProject.png"
+         alt="installProject parameters" />
+
+  <a name="generateDslToDirectory" id="generateDslToDirectory" />
+  <h3>generateDslToDirectory</h3>
+  <p>Export DSL for a top level Flow object, with options for which child
+    objects and values to include. Export the DSL in separate files in a directory
+    tree representing the object hierarchy, for ease of editing and management.</p>
+  <table class="grid">
+    <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="required">Directory path</td>
+        <td>Folder where the code is generated.</td>
+      </tr>
+      <tr>
+        <td class="required">Server Pool or Resource</td>
+        <td>Server pool to use for a cluster setup.</td>
+      </tr>
+      <tr>
+        <td class="required">Object Type</td>
+        <td>Object type to generate DSL for.</td>
+      </tr>
+      <tr>
+        <td class="required">Object Name</td>
+        <td>Object name to generate DSL for.</td>
+      </tr>
+      <tr>
+        <td class="required">Suppress Nulls</td>
+        <td>Exclude from the generated DSL properties with null value.</td>
+      </tr>
+      <tr>
+        <td class="required">Suppress Defaults</td>
+        <td>Exclude from the generated DSL properties with default value.</td>
+      </tr>
+      <tr>
+        <td class="required">Suppress Parent</td>
+        <td>Exclude from the generated DSL properties referred to object parent.</td>
+      </tr>
+      <tr>
+        <td class="required">Include ACLs</td>
+        <td>Include in ACLs for objects.</td>
+      </tr>
+      <tr>
+        <td class="required">Include All Children</td>
+        <td>Include in the generated DSL all object children. If True - ignore value of 'Include Children' parameter.</td>
+      </tr>
+      <tr>
+        <td class="required">Include children</td>
+        <td>Comma-separated list of object children the DSL should be generated for.</td>
+      </tr>
+      <tr>
+        <td class="required">Include Children in Same File</td>
+        <td>Include in the generated DSL all object children. If True - ignore value of 'Include Children' parameter.</td>
+      </tr>
+      <tr>
+        <td class="required">Children in Different Files</td>
+        <td>Comma-separated list of patterns to include, like pipelines, procedures.*, applications.applicationTiers.components</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <img src="../../plugins/@PLUGIN_KEY@/images/help/generateDslToDirectory.png"
+       alt="generateDslToDirectory parameters" />
+
+  <a name="importDslFromGit" id="importDslFromGit" />
+  <h3>importDslFromGit</h3>
+  <p>Import DSL file structure from a Git repository.<br />
+    This procedure main usage is to set up a CI process.</p>
+  <table class="grid">
+    <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="required">Server Resource</td>
+        <td>The resource where the DSL files will be checked out from git and imported to the Flow server.</td>
+      </tr>
+      <tr>
+        <td class="required">Destination Directory</td>
+        <td>The directory on the resource where the source tree will be created and from where the DSL files are read to be imported in Flow server. </td>
+      </tr>
+      <tr>
+        <td>Cleanup?</td>
+        <td>This option will delete the destination directory with the source tree after the job execution.</td>
+      </tr>
+      <tr>
+        <td>Overwrite mode</td>
+        <td>Select to enable overwrite mode. If the object exists, all attributes
+          and child objects are overwritten by the values in the DSL files.</td>
+      </tr>
+      <tr>
+        <td class="required">Configuration</td>
+        <td>The name of a saved SCM configuration.</td>
+      </tr>
+      <tr>
+        <td class="required">Git repository</td>
+        <td>URL to the repository to pull from. ie: 'git://server/repo.git'.</td>
+      </tr>
+      <tr>
+        <td>Commit Hash</td>
+        <td>The Commit Hash to update the index. Note: This will move the HEAD.</td>
+      </tr>
+      <tr>
+        <td>Remote Branch</td>
+        <td>The name of the Git branch to use. ie: 'experimental'.</td>
+      </tr>
+      <tr>
+        <td>Clone?</td>
+        <td>This option will clone a repository into a newly created directory.</td>
+      </tr>
+      <tr>
+        <td>Overwrite?</td>
+        <td>This option will overwrite a repository if it already exists.</td>
+      </tr>
+      <tr>
+        <td>Depth</td>
+        <td>Create a shallow clone with a history truncated to the specified number of revisions.</td>
+      </tr>
+      <tr>
+        <td>Tag</td>
+        <td>Provide the name of a specific tag to checkout after the clone command.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <img src="../../plugins/@PLUGIN_KEY@/images/help/importDslFromGit.png"
+       alt="importDslFromGit parameters" />
 
 	<h1>Contact authors</h1>
 	<dl>
@@ -125,6 +301,24 @@ plugin.</p>
   <p> Check
     the <a href="https://github.com/electric-cloud-community/EC-DslDeploy/blob/master/CHANGELOG">CHANGELOG</a>
     for details.</p>
+
+  <h3 id="2.1.2">@PLUGIN_KEY@ 2.1.2</h3>
+  <ul>
+    <li>Merge pull request #41 from electric-cloud-community/dev/lrochette</li>
+    <li>convert deployMain and deployPost to ec-perl to work around 8K limit</li>
+  </ul>
+
+  <h3 id="2.1.0">@PLUGIN_KEY@ 2.1.0</h3>
+  <ul>
+    <li>Merge pull request #38 from electric-cloud-community/dev/lrochette</li>
+    <li>Add ACLs support</li>
+  </ul>
+
+  <h3 id="1.1.0">@PLUGIN_KEY@ 1.1.0</h3>
+  <ul>
+    <li>Merge pull request #26 from lrochette/master</li>
+    <li>Add support for resources.</li>
+  </ul>
 
   <h3 id="1.0.2">@PLUGIN_KEY@ 1.0.2</h3>
   <ul>
