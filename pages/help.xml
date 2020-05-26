@@ -302,6 +302,23 @@ plugin.</p>
     the <a href="https://github.com/electric-cloud-community/EC-DslDeploy/blob/master/CHANGELOG">CHANGELOG</a>
     for details.</p>
 
+  <h3 id="2.2.1">@PLUGIN_KEY@ 2.2.1</h3>
+  <ul>
+    <li>The plugin is adopted to use new 'clientFiles' argument in evalDsl API
+      what allows to remove limitation of shared folder usage for DSL import</li>
+    <li>fixed issue with import of 'release' property sheet under the
+      project</li>
+    <li>fixed issue for 'generateDslToDirectory' with includeAcls='1'</li>
+  </ul>
+
+  <h3 id="2.2.0">@PLUGIN_KEY@ 2.2.0</h3>
+  <ul>
+    <li>Added 'overwrite' parameter to install procedures</li>
+    <li>added 'generateDslToDirectory' procedure</li>
+    <li>added 'importDslFromGit' procedure</li>
+    <li>enhanced 'installDsl' procedure to support deploy of more types of objects</li>
+  </ul>
+
   <h3 id="2.1.2">@PLUGIN_KEY@ 2.1.2</h3>
   <ul>
     <li>Merge pull request #41 from electric-cloud-community/dev/lrochette</li>
