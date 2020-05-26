@@ -45,6 +45,7 @@
     <property>additionalDslArguments</property>
     <required>0</required>
     <expansionDeferred>1</expansionDeferred>
-    <documentation>Additional argument for evalDsl call.</documentation>
+    <documentation>Additional argument for evalDsl call, for
+      example --timeout or --debug.</documentation>
   </formElement>
 </editor>
