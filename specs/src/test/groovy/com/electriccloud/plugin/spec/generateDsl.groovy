@@ -934,6 +934,39 @@ acl {
         new File(dslDir).deleteDir()
     }
 
+    def "run procedure with EC-DslDeploy generateDslToDirectory procedure step"() {
+        def projectName = randomize('test_project')
+        def procedureName = randomize("test_procedure")
+
+        def projects = [projectName: projectName]
+        def procedures = [procedureName: procedureName]
+        args << projects
+        args << procedures
+
+        def jobId
+        def response
+
+        given:
+        dslFile ('ec_dslDeploy_procedure.dsl', args)
+
+        when: "run procedure"
+        response = dsl "runProcedure projectName: '$projectName', procedureName: '$procedureName'"
+
+        then: "job gets created"
+        waitUntil {
+            assert response?.jobId
+            jobId = response?.jobId
+            assert jobId: 'jobId should be present'
+        }
+
+        and: "job should complete"
+        jobCompleted jobId
+
+
+        cleanup:
+        deleteProjects(projects, false)
+    }
+
 
     private void assertFile(File file, String content) {
         assert file.exists()
