@@ -1,6 +1,8 @@
 package com.electriccloud.plugin.spec
 
-import spock.lang.*
+import spock.lang.Shared
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 class overwrite_installProject extends PluginTestHelper {
     static String pName = 'EC-DslDeploy'
@@ -1571,5 +1573,148 @@ class overwrite_installProject extends PluginTestHelper {
                 "'$testProjName', releaseName: 'release1'"
         assert releaseResult2.propertySheet.property.size() == 2
 
+        cleanup:
+        deleteProjects([projectName: testProjName], false)
+    }
+
+    //Leading and trailing spaces are not supported
+    def "install project with special symbols in names"() {
+        def testProjName = 'new test Import'
+        def procName = 'A Procedure %% \\\\\\\\ @'
+        def procStepName = 'step # 1'
+        def pipelineName = 'Verify QA / Notify'
+        def pipeStageName = 'Stage 1'
+        def pipeTaskName = 'task %%1'
+
+        given: "spec_symbols project code"
+
+        when: "Load DSL Code"
+        def p = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installProject",
+          actualParameter: [
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/spec_symbols/projects/new test Import",
+            projName: "$testProjName"
+          ]
+        )""")
+
+        then: "job completed"
+        waitUntil {
+            assert p.jobId
+            assert getJobProperty("outcome", p.jobId) == "success" || getJobProperty("outcome", p.jobId) == "warning"
+        }
+
+        when:
+        def result = dsl "getProject(projectName: '$testProjName')"
+
+        then: "project created"
+        assert result.project['projectName'] == testProjName
+
+        when:
+        result = dsl "generateDsl(path: '/projects/$testProjName')"
+        println result
+        //resort to manual parsing due to implicit dsl test escaping
+        Matcher matcher = Pattern.compile("procedure '(.*)', \\{[\\W\\w]*step '(.*)', \\{[\\W\\w]*command\\s=\\s'(.*)'[\\W\\w]*?}?\\W*}")
+                                 .matcher(result.value);
+        if (matcher.find()) {
+            assert matcher.group(1) == procName
+            assert matcher.group(2) == procStepName
+            assert matcher.group(3) == "echo Procedure is completed"
+        }
+        else assert false
+
+        and:
+        result = dsl "getPipeline(projectName: '$testProjName', pipelineName: '$pipelineName')"
+
+        then: "pipeline created"
+        assert result.pipeline['pipelineName'] == pipelineName
+
+        when:
+        result = dsl "getStage(projectName: '$testProjName', pipelineName: '$pipelineName', stageName: '$pipeStageName')"
+
+        then: "stage created"
+        assert result.stage['stageName'] == pipeStageName
+
+        when:
+        result = dsl "getTask(projectName: '$testProjName', pipelineName: '$pipelineName', stageName: '$pipeStageName', taskName: '$pipeTaskName')"
+
+        then: "task created"
+        assert result.task['taskName'] == pipeTaskName
+        assert result.task['actualParameters']['parameterDetail'].parameterName[0] == 'commandToRun'
+        assert result.task['actualParameters']['parameterDetail'].parameterValue[0] == 'echo task %%1 completed'
+
+        cleanup:
+        deleteProjects([projectName: testProjName], false)
+    }
+
+    def "install project with spaces in names"() {
+        def testProjName = 'old test Import'
+        def procName = 'A Procedure #1'
+        def procStepName = 'step 1'
+        def pipelineName = 'Verify QA, Notify'
+        def pipeStageName = 'Stage 1'
+        def pipeTaskName = 'task 1'
+
+        given: "spec_symbols project code"
+
+        when: "Load DSL Code"
+        def p = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installProject",
+          actualParameter: [
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/spec_symbols/projects/$testProjName",
+            projName: "$testProjName"
+          ]
+        )""")
+
+        then: "job completed"
+        waitUntil {
+            assert p.jobId
+            assert getJobProperty("outcome", p.jobId) == "success" || getJobProperty("outcome", p.jobId) == "warning"
+        }
+
+        when:
+        def result = dsl "getProject(projectName: '$testProjName')"
+
+        then: "project created"
+        assert result.project['projectName'] == testProjName
+
+        when:
+        result = dsl "getProcedure(projectName: '$testProjName', procedureName: '$procName')"
+
+        then:"procedure created"
+        assert result.procedure['procedureName'] == procName
+
+        when:
+        result = dsl "getStep(projectName: '$testProjName', procedureName: '$procName', stepName: '$procStepName')"
+
+        then: "step created"
+        assert result.step['stepName'] == procStepName
+        assert result.step['command'] == "echo Procedure is completed"
+
+        when:
+        result = dsl "getPipeline(projectName: '$testProjName', pipelineName: '$pipelineName')"
+
+        then: "pipeline created"
+        assert result.pipeline['pipelineName'] == pipelineName
+
+        when:
+        result = dsl "getStage(projectName: '$testProjName', pipelineName: '$pipelineName', stageName: '$pipeStageName')"
+
+        then: "stage created"
+        assert result.stage['stageName'] == pipeStageName
+
+        when:
+        result = dsl "getTask(projectName: '$testProjName', pipelineName: '$pipelineName', stageName: '$pipeStageName', taskName: '$pipeTaskName')"
+
+        then: "task created"
+        assert result.task['taskName'] == pipeTaskName
+        assert result.task['actualParameters']['parameterDetail'].parameterName[0] == 'commandToRun'
+        assert result.task['actualParameters']['parameterDetail'].parameterValue[0] == 'echo task 1 completed'
+
+        cleanup:
+        deleteProjects([projectName: testProjName], false)
     }
 }
