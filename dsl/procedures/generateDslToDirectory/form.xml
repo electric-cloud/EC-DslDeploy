@@ -1,0 +1,143 @@
+<!--
+
+     Copyright 2019 Cloud Bees, Inc.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+-->
+<editor>
+  <formElement>
+    <type>entry</type>
+    <label>Directory path</label>
+    <property>directory</property>
+    <required>1</required>
+    <documentation>Folder where the code is generated</documentation>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Server Pool or Resource</label>
+    <property>pool</property>
+    <required>1</required>
+    <value>local</value>
+    <documentation>Server pool to use for a cluster setup.</documentation>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Object Type</label>
+    <property>objectType</property>
+    <required>1</required>
+    <documentation>Object type to generate DSL for.</documentation>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Object Name</label>
+    <property>objectName</property>
+    <required>1</required>
+    <documentation>Object name to generate DSL for.</documentation>
+  </formElement>
+
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Suppress Nulls</label>
+    <property>suppressNulls</property>
+    <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <value>1</value>
+    <documentation>Exclude from the generated DSL properties with null value.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Suppress Defaults</label>
+    <property>suppressDefaults</property>
+    <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <value>0</value>
+    <documentation>Exclude from the generated DSL properties with default value.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Suppress Parent</label>
+    <property>suppressParent</property>
+    <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <value>0</value>
+    <documentation>Exclude from the generated DSL properties referred to object parent.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Include ACLs</label>
+    <property>includeAcls</property>
+    <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <value>0</value>
+    <documentation>Include in ACLs for objects.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Include ACLs in different file</label>
+    <property>includeAclsInDifferentFile</property>
+    <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <value>0</value>
+    <documentation>Include ACLs for generated objects in different file.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Include All Children</label>
+    <property>includeAllChildren</property>
+    <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <value>0</value>
+    <documentation>Include in the generated DSL all object children. If True - ignore value of 'Include Children' parameter.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>textarea</type>
+    <label>Include children</label>
+    <property>includeChildren</property>
+    <required>0</required>
+    <documentation>Comma-separated list of object children the DSL should be generated for.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Include Children in Same File</label>
+    <property>includeChildrenInSameFile</property>
+    <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <value>0</value>
+    <documentation>Include in the generated DSL all object children. If True - ignore value of 'Include Children' parameter.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>textarea</type>
+    <label>Children in Different Files</label>
+    <property>childrenInDifferentFile</property>
+    <required>0</required>
+    <documentation>Comma-separated list of patterns to include, like pipelines, procedures.*, applications.applicationTiers.components</documentation>
+  </formElement>
+
+</editor>

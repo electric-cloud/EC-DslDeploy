@@ -1,7 +1,7 @@
 version: '3'
 services:
   electric-flow:
-    image: "ecdocker/eflow-ce-server"
+    image: "electricflow/efserver:latest"
     ports:
       - "8000:8000"
       - "8443:8443"
@@ -11,6 +11,8 @@ services:
       - internal
     container_name: electricflow
     tty: true
+    environment:
+      - COMMANDER_SERVER=electricflow
 networks:
   internal:
     driver: bridge

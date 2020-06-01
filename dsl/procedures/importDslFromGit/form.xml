@@ -1,0 +1,126 @@
+<!--
+
+     Copyright 2019 Electric Cloud, Inc.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+-->
+<editor>
+  <formElement>
+    <type>entry</type>
+    <label>Server Resource</label>
+    <property>rsrcName</property>
+    <required>1</required>
+    <value>local</value>
+    <documentation>The resource where the DSL files will be checked out from git and imported to the Flow server. The directory on this resource must be accessible from the Flow server.</documentation>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Destination Directory:</label>
+    <property>dest</property>
+    <required>1</required>
+    <value>dsl</value>
+    <documentation>The directory on the resource where the source tree will be created and from where the DSL files are read to be imported in Flow server. This directory must be accessible from the Flow server. In a clustered deployment, all Flow server nodes must have access to this directory.</documentation>
+  </formElement>
+  <formElement>
+    <type>checkbox</type>
+    <label>Cleanup?:</label>
+    <property>cleanup</property>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <initiallyChecked>0</initiallyChecked>
+    <documentation>This option will delete the destination directory with the source tree after the job execution.</documentation>
+    <required>0</required>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Overwrite mode</label>
+    <property>overwrite</property>
+    <required>0</required>
+    <value>1</value>
+    <documentation>Overwrite mode, remove nonexistent in DSL elements.</documentation>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Configuration:</label>
+    <property>config</property>
+    <documentation>The name of a saved SCM configuration.</documentation>
+    <required>1</required>
+    <configuration>1</configuration>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Git repository:</label>
+    <property>GitRepo</property>
+    <documentation>URL to the repository to pull from. ie: 'git://server/repo.git'.</documentation>
+    <required>1</required>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Commit Hash:</label>
+    <property>commit</property>
+    <documentation>The Commit Hash to update the index. Note: This will move the HEAD.</documentation>
+    <required>0</required>
+  </formElement>
+
+  <formElement>
+    <type>entry</type>
+    <label>Remote Branch:</label>
+    <property>GitBranch</property>
+    <documentation>The name of the Git branch to use. ie: 'experimental'.</documentation>
+    <required>0</required>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Clone?:</label>
+    <property>clone</property>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <initiallyChecked>0</initiallyChecked>
+    <documentation>This option will clone a repository into a newly created directory.</documentation>
+    <required>0</required>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Overwrite?:</label>
+    <property>GitOverwrite</property>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <initiallyChecked>0</initiallyChecked>
+    <documentation>This option will overwrite a repository if it already exists.</documentation>
+    <required>0</required>
+  </formElement>
+
+  <formElement>
+    <type>entry</type>
+    <label>Depth:</label>
+    <property>depth</property>
+    <documentation>Create a shallow clone with a history truncated to the specified number of revisions.</documentation>
+    <required>0</required>
+    <dependsOn>clone</dependsOn>
+    <condition>${clone} == "1"</condition>
+  </formElement>
+
+  <formElement>
+    <type>entry</type>
+    <label>Tag:</label>
+    <property>tag</property>
+    <documentation>Provide the name of a specific tag to checkout after the clone command.</documentation>
+    <required>0</required>
+    <dependsOn>clone</dependsOn>
+    <condition>${clone} == "1"</condition>
+  </formElement>
+
+</editor>
