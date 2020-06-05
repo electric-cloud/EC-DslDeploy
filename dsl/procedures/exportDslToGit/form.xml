@@ -1,0 +1,266 @@
+<!--
+
+     Copyright 2019 Electric Cloud, Inc.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+-->
+<editor>
+  <formElement>
+    <type>entry</type>
+    <label>Server Resource</label>
+    <property>rsrcName</property>
+    <required>1</required>
+    <value>local</value>
+    <documentation>The resource where the DSL files will be checked out from git and imported to the Flow server. The directory on this resource must be accessible from the Flow server.</documentation>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Destination Directory:</label>
+    <property>dest</property>
+    <required>1</required>
+    <documentation>The directory on the resource where the source tree will be created and from where the DSL files are read to be imported in Flow server. This directory must be accessible from the Flow server. In a clustered deployment, all Flow server nodes must have access to this directory.</documentation>
+  </formElement>
+  <formElement>
+    <type>checkbox</type>
+    <label>Cleanup?:</label>
+    <property>cleanup</property>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <initiallyChecked>0</initiallyChecked>
+    <documentation>This option will delete the destination directory with the source tree after the job execution.</documentation>
+    <required>0</required>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Configuration:</label>
+    <property>configuration</property>
+    <documentation>The name of a saved SCM configuration.</documentation>
+    <required>1</required>
+    <configuration>1</configuration>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Git repository:</label>
+    <property>GitRepo</property>
+    <documentation>URL to the repository to pull from. ie: 'git://server/repo.git'.</documentation>
+    <required>1</required>
+  </formElement>
+
+  <formElement>
+    <type>entry</type>
+    <label>Remote Branch:</label>
+    <property>GitBranch</property>
+    <documentation>The name of the Git branch to use. ie: 'experimental'.</documentation>
+    <required>0</required>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Clone?:</label>
+    <property>clone</property>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <initiallyChecked>1</initiallyChecked>
+    <documentation>This option will clone a repository into a newly created directory.</documentation>
+    <required>0</required>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Overwrite?:</label>
+    <property>GitOverwrite</property>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <initiallyChecked>0</initiallyChecked>
+    <documentation>This option will overwrite a repository if it already exists.</documentation>
+    <required>0</required>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Object Type</label>
+    <property>objectType</property>
+    <required>1</required>
+    <documentation>Object type to generate DSL for.</documentation>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Object Name</label>
+    <property>objectName</property>
+    <required>1</required>
+    <documentation>Object name to generate DSL for.</documentation>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <property>config</property>
+    <configuration>1</configuration>
+    <required>1</required>
+    <documentation>Previously defined configuration for the plugin</documentation>
+    <label>Configuration Name:</label>
+  </formElement>
+  <formElement>
+    <type>textarea</type>
+    <property>files</property>
+    <required>1</required>
+    <documentation>Files pattern (GLOB) to use to add files to the commit. Each pattern per line.</documentation>
+    <label>Files:</label>
+    <value>.</value>>
+  </formElement>
+  <formElement>
+    <type>textarea</type>
+    <property>message</property>
+    <required>0</required>
+    <documentation>Commit message for the newly created commit. If not provided, date and CloudBees CD Job ID will be used to identify the commit.</documentation>
+    <label>Commit Message:</label>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <property>authorName</property>
+    <required>0</required>
+    <documentation>Name of the commit author.</documentation>
+    <label>Author Name:</label>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <property>authorEmail</property>
+    <required>0</required>
+    <documentation>Email of the author (the person who wrote the code).</documentation>
+    <label>Author Email:</label>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <property>committerName</property>
+    <required>1</required>
+    <documentation>Name of the committer (someone who has committed the code as opposed to the author).</documentation>
+    <label>Committer Name:</label>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <property>committerEmail</property>
+    <required>1</required>
+    <documentation>Email of the committer.</documentation>
+    <label>Committer Email:</label>
+  </formElement>
+  <formElement>
+    <type>checkbox</type>
+    <property>removeMissing</property>
+    <documentation>If checked, the files that are missing from the repository will be removed from SCM.</documentation>
+    <label>Remove Missing?:</label>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <initiallyChecked>0</initiallyChecked>
+  </formElement>
+  <formElement>
+    <type>checkbox</type>
+    <property>failOnEmptyCommit</property>
+    <documentation>If checked, the procedure will fail if there is nothing to commit.</documentation>
+    <label>Fail on Empty Commit?:</label>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <initiallyChecked>0</initiallyChecked>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Suppress Nulls</label>
+    <property>suppressNulls</property>
+    <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <value>1</value>
+    <documentation>Exclude from the generated DSL properties with null value.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Suppress Defaults</label>
+    <property>suppressDefaults</property>
+    <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <value>0</value>
+    <documentation>Exclude from the generated DSL properties with default value.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Suppress Parent</label>
+    <property>suppressParent</property>
+    <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <value>0</value>
+    <documentation>Exclude from the generated DSL properties referred to object parent.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Include ACLs</label>
+    <property>includeAcls</property>
+    <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <value>0</value>
+    <documentation>Include in ACLs for objects.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Include ACLs in different file</label>
+    <property>includeAclsInDifferentFile</property>
+    <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <value>0</value>
+    <documentation>Include ACLs for generated objects in different file.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Include All Children</label>
+    <property>includeAllChildren</property>
+    <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <value>0</value>
+    <documentation>Include in the generated DSL all object children. If True - ignore value of 'Include Children' parameter.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>textarea</type>
+    <label>Include children</label>
+    <property>includeChildren</property>
+    <required>0</required>
+    <documentation>Comma-separated list of object children the DSL should be generated for.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
+    <label>Include Children in Same File</label>
+    <property>includeChildrenInSameFile</property>
+    <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <value>0</value>
+    <documentation>Include in the generated DSL all object children. If True - ignore value of 'Include Children' parameter.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>textarea</type>
+    <label>Children in Different Files</label>
+    <property>childrenInDifferentFile</property>
+    <required>0</required>
+    <documentation>Comma-separated list of patterns to include, like pipelines, procedures.*, applications.applicationTiers.components</documentation>
+  </formElement>
+
+</editor>
