@@ -43,8 +43,8 @@
   </formElement>
   <formElement>
     <type>entry</type>
-    <label>Configuration:</label>
-    <property>configuration</property>
+    <label>Checkout Configuration:</label>
+    <property>checkoutConfig</property>
     <documentation>The name of a saved SCM configuration.</documentation>
     <required>1</required>
     <configuration>1</configuration>
@@ -62,17 +62,6 @@
     <label>Remote Branch:</label>
     <property>GitBranch</property>
     <documentation>The name of the Git branch to use. ie: 'experimental'.</documentation>
-    <required>0</required>
-  </formElement>
-
-  <formElement>
-    <type>checkbox</type>
-    <label>Clone?:</label>
-    <property>clone</property>
-    <checkedValue>1</checkedValue>
-    <uncheckedValue>0</uncheckedValue>
-    <initiallyChecked>1</initiallyChecked>
-    <documentation>This option will clone a repository into a newly created directory.</documentation>
     <required>0</required>
   </formElement>
 
@@ -102,11 +91,11 @@
   </formElement>
   <formElement>
     <type>entry</type>
-    <property>config</property>
+    <property>commitConfig</property>
     <configuration>1</configuration>
     <required>1</required>
     <documentation>Previously defined configuration for the plugin</documentation>
-    <label>Configuration Name:</label>
+    <label>Commit Configuration:</label>
   </formElement>
   <formElement>
     <type>textarea</type>
@@ -122,20 +111,6 @@
     <required>0</required>
     <documentation>Commit message for the newly created commit. If not provided, date and CloudBees CD Job ID will be used to identify the commit.</documentation>
     <label>Commit Message:</label>
-  </formElement>
-  <formElement>
-    <type>entry</type>
-    <property>authorName</property>
-    <required>0</required>
-    <documentation>Name of the commit author.</documentation>
-    <label>Author Name:</label>
-  </formElement>
-  <formElement>
-    <type>entry</type>
-    <property>authorEmail</property>
-    <required>0</required>
-    <documentation>Email of the author (the person who wrote the code).</documentation>
-    <label>Author Email:</label>
   </formElement>
   <formElement>
     <type>entry</type>
