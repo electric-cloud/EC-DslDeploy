@@ -28,7 +28,8 @@ if (pDir.exists()) {
     def params = [
         new ActualParameter('projName', basename),
         new ActualParameter('projDir', projDir.absolutePath.toString().replace('\\', '/')),
-        new ActualParameter('overwrite', '$[overwrite]')
+        new ActualParameter('overwrite', '$[overwrite]'),
+        new ActualParameter('additionalDslArguments', '$[additionalDslArguments]')
     ]
 
     ef.createJobStep(
