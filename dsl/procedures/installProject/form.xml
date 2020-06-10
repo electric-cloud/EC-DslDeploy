@@ -29,4 +29,12 @@
         <expansionDeferred>1</expansionDeferred>
         <documentation>Additional argument for evalDsl call.</documentation>
     </formElement>
+    <formElement>
+        <type>entry</type>
+        <label>Ignore failures</label>
+        <property>ignoreFailed</property>
+        <required>0</required>
+        <value>0</value>
+        <documentation>Ignore failures during import of DSL files.</documentation>
+    </formElement>
 </editor>

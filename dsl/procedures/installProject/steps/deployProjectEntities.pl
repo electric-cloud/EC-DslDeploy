@@ -20,6 +20,7 @@ $[/myProject/scripts/summaryString]
 def projectName = '$[projName]'
 def projectDir = '$[projDir]'
 def overwrite = '$[overwrite]'
+def ignoreFailed = '$[ignoreFailed]'
 END_COMMAND
 
     # with Perl variables usage / substitution 
@@ -49,7 +50,7 @@ def counters
 
 project projectName, {
   counters = loadObjects("$objectType", projectDir, "/projects/" + projectName,
-    [projectName: projectName, projectDir: projectDir], overwrite
+    [projectName: projectName, projectDir: projectDir], overwrite, ignoreFailed
   )
 }
 
@@ -71,7 +72,8 @@ END_COMMAND
     my $command = "$command1" . "$command2";
 
     $ec->createJobStep({
-        jobStepName  => "deploy $objectType",
-        command      => "$command",
-        shell        => "$shell"});
+        jobStepName   => "deploy $objectType",
+        command       => "$command",
+        shell         => "$shell",
+        postProcessor => "postp"});
 }

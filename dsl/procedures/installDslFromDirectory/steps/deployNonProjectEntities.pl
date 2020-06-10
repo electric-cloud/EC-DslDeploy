@@ -27,10 +27,11 @@ END_COMMAND
 $command2 = <<"END_COMMAND";
 def absDir    = '$[/myJob/CWD]'
 def overwrite = '$[overwrite]'
+def ignoreFailed = '$[ignoreFailed]'
 File dir      = new File(absDir, pluralForm("$objectType"))
 
 if (dir.exists()) {
-  def counters = loadObjects("$objectType", absDir, "/", [:], overwrite, true)
+  def counters = loadObjects("$objectType", absDir, "/", [:], overwrite, ignoreFailed)
   setProperty(propertyName: "summary", value: summaryString(counters))
 } else {
   setProperty(propertyName: "summary", value: "no " + pluralForm("$objectType"))
@@ -51,8 +52,9 @@ END_COMMAND
     my $command  = "$command1" . "$command2";
 
     $ec->createJobStep({
-        jobStepName  => "deploy $objectType",
-        command      => "$command",
-        resourceName => "$resource",
-        shell        => "$shell"});
+        jobStepName   => "deploy $objectType",
+        command       => "$command",
+        resourceName  => "$resource",
+        shell         => "$shell",
+        postProcessor => "postp"});
 }
