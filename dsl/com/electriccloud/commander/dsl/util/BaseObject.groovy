@@ -147,7 +147,10 @@ abstract class BaseObject extends DslDelegatingScript {
      ######################################################################## */
   def loadObjects(String objType, String topDir,
                   String objPath = "/",
-                  Map bindingMap = [:], String overwriteMode = "0", Boolean pluginDeployMode = true) {
+                  Map bindingMap = [:],
+                  String overwriteMode = "0",
+                  String ignoreFailed = "0",
+                  Boolean pluginDeployMode = true) {
 
     // println "Entering loadObjects"
     // println "  Type:  $objType"
@@ -178,6 +181,7 @@ abstract class BaseObject extends DslDelegatingScript {
       }
 
       try {
+        Exception exc = null
         if (metadata.order) {
           metadata.order.each {
             // load in specified order
@@ -187,15 +191,36 @@ abstract class BaseObject extends DslDelegatingScript {
               objDir = new File(dir, it)
 
             }
-            loadObjectFromDirectory(objDir, objType, objPath, plural, bindingMap, overwriteMode, counters)
-            nbObjs++
+
+            try {
+              loadObjectFromDirectory(objDir, objType, objPath, plural, bindingMap, overwriteMode, counters)
+              nbObjs++
+            } catch (Exception e) {
+              if (ignoreFailed.toBoolean()) {
+                exc = e
+              } else {
+                throw e
+              }
+            }
           }
         } else {
           // sort object alphabetically
           dlist.sort({ it.name }).each {
-            loadObjectFromDirectory(it, objType, objPath, plural, bindingMap, overwriteMode, counters)
-            nbObjs++
+            try {
+              loadObjectFromDirectory(it, objType, objPath, plural, bindingMap, overwriteMode, counters)
+              nbObjs++
+            } catch (Exception e) {
+              if (ignoreFailed.toBoolean()) {
+                exc = e
+              } else {
+                throw e
+              }
+            }
           }
+        }
+
+        if (exc != null) {
+          throw exc
         }
       } catch (Exception e) {
         println("Error: " + e)
