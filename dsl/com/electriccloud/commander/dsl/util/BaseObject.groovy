@@ -343,7 +343,7 @@ abstract class BaseObject extends DslDelegatingScript {
 
       try {
         def existsProp = getProperty(objectId: "propertySheet-$pSheetId",
-                propertyName: propName)
+                propertyName: propName, expand: false)
 
         if (dir.directory) {
           def propSheetId
