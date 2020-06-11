@@ -14,12 +14,12 @@
 	<hr style="margin-left: -10px; margin-top: 10px; height: 1px; width: 100%; color: #5981BD;" noshade="noshade" />
 
 	<p>This plugin is intended to help you deploy a complete DSL file structure to
-    your ElectricFlow server(s).
+    your CloedBees CD server(s).
   The full supported file structure is available on
-  the <a href="https://github.com/electric-cloud-community/EC-DslDeploy/wiki/file-structure">Wiki</a>.</p>
+  the <a href="https://github.com/electric-cloud/EC-DslDeploy/wiki/file-structure">Wiki</a>.</p>
 
   <h2>Links</h2>
-  <a href="https://github.com/electric-cloud-community/EC-DslDeploy/wiki" target="_blank">Plugin Wiki</a>
+  <a href="https://github.com/electric-cloud/EC-DslDeploy/wiki" target="_blank">Plugin Wiki</a>
 
 
   <h1>Contents</h1>
@@ -37,7 +37,7 @@
 
   <a name="installDsl" id="installDsl" />
   <h3>installDsl</h3>
-  <p>Deploy a DSL file structure from an Artifact Version on your Flow server.</p>
+  <p>Deploy a DSL file structure from an Artifact Version on your CloudBees CD server.</p>
 
   <table class="grid">
     <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
@@ -82,16 +82,17 @@
 
   <a name="installDslFromDirectory" id="installDslFromDirectory" />
   <h3>installDslFromDirectory</h3>
-  <p>Deploy a DSL file structure from a directory on your ElectricFlow server.<br />
+  <p>Deploy a DSL file structure from a directory on your CloudBees CD server.<br />
   This procedure main usage is to set up a CI process. It will extract your code from
-  your SCM in a local directory on your Dev ElectricFlow server, and deploy it from there.</p>
+  your SCM in a local directory on your Dev CloudBees CD server, and deploy it
+    from there.</p>
 
   <table class="grid">
     <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
     <tbody>
       <tr>
         <td class="required">Directory Path</td>
-	      <td>The location of the DSL code on your Dev ElectricFlow server.</td>
+	      <td>The location of the DSL code on your Dev CloudBees CD server.</td>
 	    </tr>
       <tr>
         <td class="required">Pool or Resource</td>
@@ -117,7 +118,7 @@
   <a name="installProject" id="installProject" />
   <h3>installProject</h3>
   <p>Deploy DSL file structure from a directory on your
-    ElectricFlow server as a project.<br />
+    CloudBees CD server as a project.<br />
     The main purpose of the procedure to be a part of installDslFromDirectory
     procedure.</p>
   <table class="grid">
@@ -129,7 +130,7 @@
         </tr>
         <tr>
             <td class="required">Project directory</td>
-            <td>The location of the project DSL code on your Dev ElectricFlow
+            <td>The location of the project DSL code on your Dev CloudBeed CD
               server.</td>
         </tr>
         <tr>
@@ -150,7 +151,7 @@
 
   <a name="generateDslToDirectory" id="generateDslToDirectory" />
   <h3>generateDslToDirectory</h3>
-  <p>Export DSL for a top level Flow object, with options for which child
+  <p>Export DSL for a top level CloudBees CD object, with options for which child
     objects and values to include. Export the DSL in separate files in a directory
     tree representing the object hierarchy, for ease of editing and management.</p>
   <table class="grid">
@@ -173,35 +174,35 @@
         <td>Object name to generate DSL for.</td>
       </tr>
       <tr>
-        <td class="required">Suppress Nulls</td>
+        <td>Suppress Nulls</td>
         <td>Exclude from the generated DSL properties with null value.</td>
       </tr>
       <tr>
-        <td class="required">Suppress Defaults</td>
+        <td>Suppress Defaults</td>
         <td>Exclude from the generated DSL properties with default value.</td>
       </tr>
       <tr>
-        <td class="required">Suppress Parent</td>
+        <td>Suppress Parent</td>
         <td>Exclude from the generated DSL properties referred to object parent.</td>
       </tr>
       <tr>
-        <td class="required">Include ACLs</td>
+        <td>Include ACLs</td>
         <td>Include in ACLs for objects.</td>
       </tr>
       <tr>
-        <td class="required">Include All Children</td>
+        <td>Include All Children</td>
         <td>Include in the generated DSL all object children. If True - ignore value of 'Include Children' parameter.</td>
       </tr>
       <tr>
-        <td class="required">Include children</td>
+        <td>Include children</td>
         <td>Comma-separated list of object children the DSL should be generated for.</td>
       </tr>
       <tr>
-        <td class="required">Include Children in Same File</td>
+        <td>Include Children in Same File</td>
         <td>Include in the generated DSL all object children. If True - ignore value of 'Include Children' parameter.</td>
       </tr>
       <tr>
-        <td class="required">Children in Different Files</td>
+        <td>Children in Different Files</td>
         <td>Comma-separated list of patterns to include, like pipelines, procedures.*, applications.applicationTiers.components</td>
       </tr>
     </tbody>
@@ -219,11 +220,14 @@
     <tbody>
       <tr>
         <td class="required">Server Resource</td>
-        <td>The resource where the DSL files will be checked out from git and imported to the Flow server.</td>
+        <td>The resource where the DSL files will be checked out from git and
+          imported to the CloudBees CD server.</td>
       </tr>
       <tr>
         <td class="required">Destination Directory</td>
-        <td>The directory on the resource where the source tree will be created and from where the DSL files are read to be imported in Flow server. </td>
+        <td>The directory on the resource where the source tree will be
+          created and from where the DSL files are read to be imported in
+          CloudBees CD server. </td>
       </tr>
       <tr>
         <td>Cleanup?</td>
@@ -272,35 +276,14 @@
   <img src="../../plugins/@PLUGIN_KEY@/images/help/importDslFromGit.png"
        alt="importDslFromGit parameters" />
 
-	<h1>Contact authors</h1>
-	<dl>
-    <dt>Code</dt>
-	  <dd>Laurent Rochette: <a href="mailto:lrochette@electric-cloud.com">lrochette@electric-cloud.com</a></dd>
-	  <dd>Urvashi Singh: <a href="mailto:usingh@electtric-cloud.com">usingh@electtric-cloud.com</a></dd>
-	</dl>
-
-  <h1>Thanks</h1>
-  <p>Thanks to <a href="mailto:usingh@electtric-cloud.com">Urvashi Singh</a>
-  for her constant support and help. This plugin would not exist without her.</p>
-
-	<h1>Legal Mumbo Jumbo</h1>
-	<p>This plugin is free for use. Modify it however you see fit to better your
-experience using ElectricFlow. Share
-your <a href="https://github.com/electric-cloud-community/EC-DslDeploy/issues">enhancements</a>
-and <a href="https://github.com/electric-cloud-community/EC-DslDeploy/pulls">fixes</a>.</p>
-
-	<p>This plughin is not officially supported by Electric Cloud. It has undergone no
-formal testing and you may run into issues that have not been uncovered in the
-limited testing done so far.</p>
-
-	<p>Electric Cloud should not be held liable for any repercussions of using this
-plugin.</p>
-
   <!-- PROCEDURES END -->
   <h1 id="releaseNotes">Release Notes</h1>
-  <p> Check
-    the <a href="https://github.com/electric-cloud-community/EC-DslDeploy/blob/master/CHANGELOG">CHANGELOG</a>
-    for details.</p>
+
+  <h3 id="3.0.0">@PLUGIN_KEY@ 3.0.0</h3>
+  <ul>
+    <li>The plugin is made CloudBees Supported and moved under the private
+      repository</li>
+  </ul>
 
   <h3 id="2.2.1">@PLUGIN_KEY@ 2.2.1</h3>
   <ul>
