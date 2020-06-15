@@ -58,8 +58,10 @@ setProperty(propertyName: "summary", value: summaryString(counters))
 return ""
 END_COMMAND
 
+        my $localMode = '$[localMode]';
+
         # check support of clientFiles argument
-        if (checkClientFilesCompatibility()) {
+        if ($localMode eq "0" && checkClientFilesCompatibility()) {
             $shell .= " --clientFiles \"$[projDir]\"";
         }     
     } else {

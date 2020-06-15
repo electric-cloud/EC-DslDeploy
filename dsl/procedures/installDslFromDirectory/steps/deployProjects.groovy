@@ -34,7 +34,8 @@ if (pDir.exists()) {
         new ActualParameter('projDir', projDir.absolutePath.toString().replace('\\', '/')),
         new ActualParameter('overwrite', '$[overwrite]'),
         new ActualParameter('additionalDslArguments', '$[additionalDslArguments]'),
-        new ActualParameter('ignoreFailed', '$[ignoreFailed]')
+        new ActualParameter('ignoreFailed', '$[ignoreFailed]'),
+        new ActualParameter('localMode', '$[localMode]')
     ]
 
     ef.createJobStep(
