@@ -1,4 +1,5 @@
 import groovy.json.JsonOutput
+import groovy.json.StringEscapeUtils
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import java.util.stream.Collectors
@@ -6,8 +7,6 @@ import java.util.stream.Collectors
 class GenerateDslHelper {
 
     private static final String METADATA_FILE = "metadata.json"
-
-    private static final Map<String, String> ENCODE_MAP = ["/": "@2F", "\\": "@5C"] as HashMap
 
     //
     private def electricFlow
@@ -26,6 +25,8 @@ class GenerateDslHelper {
     private boolean suppressParent
     private final Deque<EntityTypeDetail> childrenStack = new LinkedList<>()
     private  FileTemplateItem difFileTemplateRoot = new FileTemplateItem()
+
+    $[/myProject/scripts/Utils]
 
     GenerateDslHelper(def ef,
                       String objType,
@@ -70,11 +71,13 @@ class GenerateDslHelper {
                 value: toDirectory.getAbsolutePath(), jobId: '$[/myJob/id]')
 
         //
-        def structure = electricFlow.getObjectDslStructure(objectType: objectType, objectName: objectName)
+        def structure = electricFlow.getObjectDslStructure(
+                objectType: objectType,
+                objectName: StringEscapeUtils.unescapeJava(objectName))
 
         if (structure && structure.object) {
             def obj = structure.object
-            def encPath = obj.path.replace(obj.name, encode(obj.name))
+            def encPath = pluralForm(obj.type) + '/' + encode(obj.name)
             File objDir = new File (toDirectory, encPath)
 
             if (objDir.exists()) {
@@ -94,7 +97,7 @@ class GenerateDslHelper {
         println String.format("Generate DSL for %s (%d objects)",
                 objectTypeDetail.collectionName, size)
 
-        childrenStack.push(
+        childrenStack.add(
                 new EntityTypeDetail(objectTypeDetail.name, objectTypeDetail.collectionName))
         //
         File objTypeDir = new File (parentDir, objectTypeDetail.collectionName)
@@ -246,10 +249,16 @@ class GenerateDslHelper {
         def result = arg
         while (matcher.find()) {
             String path = matcher.group(1)
+            def names = path.split("\\.")
+            def extension = names.size() > 1 ? '.' + names[names.size() - 1] : ''
+            // cut off extension
+            def pathWithoutExt = names.size() > 1 ?
+                    (names - names[-1]).join('.') :
+                    names[0]
 
             //replace /entities[name] parts with /entities/name simultaneously encoding
             List<String> parts = new ArrayList<>()
-            matcher = Pattern.compile("/(.+?)\\[(.+?)]").matcher(path)
+            matcher = Pattern.compile("/(.+?)\\[(.+?)]").matcher(pathWithoutExt)
             int matchEnd = 0
             while (matcher.find()) {
                 parts.addAll(Arrays.stream(matcher.group(1).split("/"))
@@ -258,22 +267,13 @@ class GenerateDslHelper {
                 parts.add(encode(matcher.group(2)))
                 matchEnd = matcher.end()
             }
-            if (matchEnd < path.length() - 1) {
-                parts.addAll(Arrays.stream(path.substring(matchEnd + 1).split("/"))
+            if (matchEnd < pathWithoutExt.length() - 1) {
+                parts.addAll(Arrays.stream(pathWithoutExt.substring(matchEnd + 1).split("/"))
                                    .map({p -> encode(p)})
                                    .collect(Collectors.toList()))
             }
 
-            result = result.replace(path, '/' + String.join("/", parts))
-        }
-        return result
-    }
-
-    private static String encode(String arg)
-    {
-        String result = arg
-        ENCODE_MAP.each {key, value ->
-            result = result.replace(key, value)
+            result = result.replace(path, '/' + String.join("/", parts) + extension)
         }
         return result
     }

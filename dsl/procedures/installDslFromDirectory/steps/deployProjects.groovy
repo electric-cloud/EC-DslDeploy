@@ -10,10 +10,13 @@
 
 */
 import groovy.io.FileType
+import groovy.json.StringEscapeUtils
 import com.electriccloud.client.groovy.ElectricFlow
 import com.electriccloud.client.groovy.apis.model.*
 import com.electriccloud.client.groovy.models.ActualParameter
 import java.io.File
+
+$[/myProject/scripts/Utils]
 
 ElectricFlow ef = new ElectricFlow()
 
@@ -23,10 +26,11 @@ if (pDir.exists()) {
   dlist=[]
   pDir.eachDir {dlist << it }
   dlist.sort({it.name}).each { projDir ->
-    def basename=projDir.getName().toString()
+    def basename=decode(projDir.getName().toString())
     println "Processing project $basename"
+    def escapedProjName = StringEscapeUtils.escapeJava(basename)
     def params = [
-        new ActualParameter('projName', basename),
+        new ActualParameter('projName', escapedProjName),
         new ActualParameter('projDir', projDir.absolutePath.toString().replace('\\', '/')),
         new ActualParameter('overwrite', '$[overwrite]'),
         new ActualParameter('additionalDslArguments', '$[additionalDslArguments]'),

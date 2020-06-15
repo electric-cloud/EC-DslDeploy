@@ -17,3 +17,21 @@ def summaryString (def counters) {
   }
   return summary
 }
+
+static String decode(String arg)
+{
+  String result = arg
+  ["%2F": "/", "%5C": "\\"] .each {key, value ->
+    result = result.replace(key, value)
+  }
+  return result
+}
+
+static String encode(String arg)
+{
+  String result = arg
+  ["/": "%2F", "\\": "%5C"].each {key, value ->
+    result = result.replace(key, value)
+  }
+  return result
+}

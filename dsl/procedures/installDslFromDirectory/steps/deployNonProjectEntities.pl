@@ -16,7 +16,7 @@ import com.electriccloud.commander.dsl.util.BaseObject
 //noinspection GroovyUnusedAssignment
 @BaseScript BaseObject baseScript
 
-$[/myProject/scripts/summaryString]
+$[/myProject/scripts/Utils]
 END_COMMAND
 
     # with Perl variables usage / substitution 
