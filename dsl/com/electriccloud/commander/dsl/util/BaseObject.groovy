@@ -409,24 +409,6 @@ abstract class BaseObject extends DslDelegatingScript {
 
   }
 
-  static String encode(String arg)
-  {
-    String result = arg
-    ENCODE_MAP.each {key, value ->
-      result = result.replace(key, value)
-    }
-    return result
-  }
-
-  static String decode(String arg)
-  {
-    String result = arg
-    DECODE_MAP.each {key, value ->
-          result = result.replace(key, value)
-        }
-    return result
-  }
-
 
   /**
    * NMB-27865: Intercept the DslDelegate

@@ -325,4 +325,81 @@ class overwrite_installDslFromDirectory extends PluginTestHelper {
 
     }
 
+    def "deploy project with slashed in names"(){
+
+        def projName = 'proj / new / name \\\\'
+        def procName = 'Test / procedure'
+        given: "project with a procedure and a step with slashes in names"
+        when: "Load DSL Code"
+        def p = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installDslFromDirectory",
+          actualParameter: [
+            directory: "$plugDir/$pName-$pVersion/lib/dslCode/proj_with_slashes",
+            pool: "local",
+            overwrite: '1'
+          ]
+        )""")
+        then: "job completes with success"
+        assert p.jobId
+        assert getJobProperty("outcome", p.jobId) == "success"
+
+        and: "check a project"
+        def project =
+                dsl "getProject (projectName: '$projName')"
+        assert project
+
+        def procedure =
+                dsl "getProcedure (projectName:'$projName', procedureName: " +
+                        "'$procName')"
+        assert procedure
+
+        def steps = dsl "getSteps (projectName: '$projName', procedureName: " +
+                "'$procName')"
+        assert steps
+        assert steps?.step?.size == 1
+
+        when: 'create one more step'
+
+        dsl """createStep(projectName: '$projName', 
+                                procedureName: '$procName',
+                                stepName: 'newStep'
+                                )"""
+
+        and: 'run import again'
+        p = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installDslFromDirectory",
+          actualParameter: [
+            directory: "$plugDir/$pName-$pVersion/lib/dslCode/proj_with_slashes",
+            pool: "local",
+            overwrite: '1'
+          ]
+        )""")
+        then: "job completes with success"
+        assert p.jobId
+        assert getJobProperty("outcome", p.jobId) == "success"
+
+        and: "check a project"
+        def project2 =
+                dsl """getProject (projectName: '$projName')"""
+        assert project2
+
+        def procedure2 =
+                dsl "getProcedure (projectName:'$projName', procedureName: " +
+                        "'$procName')"
+        assert procedure2
+
+        def steps2 = dsl "getSteps (projectName: '$projName', procedureName: " +
+                "'$procName')"
+        assert steps2
+        assert steps2?.step?.size == 1
+
+        cleanup:
+
+        deleteProjects([projectName: procName], false)
+    }
+
 }
