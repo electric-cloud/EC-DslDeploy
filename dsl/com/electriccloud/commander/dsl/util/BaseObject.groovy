@@ -307,7 +307,17 @@ abstract class BaseObject extends DslDelegatingScript {
             childrenCounter = loadObjects(child, objDir,
                     "$objPath/${objType}s['$objName']", bindingMap)
           }
-          counters << childrenCounter
+
+          if (childrenCounter) {
+            childrenCounter.each { key, value ->
+              def countersValue = counters.get(key)
+              if (countersValue) {
+                counters.put(key, value + countersValue)
+              } else {
+                counters.put(key, value)
+              }
+            }
+          }
         }
       }
     } finally {
