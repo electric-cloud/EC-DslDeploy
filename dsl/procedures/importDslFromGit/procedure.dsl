@@ -27,7 +27,9 @@ procedure procName, {
             actualParameter: [
                     directory: '$[dest]',
                     pool     : '$[rsrcName]',
-                    overwrite: '$[overwrite]'
+                    overwrite: '$[overwrite]',
+                    localMode: '$[localMode]',
+                    ignoreFailed: '$[ignoreFailed]'
             ]
 
     step 'cleanup', {

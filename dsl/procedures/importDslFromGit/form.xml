@@ -123,4 +123,21 @@
     <condition>${clone} == "1"</condition>
   </formElement>
 
+  <formElement>
+    <type>entry</type>
+    <label>Ignore failures</label>
+    <property>ignoreFailed</property>
+    <required>0</required>
+    <value>0</value>
+    <documentation>Ignore failures during import of DSL files.</documentation>
+  </formElement>
+  <formElement>
+    <type>entry</type>
+    <label>Local mode</label>
+    <property>localMode</property>
+    <required>0</required>
+    <value>0</value>
+    <documentation>Do not send files to the server with help of clientFiles argument of the evalDsl operation in local mode.</documentation>
+  </formElement>
+
 </editor>
