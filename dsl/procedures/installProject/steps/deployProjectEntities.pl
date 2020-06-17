@@ -1,5 +1,8 @@
 $[/myProject/scripts/perlHeaderJSON]
 
+# Check if agent and server support clientFiles argument in evalDsl operation
+my $clientFilesCompatible = checkClientFilesCompatibility();
+
 # deploy sub project entities
 my @subProjectEntities = ("project", "procedure", "resourceTemplate", "workflowDefinition", "environmentTemplate", "environment", "component", "application", "service", "pipeline", "release", "schedule", "catalog", "report", "dashboard");
 
@@ -61,7 +64,7 @@ END_COMMAND
         my $localMode = '$[localMode]';
 
         # check support of clientFiles argument
-        if ($localMode eq "0" && checkClientFilesCompatibility()) {
+        if ($localMode eq '0' && $clientFilesCompatible) {
             $shell .= " --clientFiles \"$[projDir]\"";
         }     
     } else {
