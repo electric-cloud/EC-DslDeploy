@@ -39,7 +39,7 @@ sub checkClientFilesCompatibility() {
     my $resourceVersion = $xpath->findvalue("//version");
     
     # Ger server version
-    $xpath = $ec->getServerStatus();
+    $xpath = $ec->getVersions();
     my $serverVersion = $xpath->findvalue("//serverVersion/version");
     
     my @supportedVersionPatterns = ("[0-9]{2}\.", "2020\.[5-9]+", "2020\.[0-9]{2}", "202[1-9]");
