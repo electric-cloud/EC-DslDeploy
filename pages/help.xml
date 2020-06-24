@@ -95,7 +95,7 @@
 	      <td>The location of the DSL code on your Dev CloudBees CD server.</td>
 	    </tr>
       <tr>
-        <td class="required">Pool or Resource</td>
+        <td class="required">Server Pool or Resource</td>
 	      <td>The name of the pool or resource where the artifact will be
           retrieved. Use "." if you have retrieved in your workspace.</td>
 	    </tr>
@@ -109,6 +109,14 @@
         <td>Additional argument for evalDsl call, for
             example --timeout or --debug.</td>
         </tr>
+      <tr>
+        <td>Ignore failures</td>
+        <td>Ignore failures during import of DSL files.</td>
+      </tr>
+      <tr>
+        <td>Local mode</td>
+        <td>Do not send files to the server with help of clientFiles argument of the evalDsl operation in local mode.</td>
+      </tr>
     </tbody>
   </table>
 
@@ -270,6 +278,14 @@
         <td>Tag</td>
         <td>Provide the name of a specific tag to checkout after the clone command.</td>
       </tr>
+      <tr>
+        <td>Ignore failures</td>
+        <td>Ignore failures during import of DSL files.</td>
+      </tr>
+      <tr>
+        <td>Local mode</td>
+        <td>Do not send files to the server with help of clientFiles argument of the evalDsl operation in local mode.</td>
+      </tr>
     </tbody>
   </table>
 
@@ -283,6 +299,10 @@
   <ul>
     <li>The plugin is made CloudBees Supported and moved under the private
       repository</li>
+    <li>Speedup noop deploy steps</li>
+    <li>Added ignoreFailed and localMode parameters for import procedures</li>
+    <li>Added support for object names with slash and backslash symbols</li>
+    <li>Fixed wrong counts in step summary for import procedures</li>
   </ul>
 
   <h3 id="2.2.1">@PLUGIN_KEY@ 2.2.1</h3>
