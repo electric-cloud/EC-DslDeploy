@@ -67,10 +67,12 @@ documentation : Help text for the parameter
       the artifact retrieve is performed on all nodes.</documentation>
   </formElement>
   <formElement>
-    <type>entry</type>
+    <type>checkbox</type>
     <label>Overwrite mode</label>
     <property>overwrite</property>
     <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
     <value>0</value>
     <documentation>Overwrite mode, remove nonexistent in DSL elements</documentation>
   </formElement>
