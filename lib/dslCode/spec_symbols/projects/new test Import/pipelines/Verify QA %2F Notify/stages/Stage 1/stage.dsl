@@ -1,2 +1,0 @@
-
-stage 'Stage 1'

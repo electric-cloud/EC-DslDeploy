@@ -1580,11 +1580,11 @@ class overwrite_installProject extends PluginTestHelper {
     //Leading and trailing spaces are not supported
     def "install project with special symbols in names"() {
         def testProjName = 'new test Import'
-        def procName = 'A Procedure %% \\\\\\\\ @'
-        def procStepName = 'step # 1'
+        def procName = 'Procedure: %% \\\\\\\\ @'
+        def procStepName = 'step * 1'
         def pipelineName = 'Verify QA / Notify'
-        def pipeStageName = 'Stage 1'
-        def pipeTaskName = 'task %%1'
+        def pipeStageName = 'Stage>1'
+        def pipeTaskName = 'task %% |'
 
         given: "spec_symbols project code"
 
@@ -1642,12 +1642,13 @@ class overwrite_installProject extends PluginTestHelper {
         then: "task created"
         assert result.task['taskName'] == pipeTaskName
         assert result.task['actualParameters']['parameterDetail'].parameterName[0] == 'commandToRun'
-        assert result.task['actualParameters']['parameterDetail'].parameterValue[0] == 'echo task %%1 completed'
+        assert result.task['actualParameters']['parameterDetail'].parameterValue[0] == 'echo task completed'
 
         cleanup:
         deleteProjects([projectName: testProjName], false)
     }
 
+    //To ensure backward compatibility
     def "install project with spaces in names"() {
         def testProjName = 'old test Import'
         def procName = 'A Procedure #1'

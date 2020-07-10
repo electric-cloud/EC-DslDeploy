@@ -1,8 +1,7 @@
 package com.electriccloud.plugin.spec
 
-
-import spock.lang.Shared
 import groovy.json.StringEscapeUtils
+import spock.lang.Shared
 
 class generateDsl extends PluginTestHelper {
     static String pName='EC-DslDeploy'
@@ -1072,8 +1071,8 @@ acl {
 
     def "generate DSL for project with special symbol in project names"() {
         dslDir = 'build/proj_spec_symbols'
-        def projName = 'proj / new / name \\'
-        def procName = 'Verify QA / Notify'
+        def projName = 'proj | new > name \\'
+        def procName = 'Procedure: Verify QA / Notify'
         def procStepName = 'step 1/2'
         args << [projectName: projName,
                  procedureName: procName,
@@ -1091,7 +1090,7 @@ acl {
                           actualParameter: [
                             directory: "$dslDir",
                             objectType: 'project',
-                            objectName: "proj / new / name \\\\\\\\",
+                            objectName: "proj | new > name \\\\\\\\",
                             includeAllChildren: '1',
                             includeAcls: '0',
                             includeAclsInDifferentFile: '0',
@@ -1114,7 +1113,7 @@ acl {
         and: "check project was created"
         assert projDir.exists()
         assertFile(new File(projDir, 'project.dsl'),
-                        "\nproject 'proj / new / name \\\\'\n")
+                        "\nproject 'proj | new > name \\\\'\n")
 
         then:"check procedures directory were created"
         def encProcName = encode(procName)
@@ -1143,7 +1142,10 @@ acl {
 
     private static String encode(String arg)
     {
-        Map<String, String> ENCODE_MAP = ["/": "%2F", "\\": "%5C"] as HashMap
+        Map<String, String> ENCODE_MAP = [
+            "/": "%2F", "\\": "%5C", ":": "%3A", "*": "%2A", "?": "%3F", "\"": "%22",
+            "<": "%3C", ">": "%3E", "|": "%7C"
+        ] as HashMap
         String result = arg
         ENCODE_MAP.each {key, value ->
             result = result.replace(key, value)

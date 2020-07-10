@@ -1,2 +1,0 @@
-
-procedure 'A Procedure %% \\\\ @'
