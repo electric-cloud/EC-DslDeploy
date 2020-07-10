@@ -43,10 +43,12 @@
     <required>0</required>
   </formElement>
   <formElement>
-    <type>entry</type>
+    <type>checkbox</type>
     <label>Overwrite mode</label>
     <property>overwrite</property>
     <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
     <value>1</value>
     <documentation>Overwrite mode, remove nonexistent in DSL elements.</documentation>
   </formElement>
@@ -124,18 +126,23 @@
   </formElement>
 
   <formElement>
-    <type>entry</type>
+    <type>checkbox</type>
     <label>Ignore failures</label>
     <property>ignoreFailed</property>
     <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
     <value>0</value>
     <documentation>Ignore failures during import of DSL files.</documentation>
   </formElement>
+
   <formElement>
-    <type>entry</type>
+    <type>checkbox</type>
     <label>Local mode</label>
     <property>localMode</property>
     <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
     <value>0</value>
     <documentation>Do not send files to the server with help of clientFiles argument of the evalDsl operation in local mode.</documentation>
   </formElement>
