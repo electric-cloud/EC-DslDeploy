@@ -147,4 +147,13 @@
     <documentation>Do not send files to the server with help of clientFiles argument of the evalDsl operation in local mode.</documentation>
   </formElement>
 
+  <formElement>
+    <type>entry</type>
+    <label>Additional DSL Arguments</label>
+    <property>additionalDslArguments</property>
+    <required>0</required>
+    <expansionDeferred>1</expansionDeferred>
+    <documentation>Additional argument for evalDsl call.</documentation>
+  </formElement>
+
 </editor>
