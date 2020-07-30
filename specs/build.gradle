@@ -1,9 +1,9 @@
-
-apply plugin: "groovy"
-apply plugin: 'idea'
+plugins {
+    id "com.cloudbees.cd.plugins.specs" version "1.5.13.0"
+}
 
 version = "1.0"
-description = "EC-DeslDeploy Specs"
+description = "EC-DslDeploy Specs"
 
 sourceCompatibility = 1.8
 
@@ -51,15 +51,6 @@ processTestResources.dependsOn copyTestResources
 test {
     systemProperty 'com.athaydes.spockframework.report.showCodeBlocks', true
 
-    def server = findProperty('server') ?: 'localhost'
-    def passwd = findProperty('password') ?: 'changeme'
-    systemProperties['COMMANDER_SERVER'] = server
-    systemProperties['COMMANDER_PASSWORD'] = passwd
-    systemProperties["COMMANDER_SECURE"] = '1'
-
-    testLogging {
-        showStandardStreams = true
-    }
     outputs.upToDateWhen { false }
     systemProperties['EC_SPECS_CLI'] = true
 
@@ -68,4 +59,8 @@ test {
         systemProperty 'com.athaydes.spockframework.report.outputDir', destination
     }
 
+}
+
+sendAllureReports {
+    projectName = 'ec-dsldeploy'
 }
