@@ -295,6 +295,11 @@
   <!-- PROCEDURES END -->
   <h1 id="releaseNotes">Release Notes</h1>
 
+  <h3 id="3.0.1">@PLUGIN_KEY@ 3.0.1</h3>
+  <ul>
+    <li>CEV-25319: fixed a project import in the remote mode.</li>
+  </ul>
+
   <h3 id="3.0.0">@PLUGIN_KEY@ 3.0.0</h3>
   <ul>
     <li>The plugin is made CloudBees Supported and moved under the private
