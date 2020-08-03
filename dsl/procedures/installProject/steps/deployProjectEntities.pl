@@ -60,13 +60,6 @@ project projectName, {
 setProperty(propertyName: "summary", value: summaryString(counters))
 return ""
 END_COMMAND
-
-        my $localMode = '$[localMode]';
-
-        # check support of clientFiles argument
-        if ($localMode eq '0' && $clientFilesCompatible) {
-            $shell .= " --clientFiles \"$[projDir]\"";
-        }     
     } else {
         $command2 = <<"END_COMMAND";
 
@@ -74,7 +67,13 @@ setProperty(propertyName: "summary", value: "no " + pluralForm("$objectType"))
 END_COMMAND
     }
 
-    my $command = "$command1" . "$command2";
+    my $command   = "$command1" . "$command2";
+    my $localMode = '$[localMode]';
+
+    # check support of clientFiles argument
+    if ($localMode eq '0' && $clientFilesCompatible) {
+        $shell .= " --clientFiles \"$[projDir]\"";
+    }
 
     $ec->createJobStep({
         jobStepName   => "deploy $objectType",
