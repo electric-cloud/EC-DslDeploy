@@ -7,6 +7,7 @@ import java.util.stream.Collectors
 class GenerateDslHelper {
 
     private static final String METADATA_FILE = "metadata.json"
+    private static final Pattern COMMAND = Pattern.compile("command = '.*'")
 
     //
     private def electricFlow
@@ -204,6 +205,13 @@ class GenerateDslHelper {
             objDslFile << 'import java.io.File\n\n'
             dsl = dsl.replaceAll("'(new File\\(.*,.*\\).text)'", "\$1")
             dsl = encodePath(dsl)
+        }
+        else {
+            Matcher matcher = COMMAND.matcher(dsl)
+            while (matcher.find()) {
+                dsl = dsl.replace(matcher.group(), '')
+            }
+
         }
 
         objDslFile << dsl

@@ -42,9 +42,6 @@ abstract class BaseObject extends DslDelegatingScript {
                   "steps", "reportingFilters", "stages", "stateDefinitions", "tasks",
                   "widgets");
 
-  private static final Map<String, String> ENCODE_MAP = ["/": "@2F", "\\": "@5C"] as HashMap
-  private static final Map<String, String> DECODE_MAP = ["@2F": "/", "@5C": "\\"] as HashMap
-
   def jsonSlurper = new JsonSlurper()
 
   // return the object.groovy or object.dsl

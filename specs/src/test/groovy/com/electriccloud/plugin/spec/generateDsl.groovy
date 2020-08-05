@@ -1139,6 +1139,76 @@ acl {
         new File(dslDir).deleteDir()
     }
 
+    def "generate DSL for procedure with empty command"() {
+        dslDir = 'build/procedure_with_empty_command'
+        def projName = randomize("project")
+        args << [projectName: projName]
+        def artifactName = 'dsl:proc_empty_comm'
+        File projDir
+
+        given:
+        dslFile("procedure_with_empty_command.dsl", args)
+        when: 'run generate Dsl procedure'
+        def result= runProcedureDsl("""
+                        runProcedure(
+                          projectName: "generateDslTestProject",
+                          procedureName: "generateDslAndPublish",
+                          actualParameter: [
+                            directory: "$dslDir",
+                            objectType: 'project',
+                            objectName: '$projName',
+                            includeAllChildren: '1',
+                            includeAcls: '0',
+                            includeAclsInDifferentFile: '0',
+                            suppressNulls: '1',
+                            suppressParent: '1',
+                            artifactName: "$artifactName",
+                            artifactVersionVersion: '1.0',
+                            runResourceName: '$defaultPool'
+                          ]
+                        )""")
+        then:
+        assert result.jobId
+        def outcome=getJobProperty("outcome", result.jobId)
+        assert outcome == "success"
+
+        when:
+        retrieveArtifactVersion("$artifactName", "1.0", dslDir)
+        projDir = new File (dslDir, "projects/$projName")
+
+        and: "check project was created"
+        assert projDir.exists()
+        assertFile(new File(projDir, 'project.dsl'), "\nproject '$projName'\n")
+
+        then:"check first procedure directory were created"
+        def procDir1 = new File(projDir, "procedures/proc1")
+        assert procDir1.exists()
+        def procStepDir1 = new File(procDir1, 'steps')
+        assert procStepDir1.exists()
+        def stepDir1 = new File(procStepDir1, "step1")
+        assert stepDir1.exists()
+        assertFileContains(new File(stepDir1, 'step.dsl'),
+                "command = new File(projectDir, \"./procedures/proc1/steps/step1.cmd\").text")
+        assertFile(new File(procStepDir1, 'step1.cmd'), 'echo Test')
+
+        then:"check second procedure directory were created"
+        def procDir2 = new File(projDir, "procedures/proc2")
+        assert procDir2.exists()
+        def procStepDir2 = new File(procDir2, 'steps')
+        assert procStepDir2.exists()
+        def stepDir2 = new File(procStepDir2, "Checkout from GitHub")
+        assert stepDir2.exists()
+        def stepFile = new File(stepDir2, 'step.dsl')
+        assertFileDoesNotContain(stepFile, "command = ")
+        assertFileContains(stepFile,
+            "subprocedure = 'CheckoutCode'\n" + "  subproject = '/plugins/ECSCM-Git/project'")
+
+        cleanup:
+        deleteProjects([projectName: projName], false)
+        dsl("deleteArtifact(artifactName: '$artifactName')")
+        new File(dslDir).deleteDir()
+    }
+
 
     private static String encode(String arg)
     {
@@ -1156,6 +1226,16 @@ acl {
     private void assertFile(File file, String content) {
         assert file.exists()
         assert content.equals(file.text.replace("\r\n", "\n"))
+    }
+
+    private void assertFileContains(File file, String content) {
+        assert file.exists()
+        assert file.text.replace("\r\n", "\n").contains(content)
+    }
+
+    private void assertFileDoesNotContain(File file, String content) {
+        assert file.exists()
+        assert !file.text.replace("\r\n", "\n").contains(content)
     }
 
     private void assertAcl(File file, String content) {
