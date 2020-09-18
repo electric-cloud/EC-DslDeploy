@@ -13,7 +13,7 @@
                 Version @PLUGIN_VERSION@
             </p>
             <p>
-                Documentation for this plugin is now  available <a href="https://cloudbees/r/preview/ec-dsldeploy" target="_blank">here</a>.
+                Documentation for this plugin is now  available <a href="https://docs.cloudbees.com/docs/cloudbees-cd/latest/plugins/ec-dsldeploy" target="_blank">here</a>.
             </p>
         </div>
         </body>
