@@ -11,13 +11,8 @@
   <ecSupportLevel>10</ecSupportLevel>
   <version>3.0.2</version>
   <hasAdoc>true</hasAdoc>
-    
-        
 
-
-
-
-<detailedDescription>CloudBees CD allows you to take a fully code-native approach to continuous delivery and release orchestration using the CloudBees CD Groovy-based DSL. The CloudBees CD model based approach means that every object in CloudBees CD, including release pipelines, deployment automation & strategies, environments, configurations, application models, and more, are all backed by code.
+<detailedDescription>CloudBees CD allows you to take a fully code-native approach to continuous delivery and release orchestration using the CloudBees CD Groovy-based DSL. The CloudBees CD model based approach means that every object in CloudBees CD, including release pipelines, deployment automation &amp; strategies, environments, configurations, application models, and more, are all backed by code.
 
 The EC-DslDeploy plugin makes it easy to sync CloudBees CD DSL code with your local repository so that you can start treating your pipeline as a product, making it versionable, testable, and reusable, just like your application code! This plugin maintains your code in a file structure that maps directly to the CloudBees CD model-based structure making it easy to re-use, collaborate, and maintain.</detailedDescription>
 <catalogLabel>DslDeploy</catalogLabel>
