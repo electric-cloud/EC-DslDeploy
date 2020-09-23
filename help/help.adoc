@@ -1,0 +1,185 @@
+
+Plugin Version @PLUGIN_VERSION@
+
+'''''
+
+This plugin is intended to help you deploy a complete DSL file structure to your {CD} server(s). The full supported file structure is available on the https://github.com/electric-cloud/EC-DslDeploy/wiki/file-structure[Wiki].
+
+== Links
+
+https://github.com/electric-cloud/EC-DslDeploy/wiki[Plugin Wiki]
+
+
+== Procedures
+
+IMPORTANT: For all parameter descriptions below, required parameters are shown in [.required]#bold italics#.
+
+
+
+=== InstallDsl
+
+Deploy a DSL file structure from an Artifact Version on your {CD} server.
+
+[cols=",",options="header",]
+|===
+|Parameter |Description
+|Artifact Name |The name of your artifact.
+|Artifact Version |The version of the artifact you want to deploy. If empty, it will deploy the latest version.
+
+*Note:* Use an empty version only in your Dev environment. In higher environments, the best practices recommend that you use a specific version that has been tested in lower environments.
+|Pool or Resource |The name of the pool or resource where the artifact will be retrieved. DSL is evaluated on the server so all system actions (like file reads) will be evaluated on one of the server nodes.
+
+Default value is local.
+|Retrieve on All server nodes |Use this option when running in a cluster with local workspace as the artifact version needs to be retrieved on all nodes (as the system pick a random server node for each action). Use alongside a resource pool covering all server node agents for the parameter above.
+
+Default is "false"
+|Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
+|===
+
+image:cloudbees-common::cd-plugins/ec-dsldeploy/help/installdsl.png[installDsl parameters]
+
+=== InstallDslFromDirectory
+
+Deploy a DSL file structure from a directory on your {CD} server.
+
+This procedure main usage is to set up a CI process. It will extract your code from your SCM in a local directory on your Dev {CD} server, and deploy it from there.
+
+[cols=",",options="header",]
+|===
+|Parameter |Description
+|Directory Path |The location of the DSL code on your Dev {CD} server.
+|Server Pool or Resource |The name of the pool or resource where the artifact will be retrieved. Use "." if you have retrieved in your workspace.
+|Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
+|Additional DSL Arguments |Additional argument for evalDsl call, for example --timeout or --debug.
+|Ignore failures |Ignore failures during import of DSL files.
+|Local mode |Do not send files to the server with help of clientFiles argument of the evalDsl operation in local mode.
+|===
+
+image:cloudbees-common::cd-plugins/ec-dsldeploy/help/installdslfromdirectory.png[installDslFromDirectory parameters]
+
+=== InstallProject
+
+Deploy DSL file structure from a directory on your {CD} server as a project.
+
+The main purpose of the procedure to be a part of installDslFromDirectory procedure.
+
+[cols=",",options="header",]
+|===
+|Parameter |Description
+|Project Name |Name of the project to instal.
+|Project directory |The location of the project DSL code on your Dev {CD} server.
+|Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
+|Additional DSL Arguments |Additional argument for evalDsl call, for example --timeout or --debug.
+|===
+
+image:cloudbees-common::cd-plugins/ec-dsldeploy/help/installproject.png[installProject parameters]
+
+=== GenerateDslToDirectory
+
+Export DSL for a top level {CD} object, with options for which child objects and values to include. Export the DSL in separate files in a directory tree representing the object hierarchy, for ease of editing and management.
+
+[cols=",",options="header",]
+|===
+|Parameter |Description
+|Directory path |Folder where the code is generated.
+|Server Pool or Resource |Server pool to use for a cluster setup.
+|Object Type |Object type to generate DSL for.
+|Object Name |Object name to generate DSL for.
+|Suppress Nulls |Exclude from the generated DSL properties with null value.
+|Suppress Defaults |Exclude from the generated DSL properties with default value.
+|Suppress Parent |Exclude from the generated DSL properties referred to object parent.
+|Include ACLs |Include in ACLs for objects.
+|Include All Children |Include in the generated DSL all object children. If True - ignore value of 'Include Children' parameter.
+|Include children |Comma-separated list of object children the DSL should be generated for.
+|Include Children in Same File |Include in the generated DSL all object children. If True - ignore value of 'Include Children' parameter.
+|Children in Different Files |Comma-separated list of patterns to include, like pipelines, procedures.*, applications.applicationTiers.components
+|===
+
+image:cloudbees-common::cd-plugins/ec-dsldeploy/help/generatedsltodirectory.png[generateDslToDirectory parameters]
+
+=== ImportDslFromGit
+
+Import DSL file structure from a Git repository.
+
+This procedure main usage is to set up a CI process.
+
+[cols=",",options="header",]
+|===
+|Parameter |Description
+|Server Resource |The resource where the DSL files will be checked out from git and imported to the {CD} server.
+|Destination Directory |The directory on the resource where the source tree will be created and from where the DSL files are read to be imported in {CD} server.
+|Cleanup? |This option will delete the destination directory with the source tree after the job execution.
+|Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
+|Configuration |The name of a saved SCM configuration.
+|Git repository |URL to the repository to pull from. ie: 'git://server/repo.git'.
+|Commit Hash |The Commit Hash to update the index. Note: This will move the HEAD.
+|Remote Branch |The name of the Git branch to use. ie: 'experimental'.
+|Clone? |This option will clone a repository into a newly created directory.
+|Overwrite? |This option will overwrite a repository if it already exists.
+|Depth |Create a shallow clone with a history truncated to the specified number of revisions.
+|Tag |Provide the name of a specific tag to checkout after the clone command.
+|Ignore failures |Ignore failures during import of DSL files.
+|Local mode |Do not send files to the server with help of clientFiles argument of the evalDsl operation in local mode.
+|===
+
+image:cloudbees-common::cd-plugins/ec-dsldeploy/help/importdslfromgit.png[importDslFromGit parameters]
+
+[[releaseNotes]]
+== Release notes
+
+=== EC-DslDeploy 3.0.2
+
+* The documentation has been migrated to the main documentation site.
+
+=== EC-DslDeploy 3.0.1
+
+* CEV-25319: fixed a project import in the remote mode.
+
+=== EC-DslDeploy 3.0.0
+
+* The plugin is made CloudBees Supported and moved under the private repository
+* Speedup noop deploy steps
+* Added ignoreFailed and localMode parameters for import procedures
+* Added support for object names with slash and backslash symbols
+* Fixed wrong counts in step summary for import procedures
+
+=== EC-DslDeploy 2.2.1
+
+* The plugin is adopted to use new 'clientFiles' argument in evalDsl API what allows to remove limitation of shared folder usage for DSL import
+* fixed issue with import of 'release' property sheet under the project
+* fixed issue for 'generateDslToDirectory' with includeAcls='1'
+
+=== EC-DslDeploy 2.2.0
+
+* Added 'overwrite' parameter to install procedures
+* added 'generateDslToDirectory' procedure
+* added 'importDslFromGit' procedure
+* enhanced 'installDsl' procedure to support deploy of more types of objects
+
+=== EC-DslDeploy 2.1.2
+
+* Merge pull request #41 from electric-cloud-community/dev/lrochette
+* convert deployMain and deployPost to ec-perl to work around 8K limit
+
+=== EC-DslDeploy 2.1.0
+
+* Merge pull request #38 from electric-cloud-community/dev/lrochette
+* Add ACLs support
+
+=== EC-DslDeploy 1.1.0
+
+* Merge pull request #26 from lrochette/master
+* Add support for resources.
+
+=== EC-DslDeploy 1.0.2
+
+* Refactor tests and add sample code as test.
+* Fix https://github.com/electric-cloud-community/EC-DslDeploy/issues/14[Issue #14].
+
+=== EC-DslDeploy 1.0.1
+
+* Remove EC-Admin dependency.
+
+=== EC-DslDeploy 1.0.0
+
+* First official version.
