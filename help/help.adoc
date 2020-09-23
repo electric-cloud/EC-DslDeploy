@@ -3,7 +3,7 @@ Plugin Version @PLUGIN_VERSION@
 
 '''''
 
-This plugin is intended to help you deploy a complete DSL file structure to your CloedBees CD server(s). The full supported file structure is available on the https://github.com/electric-cloud/EC-DslDeploy/wiki/file-structure[Wiki].
+This plugin is intended to help you deploy a complete DSL file structure to your {CD} server(s). The full supported file structure is available on the https://github.com/electric-cloud/EC-DslDeploy/wiki/file-structure[Wiki].
 
 == Links
 
@@ -67,7 +67,7 @@ The main purpose of the procedure to be a part of installDslFromDirectory proced
 |===
 |Parameter |Description
 |Project Name |Name of the project to instal.
-|Project directory |The location of the project DSL code on your Dev CloudBeed CD server.
+|Project directory |The location of the project DSL code on your Dev {CD} server.
 |Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
 |Additional DSL Arguments |Additional argument for evalDsl call, for example --timeout or --debug.
 |===
