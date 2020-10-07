@@ -21,29 +21,18 @@ project '2_applicationProject', {
 
       component 'maven_comp', {
         applicationName = 'myApp'
-        pluginKey = 'EC-Maven'
+        pluginKey = 'maven-plugin'
         reference = '0'
 
         process 'maven_comp_process', {
           processType = 'DEPLOY'
 
           processStep 'maven_comp_proc_step', {
-            actualParameter = [
-              'artifact': '$[/myComponent/ec_content_details/artifact]',
-              'classifier': '$[/myComponent/ec_content_details/classifier]',
-              'config': '$[/myComponent/ec_content_details/config]',
-              'directory': '$[/myComponent/ec_content_details/directory]',
-              'overwrite': '$[/myComponent/ec_content_details/overwrite]',
-              'repository': '$[/myComponent/ec_content_details/repository]',
-              'server': '$[/myComponent/ec_content_details/server]',
-              'type': '$[/myComponent/ec_content_details/type]',
-              'version': '$[/myJob/ec_maven_comp-version]',
-            ]
             alwaysRun = '0'
             errorHandling = 'failProcedure'
             processStepType = 'component'
             subprocedure = 'Retrieve Artifact'
-            subproject = '/plugins/EC-Maven/project'
+            subproject = '/plugins/maven-plugin/project'
             useUtilityResource = '0'
           }
         }
@@ -63,13 +52,6 @@ project '2_applicationProject', {
           directory = ''
           overwrite = '1'
           pluginProcedure = 'Retrieve Artifact'
-
-          property 'pluginProjectName', value: 'EC-Maven', {
-            expandable = '1'
-            suppressValueTracking = '0'
-          }
-          repository = 'maven2'
-          server = 'http://repo1.maven.org'
 
           property 'type', value: '.jar', {
             expandable = '1'

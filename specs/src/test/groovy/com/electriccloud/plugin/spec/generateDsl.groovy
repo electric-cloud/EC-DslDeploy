@@ -1139,6 +1139,185 @@ acl {
         new File(dslDir).deleteDir()
     }
 
+    def 'generate DSL for trigger application'() {
+
+        dslDir = 'build/application-trigger'
+        def environmentProjectName = randomize('env_project')
+        def projectName = randomize('test_project')
+        def serviceAccount = randomize('sa')
+        def artifactName = 'dsl:trigger-app'
+        File projDir, appDir
+
+        def projects = [environmentProject: environmentProjectName,
+                        applicationProject: projectName,
+                        serviceAccount: serviceAccount]
+
+        args << projects
+
+        given:
+        dslFile ('webhook_plugin.dsl')
+        dslFile ('trigger/app_with_env_template_mapping.dsl', args)
+
+        when: 'run generate Dsl procedure'
+        def result= runProcedureDsl("""
+                        runProcedure(
+                          projectName: "generateDslTestProject",
+                          procedureName: "generateDslAndPublish",
+                          actualParameter: [
+                            directory: "$dslDir",
+                            objectType: 'project',
+                            objectName: "$projectName",
+                            includeAllChildren: '1',
+                            includeAcls: '0',
+                            includeAclsInDifferentFile: '0',
+                            suppressDefaults: '1',
+                            suppressParent: '0',
+                            artifactName: "$artifactName",
+                            artifactVersionVersion: '1.0',
+                            runResourceName: '$defaultPool'
+                          ]
+                        )""")
+        then:
+        assert result.jobId
+        def outcome=getJobProperty("outcome", result.jobId)
+        assert outcome == "success"
+
+        when:
+        retrieveArtifactVersion("$artifactName", "1.0", dslDir)
+        projDir = new File (dslDir, "projects/$projectName")
+
+        and: "check project was created"
+        assert projDir.exists()
+        assertFile(new File(projDir, 'project.dsl'), "\nproject '$projectName'\n")
+
+        and:"check application directory were created"
+        appDir = new File(projDir, "applications/testApp")
+        assert appDir.exists()
+        assertFile(new File(appDir, 'application.dsl'), """
+application 'testApp', {
+  projectName = '$projectName'
+}
+""")
+
+        then:"check trigger directories were created"
+        def triggerDir = new File(appDir, "triggers/app-webhook")
+        assert triggerDir.exists()
+        assertFile(new File(triggerDir, 'trigger.dsl'), """
+trigger 'app-webhook', {
+  actualParameter = [
+    'param1': 'paramValue',
+  ]
+  applicationName = 'testApp'
+  environmentName = 'test_env_1'
+  environmentTemplateName = 'testEnvTemplate'
+  pluginKey = 'webhook-plugin'
+  pluginParameter = [
+    'pushEvent': 'true',
+  ]
+  processName = 'testApp_process'
+  projectName = '$projectName'
+  quietTimeMinutes = '0'
+  runDuplicates = '1'
+  serviceAccountName = '$serviceAccount'
+  tierResourceCount = [
+    'testEnvTemplateTier': '1',
+  ]
+  triggerType = 'webhook'
+}
+""")
+
+        cleanup:
+        deleteProjects(projects, false)
+        dsl("deleteArtifact(artifactName: '$artifactName')")
+        new File(dslDir).deleteDir()
+    }
+
+    def "generate DSL for trigger application with suppressParent=true"() {
+
+        dslDir = 'build/application-trigger'
+        def environmentProjectName = randomize('env_project')
+        def projectName = randomize('test_project')
+        def serviceAccount = randomize('sa')
+        def artifactName = 'dsl:trigger-app'
+        File projDir, appDir
+
+        def projects = [environmentProject: environmentProjectName,
+                        applicationProject: projectName,
+                        serviceAccount: serviceAccount]
+
+        args << projects
+
+        given:
+        dslFile ('webhook_plugin.dsl')
+        dslFile ('trigger/app_with_env_template_mapping.dsl', args)
+
+        when: 'run generate Dsl procedure'
+        def result= runProcedureDsl("""
+                        runProcedure(
+                          projectName: "generateDslTestProject",
+                          procedureName: "generateDslAndPublish",
+                          actualParameter: [
+                            directory: "$dslDir",
+                            objectType: 'project',
+                            objectName: "$projectName",
+                            includeAllChildren: '1',
+                            includeAcls: '0',
+                            includeAclsInDifferentFile: '0',
+                            suppressDefaults: '1',
+                            suppressParent: '1',
+                            artifactName: "$artifactName",
+                            artifactVersionVersion: '1.0',
+                            runResourceName: '$defaultPool'
+                          ]
+                        )""")
+        then:
+        assert result.jobId
+        def outcome=getJobProperty("outcome", result.jobId)
+        assert outcome == "success"
+
+        when:
+        retrieveArtifactVersion("$artifactName", "1.0", dslDir)
+        projDir = new File (dslDir, "projects/$projectName")
+
+        and: "check project was created"
+        assert projDir.exists()
+        assertFile(new File(projDir, 'project.dsl'), "\nproject '$projectName'\n")
+
+        and:"check application directory were created"
+        appDir = new File(projDir, "applications/testApp")
+        assert appDir.exists()
+        assertFile(new File(appDir, 'application.dsl'), "\napplication 'testApp'\n")
+
+        then:"check trigger directories were created"
+        def triggerDir = new File(appDir, "triggers/app-webhook")
+        assert triggerDir.exists()
+        assertFile(new File(triggerDir, 'trigger.dsl'), """
+trigger 'app-webhook', {
+  actualParameter = [
+    'param1': 'paramValue',
+  ]
+  environmentName = 'test_env_1'
+  environmentTemplateName = 'testEnvTemplate'
+  pluginKey = 'webhook-plugin'
+  pluginParameter = [
+    'pushEvent': 'true',
+  ]
+  quietTimeMinutes = '0'
+  runDuplicates = '1'
+  serviceAccountName = '$serviceAccount'
+  tierResourceCount = [
+    'testEnvTemplateTier': '1',
+  ]
+  triggerType = 'webhook'
+}
+""")
+
+        cleanup:
+        deleteProjects(projects, false)
+        dsl("deleteArtifact(artifactName: '$artifactName')")
+        new File(dslDir).deleteDir()
+    }
+
 
     private static String encode(String arg)
     {
@@ -1167,5 +1346,4 @@ acl {
 
         assertFile(aclFile, content)
     }
-
 }
