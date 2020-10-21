@@ -1,6 +1,5 @@
 package com.electriccloud.plugin.spec
 
-import spock.lang.Ignore
 import spock.lang.Shared
 
 class ReleaseSpec
@@ -23,6 +22,7 @@ class ReleaseSpec
         dsl """
       deleteProject(projectName: "$projName")
     """
+        dslFile("maven_plugin.dsl")
     }
 
     def doCleanupSpec() {

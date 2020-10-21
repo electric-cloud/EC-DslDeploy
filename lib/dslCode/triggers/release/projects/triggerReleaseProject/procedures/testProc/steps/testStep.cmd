@@ -1,0 +1,1 @@
+echo $[entry-param]

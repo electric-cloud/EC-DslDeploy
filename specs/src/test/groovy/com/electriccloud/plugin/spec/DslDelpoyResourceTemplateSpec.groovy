@@ -13,6 +13,7 @@ class DslDelpoyResourceTemplateSpec
     def doSetupSpec() {
         pVersion = getP("/plugins/$pName/pluginVersion")
         plugDir = getP("/server/settings/pluginsDirectory")
+        dslFile("maven_plugin.dsl")
     }
 
     // overwrite with pipeline

@@ -1,0 +1,4 @@
+
+release 'testRelease', {
+  projectName = 'triggerReleaseProject'
+}

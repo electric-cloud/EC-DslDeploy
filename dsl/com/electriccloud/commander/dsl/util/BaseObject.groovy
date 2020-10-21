@@ -138,10 +138,10 @@ abstract class BaseObject extends DslDelegatingScript {
   }
 
   /* ########################################################################
-      loadObjects: function to load the top directory contains "obkects"
+      loadObjects: function to load the top directory contains "objects"
       Parameters:
         - objType: the type of object like "procedure", "persona", ...
-        - dir: the location where "objects" will be found.
+        - topDir: the location where "objects" will be found.
         - bindingMap: a list of properties to pass dow to evaluate the DSL
                       in context. Typically objectName and objectDir.
      ######################################################################## */
@@ -279,17 +279,18 @@ abstract class BaseObject extends DslDelegatingScript {
       }
 
       def children = [
-              application    : ['applicationTier', 'service', 'process', 'tierMap', 'environmentTemplateTierMap', 'snapshot'],
+              application    : ['applicationTier', 'service', 'process', 'tierMap', 'environmentTemplateTierMap', 'snapshot', 'trigger'],
               applicationTier: ['component'],
               catalog        : ['catalogItem'],
+              catalogItem    : ['trigger'],
               component      : ['process'],
               dashboard      : ['reportingFilter', 'widget'],
               environment    : ['cluster', 'environmentTier'],
               gate           : ['task'],
-              pipeline       : ['stage'],
+              pipeline       : ['stage', 'trigger'],
               process        : ['processStep'],
-              procedure      : ['step', 'emailNotifier'],
-              release        : ['pipeline', 'deployerApplication', 'deployerService'],
+              procedure      : ['step', 'emailNotifier', 'trigger'],
+              release        : ['pipeline', 'deployerApplication', 'deployerService', 'trigger'],
               service        : ['container', 'port', 'process', 'environmentMap', 'snapshot'],
               stage          : ['gate', 'task'],
               task           : ['task'],
