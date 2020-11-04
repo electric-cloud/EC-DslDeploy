@@ -4,21 +4,32 @@ def procName = 'exportDslToGit'
 procedure procName, {
     jobNameTemplate = 'export-dsl-to-git-$[jobId]'
 
-    step 'checkoutDsl',
-            subprocedure: 'CheckoutCode',
-            subproject:'/plugins/ECSCM-Git/project',
-            resourceName: '$[rsrcName]',
-            errorHandling: 'abortProcedure',
-                actualParameter: [
-                        clone: 'true',
-                        commit: 'HEAD',
-                        config: '$[checkoutConfig]',
-                        depth: '1',
-                        dest: '$[dest]',
-                        GitBranch: '$[GitBranch]',
-                        GitRepo: '$[GitRepo]',
-                        overwrite: '$[GitOverwrite]',
-                ]
+    step 'Clone',
+                subprocedure: 'Clone',
+                subproject: '/plugins/EC-Git/project',
+                condition: '$[/myJob/actualParameters/clone]',
+                errorHandling:'abortProcedure',
+                resourceName: '$[rsrcName]',
+                    actualParameter: [
+                            branch: '$[branch]',
+                            config: '$[gitConfig]',
+                            gitRepoFolder: '$[dest]',
+                            overwrite: '$[GitOverwrite]',
+                            repoUrl: '$[repoUrl]',
+                            tag: '$[tag]'
+                        ]
+
+        step 'Pull',
+                subprocedure: 'Pull',
+                subproject: '/plugins/EC-Git/project',
+                resourceName: '$[rsrcName]',
+                errorHandling: 'abortProcedure',
+                     actualParameter: [
+                            branch: '$[branch]',
+                            config: '$[gitConfig]',
+                            gitRepoFolder: '$[dest]',
+                            repoUrl: '$[repoUrl]',
+                        ]
 
     step 'generateDslToDirectory',
             subprocedure: 'generateDslToDirectory',
@@ -45,11 +56,9 @@ procedure procName, {
             resourceName: '$[rsrcName]',
             errorHandling: 'abortProcedure',
             actualParameter: [
-                    authorEmail: '$[authorEmail]',
-                    authorName: '$[authorName]',
                     committerEmail: '$[committerEmail]',
                     committerName: '$[committerName]',
-                    config: '$[commitConfig]',
+                    config: '$[gitConfig]',
                     failOnEmptyCommit: '$[failOnEmptyCommit]',
                     files: '$[files]',
                     gitRepoFolder: '$[dest]',
