@@ -1718,4 +1718,65 @@ class overwrite_installProject extends PluginTestHelper {
         cleanup:
         deleteProjects([projectName: testProjName], false)
     }
+
+    def "install project with credentials"() {
+        def testProjName = 'credProjectImport'
+
+        given: "project dsl"
+
+        when: "Load DSL Code"
+        def p = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installProject",
+          actualParameter: [
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/credentials/projects/$testProjName",
+            projName: "$testProjName"
+          ]
+        )""")
+
+        then: "job completed"
+        waitUntil {
+            assert p.jobId
+            assert getJobProperty("outcome", p.jobId) == "success" || getJobProperty("outcome", p.jobId) == "warning"
+        }
+
+        when:
+        def result = dsl "getProject(projectName: '$testProjName')"
+
+        then: "project created"
+        assert result.project['projectName'] == testProjName
+
+        when:
+        result = dsl "getCredentials(projectName: '$testProjName')"
+
+        then:"credentials created"
+        assert result?.credential
+        assert result.credential[0]?.credentialName == 'externalCred'
+        assert result.credential[0]?.credentialType == 'EXTERNAL'
+        assert result.credential[0]?.projectName == testProjName
+        assert result.credential[0]?.credentialProviderName == 'testCredProvider'
+        assert result.credential[0]?.credentialProviderProjectName == testProjName
+        assert result.credential[0]?.secretPath == 'db/secret'
+        assert result.credential[0]?.userName == 'testUser'
+        assert result.credential[1]?.credentialName == 'localCred'
+        assert result.credential[1]?.credentialType == 'LOCAL'
+        assert result.credential[1]?.projectName == testProjName
+        assert result.credential[1]?.userName == 'localUser'
+
+        when:
+        result = dsl "getCredentialProvider(projectName: '$testProjName', credentialProviderName: 'testCredProvider')"
+
+        then:"credential provider created"
+        assert result?.credentialProvider
+        assert result.credentialProvider.credentialProviderName == 'testCredProvider'
+        assert result.credentialProvider.providerType == 'HASHICORP'
+        assert result.credentialProvider.projectName == testProjName
+        assert result.credentialProvider.secretEnginePath == '/path'
+        assert result.credentialProvider.secretEngineType == 'KV2'
+        assert result.credentialProvider.serverUrl == 'http://localhost:1234'
+
+        cleanup:
+        deleteProjects([projectName: testProjName], false)
+    }
 }

@@ -1318,6 +1318,92 @@ trigger 'app-webhook', {
         new File(dslDir).deleteDir()
     }
 
+    def "generate DSL for credentials"() {
+
+        dslDir = 'build/credentials'
+        def projectName = randomize('cred_project')
+        def artifactName = 'dsl:cred-app'
+        File projDir
+
+        def projects = [project: projectName]
+
+        args << projects
+
+        given:
+        dslFile ('credentials.dsl', args)
+
+        when: 'run generate Dsl procedure'
+        def result= runProcedureDsl("""
+                        runProcedure(
+                          projectName: "generateDslTestProject",
+                          procedureName: "generateDslAndPublish",
+                          actualParameter: [
+                            directory: "$dslDir",
+                            objectType: 'project',
+                            objectName: "$projectName",
+                            includeAllChildren: '1',
+                            includeAcls: '0',
+                            includeAclsInDifferentFile: '0',
+                            suppressDefaults: '1',
+                            suppressNulls: '1',
+                            artifactName: "$artifactName",
+                            artifactVersionVersion: '1.0',
+                            runResourceName: '$defaultPool'
+                          ]
+                        )""")
+        then:
+        assert result.jobId
+        def outcome=getJobProperty("outcome", result.jobId)
+        assert outcome == "success"
+
+        when:
+        retrieveArtifactVersion("$artifactName", "1.0", dslDir)
+        projDir = new File (dslDir, "projects/$projectName")
+
+        and: "check project was created"
+        assert projDir.exists()
+        assertFile(new File(projDir, 'project.dsl'), "\nproject '$projectName'\n")
+
+        and:"check credential provider directory was created"
+        def provDir = new File(projDir, "credentialProviders/testCredProvider")
+        assert provDir.exists()
+        assertFile(new File(provDir, 'credentialProvider.dsl'), """
+credentialProvider 'testCredProvider', {
+  projectName = '$projectName'
+  providerType = 'HASHICORP'
+  secretEnginePath = '/path'
+  secretEngineType = 'KV2'
+  serverUrl = 'http://localhost:1234'
+}
+""")
+
+        then:"check credentials' directories were created"
+        def credDir1 = new File(projDir, "credentials/externalCred")
+        assert credDir1.exists()
+        assertFile(new File(credDir1, 'credential.dsl'), """
+credential 'externalCred', userName: 'testUser', {
+  credentialProviderName = 'testCredProvider'
+  credentialProviderProjectName = '$projectName'
+  credentialType = 'EXTERNAL'
+  projectName = '$projectName'
+  secretPath = 'db/secret'
+}
+""")
+        def credDir2 = new File(projDir, "credentials/localCred")
+        assert credDir2.exists()
+        assertFile(new File(credDir2, 'credential.dsl'), """
+credential 'localCred', userName: 'localUser', {
+  credentialType = 'LOCAL'
+  projectName = '$projectName'
+}
+""")
+
+        cleanup:
+        deleteProjects(projects, false)
+        dsl("deleteArtifact(artifactName: '$artifactName')")
+        new File(dslDir).deleteDir()
+    }
+
 
     private static String encode(String arg)
     {
