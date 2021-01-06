@@ -1073,7 +1073,7 @@ acl {
         dslDir = 'build/proj_spec_symbols'
         def projName = 'proj | new > name \\'
         def procName = 'Procedure: Verify QA / Notify'
-        def procStepName = 'step 1/2'
+        def procStepName = 'step [1/2]'
         args << [projectName: projName,
                  procedureName: procName,
                  procStepName: procStepName]
@@ -1223,6 +1223,7 @@ trigger 'app-webhook', {
     'testEnvTemplateTier': '1',
   ]
   triggerType = 'webhook'
+  webhookName = 'default'
 }
 """)
 
@@ -1309,6 +1310,7 @@ trigger 'app-webhook', {
     'testEnvTemplateTier': '1',
   ]
   triggerType = 'webhook'
+  webhookName = 'default'
 }
 """)
 
