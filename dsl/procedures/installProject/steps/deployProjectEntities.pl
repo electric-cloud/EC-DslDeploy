@@ -57,6 +57,12 @@ project projectName, {
   )
 }
 
+//pop up possible error
+if (counters.get("Error") != null) {
+  println("Error: " + counters.get("Error"))
+  counters.remove("Error")
+}
+
 setProperty(propertyName: "summary", value: summaryString(counters))
 return ""
 END_COMMAND

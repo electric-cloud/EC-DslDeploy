@@ -258,7 +258,7 @@ class GenerateDslHelper {
 
             //replace /entities[name] parts with /entities/name simultaneously encoding
             List<String> parts = new ArrayList<>()
-            matcher = Pattern.compile("/(.+?)\\[(.+?)]").matcher(pathWithoutExt)
+            matcher = Pattern.compile("/(.+?)\\[(.+?]?)]").matcher(pathWithoutExt)
             int matchEnd = 0
             while (matcher.find()) {
                 parts.addAll(Arrays.stream(matcher.group(1).split("/"))
