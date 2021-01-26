@@ -1,0 +1,2 @@
+
+applicationTier 'T1'
