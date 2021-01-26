@@ -1,2 +1,0 @@
-
-applicationTier 'Tier 1'

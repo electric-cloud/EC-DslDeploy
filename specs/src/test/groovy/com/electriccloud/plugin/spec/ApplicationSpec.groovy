@@ -7,7 +7,7 @@ class ApplicationSpec
   static String pName='EC-DslDeploy'
   @Shared String pVersion
   @Shared String plugDir
-  static String projName="applicationDeployment"
+  static String projName="appDep"
 
   def doSetupSpec() {
     pVersion = getP("/plugins/$pName/pluginVersion")
@@ -44,7 +44,7 @@ class ApplicationSpec
           projectName: "/plugins/$pName/project",
           procedureName: "installDslFromDirectory",
           actualParameter: [
-            directory: "$plugDir/$pName-$pVersion/lib/dslCode/applications/tierMaps_envTemplTierMaps",
+            directory: "$plugDir/$pName-$pVersion/lib/dslCode/applications/tierMap1",
             pool: "$defaultPool"
           ]
         )""")
