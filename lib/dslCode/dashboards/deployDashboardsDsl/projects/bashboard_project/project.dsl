@@ -1,2 +1,0 @@
-
-project 'dashboard_project'
