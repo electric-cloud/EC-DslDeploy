@@ -1,2 +1,0 @@
-
-project 'resourceTemplate_project'
