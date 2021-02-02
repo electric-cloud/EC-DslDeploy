@@ -19,7 +19,7 @@ class DslDelpoyResourceTemplateSpec
     // overwrite with pipeline
     def "deploy multiple resource templates"(){
 
-        def projectName = 'resourceTemplate_project'
+        def projectName = 'rt'
         def projects = [project : projectName]
 
         given: "the schedule project code"
@@ -38,11 +38,11 @@ class DslDelpoyResourceTemplateSpec
         assert getJobProperty("outcome", p.jobId) == "success"
 
         then: "verify first resource template was creared"
-        def resTempl1 = dsl """getResourceTemplate(projectName: '$projectName', resourceTemplateName: 'myResourceTemplate')"""
+        def resTempl1 = dsl """getResourceTemplate(projectName: '$projectName', resourceTemplateName: 't1')"""
         assert resTempl1
 
         then: "verify second resource template was creared"
-        def resTempl2 = dsl """getResourceTemplate(projectName: '$projectName', resourceTemplateName: 'myResourceTemplate2')"""
+        def resTempl2 = dsl """getResourceTemplate(projectName: '$projectName', resourceTemplateName: 't2')"""
         assert resTempl2
 
         cleanup:
