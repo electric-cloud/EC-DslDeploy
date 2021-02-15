@@ -131,6 +131,13 @@ class deployPipeline
         def group2Subtasks = group2.task
         assert group2Subtasks.size() == 2
         def group2ManualTask = group2Subtasks.find{it.taskName == 'manual2'}
+        // check property
+        def procedProperties = dsl """getProperties(projectName: 'pipeline_group_proj',
+                pipelineName: 'pipe1', stageName: 'stage', taskName: 'manual2')"""
+
+        assert procedProperties?.propertySheet?.property.size == 1
+        assert procedProperties?.propertySheet?.property[0]?.value == 'value'
+        //
         def group2CmdTask = group2Subtasks.find{it.taskName == 'cmd2'}
         assert group2CmdTask.index > group2ManualTask.index
         assert group2CmdTask.actualParameters.parameterDetail[0].parameterValue =='sleep 1'
