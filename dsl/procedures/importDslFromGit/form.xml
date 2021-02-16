@@ -33,6 +33,14 @@
     <documentation>The directory on the resource where the source tree will be created and from where the DSL files are read to be imported in Flow server. This directory must be accessible from the Flow server. In a clustered deployment, all Flow server nodes must have access to this directory.</documentation>
   </formElement>
   <formElement>
+    <type>entry</type>
+    <label>Relative path to DSL files:</label>
+    <property>relPath</property>
+    <required>0</required>
+    <value/>
+    <documentation>If the DSL files are not located at the top-level in the repository, then specify the relative path to the directory containing the DSL files within the repository. E.g., 'scripts/dsls' where the dsl files are located in the following sub-directories in the repository 'scripts/dsls/projects' and 'scripts/dsls/resources'.</documentation>
+  </formElement>
+  <formElement>
     <type>checkbox</type>
     <label>Cleanup?:</label>
     <property>cleanup</property>
