@@ -4,22 +4,37 @@ def procName = 'importDslFromGit'
 procedure procName, {
     jobNameTemplate = 'import-dsl-from-git-$[jobId]'
 
-    step 'checkoutDsl',
-            subprocedure: 'CheckoutCode',
-            subproject:'/plugins/ECSCM-Git/project',
-            resourceName: '$[rsrcName]',
-            errorHandling: 'abortProcedure',
-                actualParameter: [
-                        clone: '$[clone]',
-                        commit: '$[commit]',
-                        config: '$[config]',
-                        depth: '$[depth]',
-                        dest: '$[dest]',
-                        GitBranch: '$[GitBranch]',
-                        GitRepo: '$[GitRepo]',
-                        overwrite: '$[GitOverwrite]',
-                        tag: '$[tag]'
-                ]
+    step 'checkoutDslClone', {
+        subprocedure = 'Clone'
+        subproject = '/plugins/EC-Git/project'
+        resourceName = '$[rsrcName]'
+        errorHandling = 'abortProcedure'
+        actualParameter = [
+            commit: '$[commit]',
+            config: '$[config]',
+            depth: '$[depth]',
+            repoUrl: '$[GitRepo]',
+            branch: '$[GitBranch]',
+            gitRepoFolder: '$[dest]',
+            overwrite: '$[GitOverwrite]',
+            tag: '$[tag]'
+        ]
+        condition = '$[/javascript myJob.clone == "1" || myJob.clone == "true"]'
+    }
+
+    step 'checkoutDslPull', {
+        subprocedure = 'Pull'
+        subproject = '/plugins/EC-Git/project'
+        resourceName = '$[rsrcName]'
+        errorHandling =  'abortProcedure'
+        actualParameter = [
+            config: '$[config]',
+            branch: '$[GitBranch]',
+            repoUrl: '$[GitRepo]',
+            gitRepoFolder: '$[dest]',
+        ]
+        condition = '$[/javascript myJob.clone == "0" || myJob.clone == "false"]'
+    }
 
     step 'installFromDirectory',
             subprocedure: 'installDslFromDirectory',
