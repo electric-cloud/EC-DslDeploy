@@ -10,7 +10,7 @@ class overwrite_installProject extends PluginTestHelper {
     String pVersion
     @Shared
     String plugDir
-    static String projName = "overwrite_installProject"
+    static String projName = "ow_pr"
 
     def doSetupSpec() {
         pVersion = getP("/plugins/$pName/pluginVersion")
@@ -170,7 +170,7 @@ class overwrite_installProject extends PluginTestHelper {
         assert getJobProperty("outcome", p2.jobId) == "success"
 
         then: "procedure has one step"
-        def steps  = dsl """getSteps(projectName: 'overwrite_installProject', procedureName: 'testProcedure')"""
+        def steps  = dsl """getSteps(projectName: 'ow_pr', procedureName: 'testProcedure')"""
         assert steps?.step?.size == 1
 
         then: "procedure has one formal parameter"
@@ -452,7 +452,7 @@ class overwrite_installProject extends PluginTestHelper {
         assert transitions?.transitionDefinition[0].transitionDefinitionName == 'transition1'
 
         then: "added email notifier was cleaned up"
-        def notifiers = dsl"""getEmailNotifiers(projectName: 'overwrite_installProject',                                                workflowDefinitionName: 'test_wfd',
+        def notifiers = dsl"""getEmailNotifiers(projectName: 'ow_pr',                                                workflowDefinitionName: 'test_wfd',
                                       stateDefinitionName: 'start'
                                       )"""
         assert notifiers?.emailNotifier?.size == 1
@@ -491,8 +491,8 @@ class overwrite_installProject extends PluginTestHelper {
           projectName: "/plugins/$pName/project",
           procedureName: "installProject",
           actualParameter: [
-            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_pipeline/projects/overwrite_installProject",
-            projName: 'overwrite_installProject'
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_pipeline/projects/ow_pr",
+            projName: 'ow_pr'
           ]
         )""")
         then: "job completed with warnings"
@@ -623,8 +623,8 @@ class overwrite_installProject extends PluginTestHelper {
           projectName: "/plugins/$pName/project",
           procedureName: "installProject",
           actualParameter: [
-            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_pipeline/projects/overwrite_installProject",
-            projName: 'overwrite_installProject',
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_pipeline/projects/ow_pr",
+            projName: 'ow_pr',
             overwrite: '1'
           ]
         )""")
@@ -722,20 +722,20 @@ class overwrite_installProject extends PluginTestHelper {
         def oldEntryResult1 = dsl """ getAclEntry(
             projectName: "$projName",
             principalType: "user",
-            principalName: "project: overwrite_installProject"
+            principalName: "project: ow_pr"
         )"""
         assert oldEntryResult1
-        assert oldEntryResult1.aclEntry.principalName == "project: overwrite_installProject"
+        assert oldEntryResult1.aclEntry.principalName == "project: ow_pr"
 
         and: "old aclEntry for pipeline still exists"
         def oldEntryResult2 = dsl """ getAclEntry(
             projectName: "$projName",
             pipelineName: "p12",
             principalType: "user",
-            principalName: "project: overwrite_installProject"
+            principalName: "project: ow_pr"
         )"""
         assert oldEntryResult2
-        assert oldEntryResult2.aclEntry.principalName == "project: overwrite_installProject"
+        assert oldEntryResult2.aclEntry.principalName == "project: ow_pr"
 
         then: "project aclEntry not exists"
         def aclEntryResult =
@@ -771,13 +771,13 @@ class overwrite_installProject extends PluginTestHelper {
           projectName: "/plugins/$pName/project",
           procedureName: "installProject",
           actualParameter: [
-            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_application/projects/overwrite_installProject",
-            projName: 'overwrite_installProject'
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/ow_app/projects/ow_pr",
+            projName: 'ow_pr'
           ]
         )""")
         then: "job succeeds"
         assert p.jobId
-        assert getJobProperty("outcome", p.jobId) == "success"
+        assert getJobProperty("outcome", p.jobId) != "error"
 
         when: "add content to application"
         dsl """
@@ -806,12 +806,12 @@ class overwrite_installProject extends PluginTestHelper {
                         pluginKey = 'EC-Artifact'
                     }
                     
-                    component 'component1', {
+                    component 'c1', {
                         description = 'new'
                         process 'new', {
                              processType = 'DEPLOY'
                         }
-                        process 'process1', {
+                        process 'p1', {
                             processStep 'new', {
                                 notificationTemplate = 'ec_default_manual_process_step_notification_template'
                                 processStepType = 'manual'
@@ -840,14 +840,14 @@ class overwrite_installProject extends PluginTestHelper {
           projectName: "/plugins/$pName/project",
           procedureName: "installProject",
           actualParameter: [
-            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_application/projects/overwrite_installProject",
-            projName: 'overwrite_installProject',
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/ow_app/projects/ow_pr",
+            projName: 'ow_pr',
             overwrite: '1'
           ]
         )""")
         then: "job succeeds"
         assert p2.jobId
-        assert getJobProperty("outcome", p2.jobId) == "success"
+        assert getJobProperty("outcome", p2.jobId) != "error"
 
         then: "The application tier not exists"
         println "Checking new application tier is not exists"
@@ -878,7 +878,7 @@ class overwrite_installProject extends PluginTestHelper {
         getProcess(
           projectName: "$projName",
           componentApplicationName: "app1",
-          componentName: "component1",
+          componentName: "c1",
           processName: "new"
         )""", null, [ignoreStatusCode: true])
 
@@ -889,8 +889,8 @@ class overwrite_installProject extends PluginTestHelper {
         getProcessStep(
           projectName: "$projName",
           componentApplicationName: "app1",
-          componentName: "component1",
-          processName: "process1",
+          componentName: "c1",
+          processName: "p1",
           processStepName: "new"
         )""", null, [ignoreStatusCode: true])
 
@@ -905,8 +905,8 @@ class overwrite_installProject extends PluginTestHelper {
           projectName: "/plugins/$pName/project",
           procedureName: "installProject",
           actualParameter: [
-            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_catalog/projects/overwrite_installProject",
-            projName: 'overwrite_installProject'
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_catalog/projects/ow_pr",
+            projName: 'ow_pr'
           ]
         )""")
         then: "job succeeds"
@@ -914,24 +914,24 @@ class overwrite_installProject extends PluginTestHelper {
         assert getJobProperty("outcome", p.jobId) == "success"
 
         and: "store catalog id"
-        def catalog = dsl"""getCatalog(projectName: 'overwrite_installProject', catalogName: 'testCatalog')"""
+        def catalog = dsl"""getCatalog(projectName: 'ow_pr', catalogName: 'testCatalog')"""
         def catalogId = catalog?.catalog?.catalogId
         assert catalog?.catalog?.description == 'original description'
 
         and: "store catalog item id"
-        def catalogItem = dsl"""getCatalogItem(projectName: 'overwrite_installProject', catalogName: 'testCatalog', catalogItemName: 'testItem')"""
+        def catalogItem = dsl"""getCatalogItem(projectName: 'ow_pr', catalogName: 'testCatalog', catalogItemName: 'testItem')"""
         assert catalogItem
         def catalogItemId = catalogItem?.catalogItem?.catalogItemId
         assert catalogItem?.catalogItem?.description == 'original description'
         assert catalogItem?.catalogItem?.buttonLabel == 'Original Label'
 
         and: "modify catalog fields values"
-        def modifiedCatalog = dsl """modifyCatalog(projectName: 'overwrite_installProject', catalogName: 'testCatalog', description: 'new description')"""
+        def modifiedCatalog = dsl """modifyCatalog(projectName: 'ow_pr', catalogName: 'testCatalog', description: 'new description')"""
         assert modifiedCatalog.catalog.description == 'new description'
 
         and: "modify catalog item fields values"
         def modifiedCatalogItem = dsl"""modifyCatalogItem(
-                            projectName: 'overwrite_installProject',
+                            projectName: 'ow_pr',
                             catalogName: 'testCatalog', 
                             catalogItemName: 'testItem',
                             description: 'new description',
@@ -940,14 +940,14 @@ class overwrite_installProject extends PluginTestHelper {
         assert modifiedCatalogItem?.catalogItem?.buttonLabel == 'new label'
 
         when: "add catalog item to catalog"
-        dsl """createCatalogItem(projectName: 'overwrite_installProject', catalogName: 'testCatalog', catalogItemName: 'testItem2')"""
+        dsl """createCatalogItem(projectName: 'ow_pr', catalogName: 'testCatalog', catalogItemName: 'testItem2')"""
 
         then: "new catalog item is created"
-        def newCatalogItem = dsl """getCatalogItem(projectName: 'overwrite_installProject', catalogName: 'testCatalog', catalogItemName: 'testItem2')"""
+        def newCatalogItem = dsl """getCatalogItem(projectName: 'ow_pr', catalogName: 'testCatalog', catalogItemName: 'testItem2')"""
         assert newCatalogItem
 
         then: "add property to catalog"
-        def newProperty = dsl """createProperty(propertyName: 'testCatalogProperty2', projectName: 'overwrite_installProject', catalogName: 'testCatalog')"""
+        def newProperty = dsl """createProperty(propertyName: 'testCatalogProperty2', projectName: 'ow_pr', catalogName: 'testCatalog')"""
         assert newProperty
 
         when: "Load DSL Code with overwrite = 1"
@@ -956,8 +956,8 @@ class overwrite_installProject extends PluginTestHelper {
           projectName: "/plugins/$pName/project",
           procedureName: "installProject",
           actualParameter: [
-            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_catalog/projects/overwrite_installProject",
-            projName: 'overwrite_installProject',
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_catalog/projects/ow_pr",
+            projName: 'ow_pr',
             overwrite: '1'
           ]
         )""")
@@ -966,7 +966,7 @@ class overwrite_installProject extends PluginTestHelper {
         assert getJobProperty("outcome", p2.jobId) == "success"
 
         then: "only one catalog remained in project"
-        def catalogs = dsl """getCatalogs(projectName: 'overwrite_installProject')"""
+        def catalogs = dsl """getCatalogs(projectName: 'ow_pr')"""
         assert catalogs?.catalog?.size == 1
         def remainedCatalog = catalogs?.catalog[0]
 
@@ -975,11 +975,11 @@ class overwrite_installProject extends PluginTestHelper {
         assert remainedCatalog?.description == 'original description'
 
         then: "added property was overwritten"
-        def properties = dsl """getProperties (projectName: 'overwrite_installProject', catalogName: 'testCatalog' )"""
+        def properties = dsl """getProperties (projectName: 'ow_pr', catalogName: 'testCatalog' )"""
         assert properties?.propertySheet?.property?.size == 1
 
         then: "only one catalog item remained"
-        def catalogItems = dsl """getCatalogItems(projectName: 'overwrite_installProject', catalogName: 'testCatalog')"""
+        def catalogItems = dsl """getCatalogItems(projectName: 'ow_pr', catalogName: 'testCatalog')"""
         assert catalogItems?.catalogItem?.size == 1
         def remainedCatalogItem = catalogItems?.catalogItem[0]
 
@@ -997,8 +997,8 @@ class overwrite_installProject extends PluginTestHelper {
           projectName: "/plugins/$pName/project",
           procedureName: "installProject",
           actualParameter: [
-            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_environment/projects/overwrite_installProject",
-            projName: 'overwrite_installProject'
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_environment/projects/ow_pr",
+            projName: 'ow_pr'
           ]
         )""")
         then: "job completed"
@@ -1064,8 +1064,8 @@ class overwrite_installProject extends PluginTestHelper {
           projectName: "/plugins/$pName/project",
           procedureName: "installProject",
           actualParameter: [
-            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_environment/projects/overwrite_installProject",
-            projName: 'overwrite_installProject',
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_environment/projects/ow_pr",
+            projName: 'ow_pr',
             overwrite: '1'
           ]
         )""")
@@ -1108,8 +1108,8 @@ class overwrite_installProject extends PluginTestHelper {
           projectName: "/plugins/$pName/project",
           procedureName: "installProject",
           actualParameter: [
-            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_component/projects/overwrite_installProject",
-            projName: 'overwrite_installProject'
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_component/projects/ow_pr",
+            projName: 'ow_pr'
           ]
         )""")
         then: "job completed"
@@ -1120,7 +1120,7 @@ class overwrite_installProject extends PluginTestHelper {
 
         then: "validate component fields"
         def component = dsl """getComponent(projectName: '$projName',
-                                                componentName: 'comp_name1')"""
+                                                componentName: 'c1')"""
 
         assert component?.component?.description == 'original description'
 
@@ -1128,8 +1128,8 @@ class overwrite_installProject extends PluginTestHelper {
         def compProcess = dsl """
         getProcess(
                 projectName: '$projName',
-                componentName : 'comp_name1',
-                processName: 'proc_name1'
+                componentName : 'c1',
+                processName: 'p1'
                 )"""
 
         assert compProcess?.process?.description == 'original description'
@@ -1141,8 +1141,8 @@ class overwrite_installProject extends PluginTestHelper {
         then: "validate component process step fields"
         def compProcessStep = dsl """getProcessStep(
             projectName: '$projName',
-            componentName : 'comp_name1',
-            processName: 'proc_name1',
+            componentName : 'c1',
+            processName: 'p1',
             processStepName: 'step1'
             )"""
 
@@ -1155,7 +1155,7 @@ class overwrite_installProject extends PluginTestHelper {
         def modifiedComponent = dsl """
         modifyComponent(
             projectName: '$projName',
-            componentName : 'comp_name1',
+            componentName : 'c1',
             description: 'this is new description'
             )"""
 
@@ -1166,8 +1166,8 @@ class overwrite_installProject extends PluginTestHelper {
         def modifiedComponentProcess = dsl """
         modifyProcess(
                 projectName: '$projName',
-                componentName : 'comp_name1',
-                processName: 'proc_name1',
+                componentName : 'c1',
+                processName: 'p1',
                 timeLimit: '15',
                 timeLimitUnits: 'hours',
                 description: 'this is new description',
@@ -1186,8 +1186,8 @@ class overwrite_installProject extends PluginTestHelper {
         def modifiedComponentProcessStep = dsl """
         modifyProcessStep(
             projectName: '$projName',
-            componentName : 'comp_name1',
-            processName: 'proc_name1',
+            componentName : 'c1',
+            processName: 'p1',
             processStepName: 'step1',
             timeLimit: '15',
             timeLimitUnits: 'hours',
@@ -1205,7 +1205,7 @@ class overwrite_installProject extends PluginTestHelper {
         dsl """
         createProcess(
             projectName: '$projName',
-            componentName : 'comp_name1',
+            componentName : 'c1',
             processName: 'tempProcess'
         )
         """
@@ -1213,7 +1213,7 @@ class overwrite_installProject extends PluginTestHelper {
         def tempProcess = dsl """
         getProcess(
             projectName: '$projName',
-            componentName : 'comp_name1',
+            componentName : 'c1',
             processName: 'tempProcess'
         )
         """
@@ -1222,8 +1222,8 @@ class overwrite_installProject extends PluginTestHelper {
         when: "add component process step to existing process"
         dsl """createProcessStep(
             projectName: '$projName',
-            componentName : 'comp_name1',
-            processName: 'proc_name1',
+            componentName : 'c1',
+            processName: 'p1',
             processStepName: 'tempStep'
             )
         """
@@ -1232,8 +1232,8 @@ class overwrite_installProject extends PluginTestHelper {
         def tempProcessStep = dsl """
         getProcessStep(
             projectName: '$projName',
-            componentName : 'comp_name1',
-            processName: 'proc_name1',
+            componentName : 'c1',
+            processName: 'p1',
             processStepName: 'tempStep'
         )
         """
@@ -1245,8 +1245,8 @@ class overwrite_installProject extends PluginTestHelper {
           projectName: "/plugins/$pName/project",
           procedureName: "installProject",
           actualParameter: [
-            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_component/projects/overwrite_installProject",
-            projName: 'overwrite_installProject',
+            projDir: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_component/projects/ow_pr",
+            projName: 'ow_pr',
             overwrite: '1'
           ]
         )""")
@@ -1258,7 +1258,7 @@ class overwrite_installProject extends PluginTestHelper {
         def overrideComponent = dsl """
         getComponent(
             projectName: '$projName',
-            componentName : 'comp_name1'
+            componentName : 'c1'
         )
         """
         assert overrideComponent.component.description == 'original description'
@@ -1269,8 +1269,8 @@ class overwrite_installProject extends PluginTestHelper {
         def overwriteProcess = dsl """
         modifyProcess(
                 projectName: '$projName',
-                componentName : 'comp_name1',
-                processName: 'proc_name1')"""
+                componentName : 'c1',
+                processName: 'p1')"""
 
         assert overwriteProcess?.process?.description == 'original description'
         assert overwriteProcess?.process?.timeLimit == '15'
@@ -1281,8 +1281,8 @@ class overwrite_installProject extends PluginTestHelper {
         then: "validate component process step fields"
         def overwriteprocessStep = dsl """getProcessStep(
             projectName: '$projName',
-            componentName : 'comp_name1',
-            processName: 'proc_name1',
+            componentName : 'c1',
+            processName: 'p1',
             processStepName: 'step1'
             )"""
 
@@ -1293,9 +1293,9 @@ class overwrite_installProject extends PluginTestHelper {
         then: 'new process step was deleted'
         def processSteps = dsl """
         getProcessSteps(
-            projectName: 'overwrite_installProject',
-            componentName : 'comp_name1',
-            processName: 'proc_name1'
+            projectName: 'ow_pr',
+            componentName : 'c1',
+            processName: 'p1'
         )
         """
         assert processSteps.processStep.size() == 2
@@ -1440,7 +1440,7 @@ class overwrite_installProject extends PluginTestHelper {
      * failed
      */
     def "overwrite_installProject properties:conflict with intrinsic property"(){
-        def testProjName = 'CEV-24672';
+        def testProjName = 'CEV-24672'
 
         given: "the overwrite_installProject code"
         when: "Load DSL Code"
@@ -1616,7 +1616,7 @@ class overwrite_installProject extends PluginTestHelper {
         println result
         //resort to manual parsing due to implicit dsl test escaping
         Matcher matcher = Pattern.compile("procedure '(.*)', \\{[\\W\\w]*step '(.*)', \\{[\\W\\w]*command\\s=\\s'(.*)'[\\W\\w]*?}?\\W*}")
-                                 .matcher(result.value);
+                                 .matcher(result.value)
         if (matcher.find()) {
             assert matcher.group(1) == procName
             assert matcher.group(2) == procStepName

@@ -8,7 +8,7 @@ class overwrite_installDslFromDirectory extends PluginTestHelper {
     String pVersion
     @Shared
     String plugDir
-    static String projName = "overwrite_installProject"
+    static String projName = "ow_pr"
     def personaPageName1 = 'myPersonaPage1'
     def personaPageName2 = 'myPersonaPage2'
     def personaPageName3 = 'myPersonaPage3'
