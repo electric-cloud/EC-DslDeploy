@@ -137,10 +137,10 @@ class TriggerSpec extends PluginTestHelper {
         assert outcome == "warning" || outcome == "success"
 
         when: "create trigger"
-        def response = dsl "createTrigger( projectName: 'overwrite_installProject', pipelineName: 'p12', triggerName: 'testTrigger', pluginParameter: ['pushEvent': 'false'], pluginKey: 'webhook-plugin', serviceAccountName: 'trigger_sa', triggerType: 'webhook')"
+        def response = dsl "createTrigger( projectName: 'ow_pr', pipelineName: 'p12', triggerName: 'testTrigger', pluginParameter: ['pushEvent': 'false'], pluginKey: 'webhook-plugin', serviceAccountName: 'trigger_sa', triggerType: 'webhook')"
         assert response?.trigger
         assert response.trigger.pluginKey == 'webhook-plugin'
-        assert response.trigger.projectName == 'overwrite_installProject'
+        assert response.trigger.projectName == 'ow_pr'
         assert response.trigger.pipelineName == 'p12'
         assert response.trigger.triggerType == 'webhook'
         assert response.trigger.triggerEnabled == '1'
@@ -163,14 +163,14 @@ class TriggerSpec extends PluginTestHelper {
         assert property == "warning" || property == "success"
 
         then: "check trigger was deleted"
-        def result = dsl "getTriggers( projectName: 'overwrite_installProject', pipelineName: 'p12')"
+        def result = dsl "getTriggers( projectName: 'ow_pr', pipelineName: 'p12')"
         assert result?.trigger == null
 
         cleanup:
-        deleteProjects([pr: 'overwrite_installProject'], false)
+        deleteProjects([pr: 'ow_pr'], false)
     }
 
-    def void assertParameter(obj, param, value)
+    void assertParameter(obj, param, value)
     {
         assert obj
         assert obj.parameterDetail?.parameterName == [param]

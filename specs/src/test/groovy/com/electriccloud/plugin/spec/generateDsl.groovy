@@ -64,8 +64,7 @@ class generateDsl extends PluginTestHelper {
         assert projDir.exists()
 
         File projectFile = new File (projDir, 'project.dsl')
-        assert projectFile.exists()
-        assert """
+        assertFile(projectFile, """
 project 'CEV-19608', {
   tracked = '1'
 
@@ -97,7 +96,7 @@ project 'CEV-19608', {
   // Custom properties
   testProperty = 'test'
 }
-""".equals(projectFile.text.replace("\r\n", "\n"))
+""")
 
         assert !new File(projDir, "procedures").exists()
         assert !new File(projDir, "properties").exists()
@@ -1135,8 +1134,7 @@ project '$projName', {
 
         and: "check project was created"
         assert projDir.exists()
-        assertFile(new File(projDir, 'project.dsl'),
-                        """
+        assertFile(new File(projDir, 'project.dsl'), """
 project 'proj | new > name \\\\', {
   tracked = '1'
 }
