@@ -67,6 +67,7 @@ class generateDsl extends PluginTestHelper {
         assert projectFile.exists()
         assert """
 project 'CEV-19608', {
+  tracked = '1'
 
   procedure 'proc1', {
     resourceName = 'test'
@@ -146,7 +147,9 @@ project 'CEV-19608', {
         assert projDir.exists()
 
         assertFile(new File(projDir, 'project.dsl'), """
-project 'CEV-19608'
+project 'CEV-19608', {
+  tracked = '1'
+}
 """)
         assert new File(projDir, "procedures").exists()
 
@@ -277,7 +280,9 @@ step 's1', {
         assert projDir.exists()
 
         assertFile(new File(projDir, 'project.dsl'), """
-project 'CEV-19608'
+project 'CEV-19608', {
+  tracked = '1'
+}
 """)
         assert new File(projDir, "procedures").exists()
 
@@ -370,7 +375,9 @@ procedure 'proc2'
         assert projDir.exists()
 
         assertFile(new File(projDir, 'project.dsl'), """
-project 'CEV-19608'
+project 'CEV-19608', {
+  tracked = '1'
+}
 """)
         assert new File(projDir, "procedures").exists()
 
@@ -484,7 +491,9 @@ procedure 'proc2', {
         assert projDir.exists()
 
         assertFile(new File(projDir, 'project.dsl'), """
-project 'CEV-19608'
+project 'CEV-19608', {
+  tracked = '1'
+}
 """)
         assert new File(projDir, "procedures").exists()
 
@@ -553,7 +562,9 @@ project 'CEV-19608'
         assert projDir.exists()
 
         assertFile(new File(projDir, 'project.dsl'), """
-project 'CEV-19608'
+project 'CEV-19608', {
+  tracked = '1'
+}
 """)
         assert !new File(projDir, "procedures").exists()
         assert !new File(projDir, "pipelines").exists()
@@ -612,7 +623,9 @@ project 'CEV-19608'
         assert projDir.exists()
 
         assertFile(new File(projDir, 'project.dsl'), """
-project 'CEV-19608'
+project 'CEV-19608', {
+  tracked = '1'
+}
 """)
         assert !new File(projDir, "procedures").exists()
         assert new File(projDir, "pipelines").exists()
@@ -813,7 +826,9 @@ acl {
         assert projDir.exists()
 
         assertFile(new File(projDir, 'project.dsl'), """
-project 'CEV-19608'
+project 'CEV-19608', {
+  tracked = '1'
+}
 """)
 
         def aclContent1 = '''
@@ -916,7 +931,11 @@ acl {
 
         and: "check project"
         assert projDir.exists()
-        assertFile(new File(projDir, 'project.dsl'), "\nproject '$projName'\n")
+        assertFile(new File(projDir, 'project.dsl'), """
+project '$projName', {
+  tracked = '1'
+}
+""")
 
         and:"check directories were created"
         appDir = new File(projDir, "applications/$appName")
@@ -1016,7 +1035,11 @@ acl {
 
         and: "check project was created"
         assert projDir.exists()
-        assertFile(new File(projDir, 'project.dsl'), "\nproject '$projName'\n")
+        assertFile(new File(projDir, 'project.dsl'), """
+project '$projName',{
+  tracked = '1'
+}
+""")
 
         and:"check procedures directory were created"
         def encProcName = encode(procName)
@@ -1113,7 +1136,11 @@ acl {
         and: "check project was created"
         assert projDir.exists()
         assertFile(new File(projDir, 'project.dsl'),
-                        "\nproject 'proj | new > name \\\\'\n")
+                        """
+project 'proj | new > name \\\\', {
+  tracked = '1'
+}
+""")
 
         then:"check procedures directory were created"
         def encProcName = encode(procName)
@@ -1188,7 +1215,11 @@ acl {
 
         and: "check project was created"
         assert projDir.exists()
-        assertFile(new File(projDir, 'project.dsl'), "\nproject '$projectName'\n")
+        assertFile(new File(projDir, 'project.dsl'), """
+project '$projectName',{
+  tracked = '1'
+}
+""")
 
         and:"check application directory were created"
         appDir = new File(projDir, "applications/testApp")
@@ -1282,7 +1313,11 @@ trigger 'app-webhook', {
 
         and: "check project was created"
         assert projDir.exists()
-        assertFile(new File(projDir, 'project.dsl'), "\nproject '$projectName'\n")
+        assertFile(new File(projDir, 'project.dsl'), """
+project '$projectName'
+  tracked = '1'  
+}
+""")
 
         and:"check application directory were created"
         appDir = new File(projDir, "applications/testApp")
@@ -1364,7 +1399,11 @@ trigger 'app-webhook', {
 
         and: "check project was created"
         assert projDir.exists()
-        assertFile(new File(projDir, 'project.dsl'), "\nproject '$projectName'\n")
+        assertFile(new File(projDir, 'project.dsl'), """
+project '$projectName', {
+  tracked = '1'
+}
+""")
 
         and:"check credential provider directory was created"
         def provDir = new File(projDir, "credentialProviders/testCredProvider")
