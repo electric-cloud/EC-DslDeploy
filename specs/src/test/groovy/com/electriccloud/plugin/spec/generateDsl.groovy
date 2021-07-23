@@ -1216,7 +1216,7 @@ project 'proj | new > name \\\\', {
         and: "check project was created"
         assert projDir.exists()
         assertFile(new File(projDir, 'project.dsl'), """
-project '$projectName',{
+project '$projectName', {
   tracked = '1'
 }
 """)
