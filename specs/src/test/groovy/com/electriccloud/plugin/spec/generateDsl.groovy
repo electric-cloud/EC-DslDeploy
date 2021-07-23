@@ -1036,7 +1036,7 @@ project '$projName', {
         and: "check project was created"
         assert projDir.exists()
         assertFile(new File(projDir, 'project.dsl'), """
-project '$projName',{
+project '$projName', {
   tracked = '1'
 }
 """)
@@ -1314,8 +1314,8 @@ trigger 'app-webhook', {
         and: "check project was created"
         assert projDir.exists()
         assertFile(new File(projDir, 'project.dsl'), """
-project '$projectName'
-  tracked = '1'  
+project '$projectName', {
+  tracked = '1'
 }
 """)
 
