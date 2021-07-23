@@ -9,8 +9,6 @@ procedure procName, {
         resourceName: '$[rsrcName]',
         errorHandling: 'abortProcedure'
 
-
-
     step 'Checkout changes',
             subprocedure: 'PullClone',
             subproject:'/plugins/EC-Git/project',
