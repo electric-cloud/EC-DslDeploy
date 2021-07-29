@@ -290,38 +290,56 @@ class GenerateDslHelper {
     }
 
     def handleEntitiesWithFileRef(def parentDir, def objectTypeDetail) {
-        File objTypeDir = new File (parentDir, objectTypeDetail.collectionName)
+        File objTypeDir = new File(parentDir, objectTypeDetail.collectionName)
 
         def hasFileRefInFile = false
+        def isTaskGroup = false
         objectTypeDetail.objects.object.each {
-            if (it.fileRefInfo?.size()?:0 > 0) {
-                objTypeDir.mkdirs()
-                def fileRefInfo = it.fileRefInfo[0]
-                File file = new File(objTypeDir, encode(it.name) + '.' + fileRefInfo.extension)
-                String propertyPath = fileRefInfo.propertyPath
-
-                try {
-                    def property = electricFlow.getProperty(propertyName: propertyPath, expand: false, suppressNoSuchPropertyException: true)
-
-                    if (property && property.property) {
-                        file << property.property.value
-                        hasFileRefInFile = true
+            //Will only be true if the object is a task group.
+            if(it.type == 'task' && it.containsKey('children')) {
+                def taskType = electricFlow.getProperty(
+                        propertyName: "${it.path}/taskType",
+                        expand: false,
+                        suppressNoSuchPropertyException: true
+                )
+                if (taskType && taskType.property) {
+                    String taskTypeValue = taskType.property.value
+                    if (taskTypeValue == 'GROUP') {
+                        isTaskGroup = true
                     }
-                } catch (Exception ignore) {}
-            }
-
-            if (it.children && it.children.objectType) {
-                for (def childType : it.children.objectType) {
-
-                    File objDir = new File(objTypeDir, encode(it.name))
-                    hasFileRefInFile = handleEntitiesWithFileRef(objDir, childType) || hasFileRefInFile
                 }
             }
+            if(!isTaskGroup) {
+                if (it.fileRefInfo?.size() ?: 0 > 0) {
 
+                    objTypeDir.mkdirs()
+                    def fileRefInfo = it.fileRefInfo[0]
+                    File file = new File(objTypeDir, encode(it.name) + '.' + fileRefInfo.extension)
+                    String propertyPath = fileRefInfo.propertyPath
+
+                    try {
+                        def property = electricFlow.getProperty(
+                                propertyName: propertyPath,
+                                expand: false,
+                                suppressNoSuchPropertyException: true
+                        )
+
+                        if (property && property.property) {
+                            file << property.property.value
+                            hasFileRefInFile = true
+                        }
+                    } catch (Exception ignore) {
+                    }
+                }
+                if (it.children && it.children.objectType) {
+                    for (def childType : it.children.objectType) {
+                        File objDir = new File(objTypeDir, encode(it.name))
+                        hasFileRefInFile = handleEntitiesWithFileRef(objDir, childType) || hasFileRefInFile
+                    }
+                }
+            }
         }
-
         return hasFileRefInFile
-
     }
 
     def generateProperties(def objDir, def obj) {

@@ -1444,6 +1444,82 @@ credential 'localCred', userName: 'localUser', {
     }
 
 
+    /**
+     * CEV-28512: EC-DslDeploy Duplicates Command Task Contents when Tasks are Contained in a Task Group
+     * @return
+     */
+    def "generate DSL for group pipeline task"() {
+        dslDir = 'build/dsl7'
+        def projName = 'CEV-28512'
+        args << [projectName: projName]
+        given: dslFile("pipeline_with_group_task.dsl", args)
+
+        when: 'run generate Dsl procedure'
+        def result= runProcedureDsl("""
+        runProcedure(
+          projectName: "generateDslTestProject",
+          procedureName: "generateDslAndPublish",
+          actualParameter: [
+            directory: "$dslDir",
+            objectType: 'project',
+            objectName: "$projName",
+            includeAllChildren: '1',
+            artifactName: 'dsl:dslCode7',
+            artifactVersionVersion: '1.0',
+            runResourceName: '$defaultPool'
+          ]
+        )""")
+        then:
+        assert result.jobId
+        def outcome=getJobProperty("outcome", result.jobId)
+        assert outcome == "success"
+        //
+        when:
+        // retrieve artifact
+        retrieveArtifactVersion("dsl:dslCode7", "1.0", dslDir)
+        then:
+
+        //
+        File projDir = new File (dslDir, "projects/" + projName)
+        assert projDir.exists()
+
+        assertFile(new File(projDir, 'project.dsl'), """
+project '$projName', {
+  tracked = '1'
+}
+""")
+        assert new File(projDir, "pipelines").exists()
+
+        // check pipeline1
+        File pipeDir = new File (projDir, "pipelines/pipeline1")
+        assert pipeDir.exists()
+        //
+        File stagesDir =  new File(pipeDir, "stages")
+        assert stagesDir.exists()
+
+        //
+        File stageDir = new File(pipeDir, "stages/stage1")
+        assert stageDir.exists()
+
+        //
+        File tasksDir = new File(stageDir, "tasks")
+        assert tasksDir.exists()
+
+        File groupTaskDir = new File(stageDir, "tasks/group1")
+        assert groupTaskDir.exists()
+        //
+        assert new File(groupTaskDir, "tasks").exists()
+
+        // command task file
+        assertFile(new File(groupTaskDir, "tasks/cmd2.cmd"), "echo test2")
+
+        cleanup:
+        deleteProjects([projectName: projName], false)
+        dsl 'deleteArtifact(artifactName: "dsl:dslCode7")'
+        new File(dslDir).deleteDir()
+    }
+
+
     private static String encode(String arg)
     {
         Map<String, String> ENCODE_MAP = [
