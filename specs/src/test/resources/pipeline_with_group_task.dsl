@@ -20,6 +20,15 @@ project args.projectName, {
                         taskType = 'COMMAND'
                     }
                 }
+
+                task 'cmd3', {
+                    actualParameter = [
+                        'commandToRun': 'echo test3',
+                    ]
+                    subpluginKey = 'EC-Core'
+                    subprocedure = 'RunCommand'
+                    taskType = 'COMMAND'
+                }
             }
     }
 

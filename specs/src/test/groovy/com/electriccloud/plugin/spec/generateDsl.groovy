@@ -1505,6 +1505,9 @@ project '$projName', {
         File tasksDir = new File(stageDir, "tasks")
         assert tasksDir.exists()
 
+        // command task file
+        assertFile(new File(tasksDir, "cmd3.cmd"), "echo test3")
+
         File groupTaskDir = new File(stageDir, "tasks/group1")
         assert groupTaskDir.exists()
         //

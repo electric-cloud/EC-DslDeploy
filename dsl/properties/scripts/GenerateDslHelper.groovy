@@ -293,8 +293,9 @@ class GenerateDslHelper {
         File objTypeDir = new File(parentDir, objectTypeDetail.collectionName)
 
         def hasFileRefInFile = false
-        def isTaskGroup = false
+        def isTaskGroup
         objectTypeDetail.objects.object.each {
+            isTaskGroup = false
             //Will only be true if the object is a task group.
             if(it.type == 'task' && it.containsKey('children')) {
                 def taskType = electricFlow.getProperty(
