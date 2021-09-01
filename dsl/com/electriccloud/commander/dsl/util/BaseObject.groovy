@@ -291,7 +291,7 @@ abstract class BaseObject extends DslDelegatingScript {
               pipeline       : ['stage', 'trigger'],
               process        : ['processStep'],
               procedure      : ['step', 'emailNotifier', 'trigger'],
-              release        : ['pipeline', 'deployerApplication', 'deployerService', 'trigger'],
+              release        : ['pipeline', 'deployerApplication', 'trigger'],
               stage          : ['gate', 'task'],
               task           : ['task'],
               step           : ['emailNotifier'],
