@@ -280,7 +280,7 @@ abstract class BaseObject extends DslDelegatingScript {
       }
 
       def children = [
-              application    : ['applicationTier', 'service', 'process', 'tierMap', 'environmentTemplateTierMap', 'snapshot', 'trigger'],
+              application    : ['applicationTier', 'process', 'tierMap', 'environmentTemplateTierMap', 'snapshot', 'trigger'],
               applicationTier: ['component'],
               catalog        : ['catalogItem'],
               catalogItem    : ['trigger'],
@@ -292,7 +292,6 @@ abstract class BaseObject extends DslDelegatingScript {
               process        : ['processStep'],
               procedure      : ['step', 'emailNotifier', 'trigger'],
               release        : ['pipeline', 'deployerApplication', 'deployerService', 'trigger'],
-              service        : ['container', 'port', 'process', 'environmentMap', 'snapshot'],
               stage          : ['gate', 'task'],
               task           : ['task'],
               step           : ['emailNotifier'],
