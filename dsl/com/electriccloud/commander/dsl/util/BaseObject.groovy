@@ -280,7 +280,7 @@ abstract class BaseObject extends DslDelegatingScript {
       }
 
       def children = [
-              application    : ['applicationTier', 'process', 'tierMap', 'environmentTemplateTierMap', 'snapshot', 'trigger'],
+              application    : ['applicationTier', 'microservice', 'process', 'tierMap', 'environmentTemplateTierMap', 'snapshot', 'trigger'],
               applicationTier: ['component'],
               catalog        : ['catalogItem'],
               catalogItem    : ['trigger'],
