@@ -95,10 +95,6 @@ class ApplicationSpec
     def envMappings = dsl """getEnvironmentTemplateTierMaps(projectName: '$projName', applicationName: 'app1')"""
     assert envMappings?.environmentTemplateTierMap?.size == 1
 
-    then: "check service count"
-    def services = dsl """getServices(projectName: '$projName', applicationName: 'app1')"""
-    assert services?.service?.size == 2
-
     then: "check process count"
     def processes = dsl """getProcesses(projectName: '$projName', applicationName: 'app1')"""
     assert processes?.process?.size == 2
