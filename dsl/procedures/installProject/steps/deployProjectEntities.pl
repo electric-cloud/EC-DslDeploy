@@ -4,7 +4,10 @@ $[/myProject/scripts/perlHeaderJSON]
 my $clientFilesCompatible = checkClientFilesCompatibility();
 
 # deploy sub project entities
-my @subProjectEntities = ("project", "credentialProvider", "credential", "procedure", "resourceTemplate", "workflowDefinition", "environmentTemplate", "environment", "component", "application", "pipeline", "release", "schedule", "catalog", "report", "dashboard");
+my @subProjectEntities = ("project", "credentialProvider", "credential",
+"pluginConfiguration","procedure", "resourceTemplate", "workflowDefinition",
+"environmentTemplate", "environment", "component",
+"application", "pipeline", "release", "schedule", "catalog", "report", "dashboard");
 
 foreach my $objectType (@subProjectEntities ) {
     my $shell   = 'ectool --timeout $[/server/EC-DslDeploy/timeout] evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl" $[additionalDslArguments]';
