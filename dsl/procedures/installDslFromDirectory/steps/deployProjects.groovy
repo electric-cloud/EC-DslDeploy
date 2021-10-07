@@ -20,30 +20,58 @@ $[/myProject/scripts/Utils]
 
 ElectricFlow ef = new ElectricFlow()
 
+def includeObjectsParam = '''$[includeObjects]'''
+def excludeObjectsParam = '''$[excludeObjects]'''
+def includeObjects = [];
+if (!includeObjectsParam.isEmpty()) {
+  includeObjects = includeObjectsParam.split( '\n' )
+}
+def excludeObjects = [];
+if (!excludeObjectsParam.isEmpty()) {
+  excludeObjects = excludeObjectsParam.split( '\n' )
+}
 File pDir=new File("projects")
 if (pDir.exists()) {
+
+  println(includeObjects)
+  println(excludeObjects)
+  if (!isIncluded(includeObjects, excludeObjects, "/projects")) {
+    println("not included")
+    return
+  }
+
   // sort projects alpahbetically
   dlist=[]
   pDir.eachDir {dlist << it }
   dlist.sort({it.name}).each { projDir ->
-    def basename=decode(projDir.getName().toString())
-    println "Processing project $basename"
-    def escapedProjName = StringEscapeUtils.escapeJava(basename)
-    def params = [
-        new ActualParameter('projName', escapedProjName),
-        new ActualParameter('projDir', projDir.absolutePath.toString().replace('\\', '/')),
-        new ActualParameter('overwrite', '$[overwrite]'),
-        new ActualParameter('additionalDslArguments', '$[additionalDslArguments]'),
-        new ActualParameter('ignoreFailed', '$[ignoreFailed]'),
-        new ActualParameter('localMode', '$[localMode]')
-    ]
 
-    ef.createJobStep(
-      jobStepName: basename,
-      subproject: '$[/myProject]',
-      subprocedure: 'installProject',
-      actualParameters: params
-    )
+    def basename = decode(projDir.getName().toString())
+
+    if (isIncluded(includeObjects, excludeObjects, "/projects/$basename")) {
+
+      println "Processing project $basename"
+      def escapedProjName = StringEscapeUtils.escapeJava(basename)
+      def params = [
+              new ActualParameter('projName', escapedProjName),
+              new ActualParameter('projDir', projDir.absolutePath.toString().replace('\\', '/')),
+              new ActualParameter('overwrite', '$[overwrite]'),
+              new ActualParameter('additionalDslArguments', '$[additionalDslArguments]'),
+              new ActualParameter('ignoreFailed', '$[ignoreFailed]'),
+              new ActualParameter('localMode', '$[localMode]'),
+              new ActualParameter('includeObjects', '''$[includeObjects]'''),
+              new ActualParameter('excludeObjects', '''$[excludeObjects]''')
+      ]
+
+      ef.createJobStep(
+              jobStepName: basename,
+              subproject: '$[/myProject]',
+              subprocedure: 'installProject',
+              actualParameters: params
+      )
+    } else {
+      println("Skip importing of $basename project as it's not answer " +
+              "includeObjects/excludeObjects parameters")
+    }
   }
 } else {
   ef.setProperty(propertyName:"summary", value:" No projects")

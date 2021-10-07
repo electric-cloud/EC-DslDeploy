@@ -1,0 +1,1 @@
+pipeline 'pipe2'

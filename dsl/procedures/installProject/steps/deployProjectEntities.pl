@@ -27,6 +27,16 @@ def projectName = '$[projName]'
 def projectDir = '$[projDir]'
 def overwrite = '$[overwrite]'
 def ignoreFailed = '$[ignoreFailed]'
+def includeObjectsParam = '''$[includeObjects]'''
+def excludeObjectsParam = '''$[excludeObjects]'''
+def includeObjects = []
+if (!includeObjectsParam.isEmpty()) {
+  includeObjects = includeObjectsParam.split( '\n' )
+}
+def excludeObjects = []
+if (!excludeObjectsParam.isEmpty()) {
+  excludeObjects = excludeObjectsParam.split( '\n' )
+}
 END_COMMAND
 
     # with Perl variables usage / substitution 
@@ -56,8 +66,8 @@ def counters
 
 project projectName, {
   counters = loadObjects("$objectType", projectDir, "/projects/" + projectName,
-    [projectName: projectName, projectDir: projectDir], overwrite, ignoreFailed
-  )
+    [projectName: projectName, projectDir: projectDir], overwrite, ignoreFailed,
+     true, includeObjects, excludeObjects)
 }
 
 //pop up possible error
@@ -84,9 +94,18 @@ END_COMMAND
         $shell .= " --clientFiles \"$[projDir]\"";
     }
 
-    $ec->createJobStep({
-        jobStepName   => "deploy $objectType",
-        command       => "$command",
-        shell         => "$shell",
-        postProcessor => "postp"});
+    my $objectTypePlural = pluralForm("$objectType");
+    my $projectName = "$[projName]";
+    if ($objectType eq "project"
+            || isIncluded("$[includeObjects]", "$[excludeObjects]",
+                "/projects/$projectName/$objectTypePlural")) {
+
+        $ec->createJobStep({
+            jobStepName   => "deploy $objectType",
+            command       => "$command",
+            shell         => "$shell",
+            postProcessor => "postp"});
+    } else {
+        print ("Skip import of $objectTypePlural as they do not match includeObjects/excludeObjects parameters\n");
+    }
 }
