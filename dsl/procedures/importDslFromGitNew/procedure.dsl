@@ -29,7 +29,9 @@ procedure procName, {
                     pool     : '$[/myJob/usedResource]',
                     overwrite: '$[overwrite]',
                     localMode: '$[localMode]',
-                    ignoreFailed: '$[ignoreFailed]'
+                    ignoreFailed: '$[ignoreFailed]',
+                    includeObjects: '''$[includeObjects]''',
+                    excludeObjects: '''$[excludeObjects]'''
             ]
 
     step 'Cleanup', {

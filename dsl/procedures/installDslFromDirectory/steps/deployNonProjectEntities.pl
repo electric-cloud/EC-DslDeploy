@@ -5,8 +5,28 @@ my $clientFilesCompatible = checkClientFilesCompatibility();
 
 # deploy non project entities
 my @nonProjectEntities = ("tag", "personaPage", "personaCategory", "persona", "user", "group", "reportObjectType", "resource", "resourcePool");
-
+my @includeObjects = ();
+if ("$[includeObjects]" ne "") {
+  @includeObjects = split('\n', "$[includeObjects]");
+}
+my @excludeObjects = ();
+if ("$[excludeObjects]" ne "") {
+    @excludeObjects = split('\n', "$[excludeObjects]");
+}
 foreach my $objectType (@nonProjectEntities) {
+    if (@includeObjects != 0 || @excludeObjects != 0 ) {
+        my $pluralType = pluralForm($objectType);
+        my $path = "/$pluralType";
+        if (@includeObjects != 0 && ! (grep ($_ eq $path, @includeObjects))) {
+            print("Skip importing of $pluralType as it's not in a includeObjects list\n");
+            next;
+        }
+        if (@excludeObjects != 0 && grep ($_ eq $path, @excludeObjects)) {
+            print("Skip importing of $pluralType as it's in a excludeObjects list\n");
+            next;
+        }
+    }
+
     my $resource = '$[pool]';
     my $shell    = 'ectool --timeout $[/server/EC-DslDeploy/timeout] evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl" $[additionalDslArguments]';
 
@@ -31,10 +51,21 @@ $command2 = <<"END_COMMAND";
 def absDir    = '$[/myJob/CWD]'
 def overwrite = '$[overwrite]'
 def ignoreFailed = '$[ignoreFailed]'
+def includeObjectsParam = '''$[includeObjects]'''
+def excludeObjectsParam = '''$[excludeObjects]'''
+def includeObjects = []
+if (!includeObjectsParam.isEmpty()) {
+  includeObjects = includeObjectsParam.split( """\n""" )
+}
+def excludeObjects = []
+if (!excludeObjectsParam.isEmpty()) {
+  excludeObjects = excludeObjectsParam.split( """\n""" )
+}
 File dir      = new File(absDir, pluralForm("$objectType"))
 
 if (dir.exists()) {
-  def counters = loadObjects("$objectType", absDir, "/", [:], overwrite, ignoreFailed)
+  def counters = loadObjects("$objectType", absDir, "/", [:], overwrite,
+  ignoreFailed, true, includeObjects, excludeObjects)
   setProperty(propertyName: "summary", value: summaryString(counters))
 } else {
   setProperty(propertyName: "summary", value: "no " + pluralForm("$objectType"))

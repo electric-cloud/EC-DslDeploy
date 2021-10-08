@@ -150,7 +150,9 @@ abstract class BaseObject extends DslDelegatingScript {
                   Map bindingMap = [:],
                   String overwriteMode = "0",
                   String ignoreFailed = "0",
-                  Boolean pluginDeployMode = true) {
+                  Boolean pluginDeployMode = true,
+                  def includeObjects = [],
+                  def excludeObjects = []) {
 
     // println "Entering loadObjects"
     // println "  Type:  $objType"
@@ -162,6 +164,7 @@ abstract class BaseObject extends DslDelegatingScript {
     def counters=[:]
     def nbObjs=0
     def plural=getPluralForm(objType)
+
     // looking for "objects" directory i.e. "procedures", "personas"
     File dir = new File(topDir, plural)
     if (dir.exists()) {
@@ -189,12 +192,13 @@ abstract class BaseObject extends DslDelegatingScript {
             if (!objDir.exists()) {
               println String.format("Trying '%s' since encoded was not found", it)
               objDir = new File(dir, it)
-
             }
-
             try {
-              loadObjectFromDirectory(objDir, objType, objPath, plural, bindingMap, overwriteMode, counters)
-              nbObjs++
+              if (loadObjectFromDirectory(objDir, objType, objPath, plural,
+                      bindingMap, overwriteMode, counters,
+                      includeObjects, excludeObjects)) {
+                nbObjs++
+              }
             } catch (Exception e) {
               if (ignoreFailed.toBoolean()) {
                 exc = e
@@ -207,8 +211,11 @@ abstract class BaseObject extends DslDelegatingScript {
           // sort object alphabetically
           dlist.sort({ it.name }).each {
             try {
-              loadObjectFromDirectory(it, objType, objPath, plural, bindingMap, overwriteMode, counters)
-              nbObjs++
+              if (loadObjectFromDirectory(it, objType, objPath, plural,
+                      bindingMap, overwriteMode, counters,
+                      includeObjects, excludeObjects)) {
+                nbObjs++
+              }
             } catch (Exception e) {
               if (ignoreFailed.toBoolean()) {
                 exc = e
@@ -231,9 +238,26 @@ abstract class BaseObject extends DslDelegatingScript {
     return counters
   }
 
-  def loadObjectFromDirectory(def childDir, String objType, String objPath, plural, Map bindingMap, String overwriteMode, counters) {
+  def loadObjectFromDirectory(def childDir, String objType, String objPath,
+                              plural, Map bindingMap, String overwriteMode,
+                              counters,
+                              includeObjects = [],
+                              excludeObjects = []) {
     //println "Entering loadObjectFromDirectory with: $childDir, $objType, $plural, $bindingMap"
+
     def objName = decode(childDir.name)
+    def objPathSize = objPath.split('/').size()
+    def pathToCheck = objPath +
+            (objPath != '/' ?  "/" : "") + plural + "/" +
+            objName
+
+    if (objPathSize < 4 && !isIncluded(includeObjects, excludeObjects,
+            pathToCheck)) {
+      println("Skip import of " + pathToCheck + " as it doesn't match " +
+              "includeObjects/excludeObjects parameters")
+      return false
+    }
+
     def objDir = childDir.absolutePath
     File dslFile = getObjectDSLFile(childDir, objType)
     if (dslFile == null) {
@@ -325,6 +349,7 @@ abstract class BaseObject extends DslDelegatingScript {
       // allow overwrite mode for parent type
       ((Set<String>) bindingMap.get('skipOverwrite')).remove(objKey)
     }
+    return true
   }     // loadObjects
 
 

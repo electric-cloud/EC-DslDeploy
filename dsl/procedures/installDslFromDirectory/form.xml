@@ -70,4 +70,18 @@
     <value>0</value>
     <documentation>Do not send files to the server with help of clientFiles argument of the evalDsl operation in local mode.</documentation>
   </formElement>
+  <formElement>
+    <type>textarea</type>
+    <label>Include objects</label>
+    <property>includeObjects</property>
+    <required>0</required>
+    <documentation>List of paths to objects to include. Include all by default</documentation>
+  </formElement>
+  <formElement>
+    <type>textarea</type>
+    <label>Exclude objects</label>
+    <property>excludeObjects</property>
+    <required>0</required>
+    <documentation>List of paths to objects to exclude. Nothing by default</documentation>
+  </formElement>
 </editor>
