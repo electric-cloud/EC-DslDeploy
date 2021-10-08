@@ -13,6 +13,8 @@ class IncludeExcludeObjectsSpec extends PluginTestHelper {
     def doSetupSpec() {
         pVersion = getP("/plugins/$pName/pluginVersion")
         plugDir = getP("/server/settings/pluginsDirectory")
+        dsl "deleteUser(userName: 'user1')"
+        dsl "deleteUser(userName: 'user2')"
     }
 
     def "test Utils.groovy isIncluded"() {
