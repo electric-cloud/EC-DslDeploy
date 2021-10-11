@@ -5,14 +5,29 @@ my $clientFilesCompatible = checkClientFilesCompatibility();
 
 # deploy non project entities
 my @nonProjectEntities = ("tag", "personaPage", "personaCategory", "persona", "user", "group", "reportObjectType", "resource", "resourcePool");
+
 my @includeObjects = ();
 if ("$[includeObjects]" ne "") {
   @includeObjects = split('\n', "$[includeObjects]");
 }
+
 my @excludeObjects = ();
 if ("$[excludeObjects]" ne "") {
     @excludeObjects = split('\n', "$[excludeObjects]");
 }
+
+my ($userTimeout) = ("$[additionalDslArguments]" =~ m/--timeout\s+([0-9]+)/);
+print("User timeout is: '$userTimeout'\n");
+
+my $pluginTimeout = $[/server/EC-DslDeploy/timeout];
+print("Plugin timeout is: '$pluginTimeout'\n");
+
+my $timeout = $userTimeout;
+if ("$timeout" eq "") {
+    $timeout = $pluginTimeout;
+}
+print("Timeout is: '$timeout'\n");
+
 foreach my $objectType (@nonProjectEntities) {
     if (@includeObjects != 0 || @excludeObjects != 0 ) {
         my $pluralType = pluralForm($objectType);
@@ -28,7 +43,7 @@ foreach my $objectType (@nonProjectEntities) {
     }
 
     my $resource = '$[pool]';
-    my $shell    = 'ectool --timeout $[/server/EC-DslDeploy/timeout] evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl" $[additionalDslArguments]';
+    my $shell    = 'ectool --timeout ' . $timeout . ' evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl" $[additionalDslArguments]';
 
     # without Perl variables usage / substitution 
     my $command1 = <<'END_COMMAND';
@@ -88,9 +103,11 @@ END_COMMAND
     my $command  = "$command1" . "$command2";
 
     $ec->createJobStep({
-        jobStepName   => "deploy $objectType",
-        command       => "$command",
-        resourceName  => "$resource",
-        shell         => "$shell",
-        postProcessor => "postp"});
+        jobStepName    => "deploy $objectType",
+        command        => "$command",
+        timeLimit      => "$userTimeout",
+        timeLimitUnits => "seconds",
+        resourceName   => "$resource",
+        shell          => "$shell",
+        postProcessor  => "postp"});
 }

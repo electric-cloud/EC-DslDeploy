@@ -9,8 +9,20 @@ my @subProjectEntities = ("project", "credentialProvider", "credential",
 "environmentTemplate", "environment", "component",
 "application", "pipeline", "release", "schedule", "catalog", "report", "dashboard");
 
+my ($userTimeout) = ("$[additionalDslArguments]" =~ m/--timeout\s+([0-9]+)/);
+print("User timeout is: '$userTimeout'\n");
+
+my $pluginTimeout = $[/server/EC-DslDeploy/timeout];
+print("Plugin timeout is: '$pluginTimeout'\n");
+
+my $timeout = $userTimeout;
+if ("$timeout" eq "") {
+    $timeout = $pluginTimeout;
+}
+print("Timeout is: '$timeout'\n");
+
 foreach my $objectType (@subProjectEntities ) {
-    my $shell   = 'ectool --timeout $[/server/EC-DslDeploy/timeout] evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl" $[additionalDslArguments]';
+    my $shell   = 'ectool --timeout ' . $timeout . ' evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl" $[additionalDslArguments]';
 
     # without Perl variables usage / substitution 
     my $command1 = <<'END_COMMAND';
@@ -101,10 +113,12 @@ END_COMMAND
                 "/projects/$projectName/$objectTypePlural")) {
 
         $ec->createJobStep({
-            jobStepName   => "deploy $objectType",
-            command       => "$command",
-            shell         => "$shell",
-            postProcessor => "postp"});
+            jobStepName    => "deploy $objectType",
+            command        => "$command",
+            timeLimit      => "$userTimeout",
+            timeLimitUnits => "seconds",
+            shell          => "$shell",
+            postProcessor  => "postp"});
     } else {
         print ("Skip import of $objectTypePlural as they do not match includeObjects/excludeObjects parameters\n");
     }
