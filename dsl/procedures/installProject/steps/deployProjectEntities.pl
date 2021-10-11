@@ -115,7 +115,7 @@ END_COMMAND
         $ec->createJobStep({
             jobStepName    => "deploy $objectType",
             command        => "$command",
-            timeLimi       => "$userTimeout",
+            timeLimit      => "$userTimeout",
             timeLimitUnits => "seconds",
             shell          => "$shell",
             postProcessor  => "postp"});
