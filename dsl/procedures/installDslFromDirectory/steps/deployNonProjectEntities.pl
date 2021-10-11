@@ -13,6 +13,18 @@ my @excludeObjects = ();
 if ("$[excludeObjects]" ne "") {
     @excludeObjects = split('\n', "$[excludeObjects]");
 }
+
+my ($userTimeout) = ("$[additionalDslArguments]" =~ m/--timeout\s+([0-9]+)/);
+print("User timeout is: '$userTimeout'\n");
+my $pluginTimeout = $[/server/EC-DslDeploy/timeout];
+print("Plugin timeout is: '$pluginTimeout'\n");
+
+my $timeout = $userTimeout;
+if ("$timeout" eq "") {
+    $timeout = $pluginTimeout;
+}
+print("Timeout is: '$timeout'\n");
+
 foreach my $objectType (@nonProjectEntities) {
     if (@includeObjects != 0 || @excludeObjects != 0 ) {
         my $pluralType = pluralForm($objectType);
@@ -28,7 +40,7 @@ foreach my $objectType (@nonProjectEntities) {
     }
 
     my $resource = '$[pool]';
-    my $shell    = 'ectool --timeout $[/server/EC-DslDeploy/timeout] evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl" $[additionalDslArguments]';
+    my $shell    = 'ectool --timeout $timeout evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl" $[additionalDslArguments]';
 
     # without Perl variables usage / substitution 
     my $command1 = <<'END_COMMAND';
@@ -90,6 +102,8 @@ END_COMMAND
     $ec->createJobStep({
         jobStepName   => "deploy $objectType",
         command       => "$command",
+        timeOut       => "$userTimeout",
+        timeOutUnits  => "seconds",
         resourceName  => "$resource",
         shell         => "$shell",
         postProcessor => "postp"});
