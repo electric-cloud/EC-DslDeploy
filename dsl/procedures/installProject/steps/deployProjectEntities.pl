@@ -22,7 +22,7 @@ if ("$timeout" eq "") {
 print("Timeout is: '$timeout'\n");
 
 foreach my $objectType (@subProjectEntities ) {
-    my $shell   = 'ectool --timeout $timeout evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl" $[additionalDslArguments]';
+    my $shell   = 'ectool --timeout ' . $timeout . ' evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl" $[additionalDslArguments]';
 
     # without Perl variables usage / substitution 
     my $command1 = <<'END_COMMAND';
@@ -113,12 +113,12 @@ END_COMMAND
                 "/projects/$projectName/$objectTypePlural")) {
 
         $ec->createJobStep({
-            jobStepName   => "deploy $objectType",
-            command       => "$command",
-            timeOut       => "$userTimeout",
-            timeOutUnits  => "seconds",
-            shell         => "$shell",
-            postProcessor => "postp"});
+            jobStepName    => "deploy $objectType",
+            command        => "$command",
+            timeLimi       => "$userTimeout",
+            timeLimitUnits => "seconds",
+            shell          => "$shell",
+            postProcessor  => "postp"});
     } else {
         print ("Skip import of $objectTypePlural as they do not match includeObjects/excludeObjects parameters\n");
     }
