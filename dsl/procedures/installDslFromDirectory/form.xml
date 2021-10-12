@@ -47,8 +47,7 @@
     <property>additionalDslArguments</property>
     <required>0</required>
     <expansionDeferred>1</expansionDeferred>
-    <documentation>Additional argument for evalDsl call, for
-      example --timeout or --debug.</documentation>
+    <documentation>Additional argument(s) for evalDsl call. ie: --timeout or --debug. Values used in --timeout will be used as timeouts for ectool, evalDsl, and the job step time out used to import the DSL.</documentation>
   </formElement>
   <formElement>
     <type>checkbox</type>
