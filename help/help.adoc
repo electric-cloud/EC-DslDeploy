@@ -48,7 +48,7 @@ This procedure main usage is to set up a CI process. It will extract your code f
 |Directory Path |The location of the DSL code on your Dev {CD} server.
 |Server Pool or Resource |The name of the pool or resource where the artifact will be retrieved. Use "." if you have retrieved in your workspace.
 |Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
-|Additional DSL Arguments |Additional argument for evalDsl call, for example --timeout or --debug.
+|Additional argument(s) for evalDsl call. ie: --timeout or --debug. Values used in --timeout will be used as timeouts for ectool, evalDsl, and the job step time out used to import the DSL.
 |Ignore failures |Ignore failures during import of DSL files.
 |Local mode |Do not send files to the server with help of clientFiles argument of the evalDsl operation in local mode.
 |===
@@ -67,7 +67,7 @@ The main purpose of the procedure to be a part of installDslFromDirectory proced
 |Project Name |Name of the project to instal.
 |Project directory |The location of the project DSL code on your Dev CloudBeed CD server.
 |Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
-|Additional DSL Arguments |Additional argument for evalDsl call, for example --timeout or --debug.
+|Additional argument(s) for evalDsl call. ie: --timeout or --debug. Values used in --timeout will be used as timeouts for ectool, evalDsl, and the job step time out used to import the DSL.
 |===
 
 image:cloudbees-common::cd-plugins/ec-dsldeploy/help/installproject.png[installProject parameters]
