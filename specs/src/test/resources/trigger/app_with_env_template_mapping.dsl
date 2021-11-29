@@ -1,10 +1,10 @@
-serviceAccount args.serviceAccount
+serviceAccount 'serviceAccount'
 
-project args.environmentProject,{
+project 'environmentProject',{
   description = 'This is another environment project'
 }
 
-project args.applicationProject, {
+project 'applicationProject', {
 
   environmentTemplate 'testEnvTemplate', {
 
@@ -17,14 +17,14 @@ project args.applicationProject, {
 
     applicationTier 'testAppTier', {
       applicationName = 'testApp'
-      projectName = args.applicationProject
+      projectName = 'applicationProject'
     }
 
     environmentTemplateTierMap 'b94be670-cc4f-11e5-9a91-34e6d73cb28d', {
       applicationName = 'testApp'
-      environmentProjectName = args.applicationProject
+      environmentProjectName = 'applicationProject'
       environmentTemplateName = 'testEnvTemplate'
-      projectName = args.applicationProject
+      projectName = 'applicationProject'
       tierMapping = ['testAppTier': 'testEnvTemplateTier']
     }
 
@@ -43,14 +43,15 @@ project args.applicationProject, {
     }
 
     trigger 'app-webhook', {
+      accessTokenPublicId = 'ieqfpqgixfmfrajtswxdk1swwp11dx'
       triggerType='webhook'
       pluginKey = 'webhook-plugin'
       pluginParameter = ['pushEvent': 'true']
-      serviceAccountName = args.serviceAccount
+      serviceAccountName = 'serviceAccount'
       processName='testApp_process'
       environmentName = 'test_env_1'
       environmentTemplateName = 'testEnvTemplate'
-      environmentTemplateProjectName = args.applicationProject
+      environmentTemplateProjectName = 'applicationProject'
       actualParameter 'param1', 'paramValue'
       tierResourceCount = ['testEnvTemplateTier': '1']
     }
