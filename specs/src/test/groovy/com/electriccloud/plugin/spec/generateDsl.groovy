@@ -1328,6 +1328,7 @@ project '$projectName', {
         assert triggerDir.exists()
         assertFile(new File(triggerDir, 'trigger.dsl'), """
 trigger 'app-webhook', {
+  accessTokenPublicId = 'ieqfpqgixfmfrajtswxdk1swwp11dx'
   actualParameter = [
     'param1': 'paramValue',
   ]
