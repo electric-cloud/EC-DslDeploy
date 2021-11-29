@@ -25,6 +25,7 @@ procedure procName, {
             subprocedure: 'installDslFromDirectory',
             errorHandling: 'abortProcedure',
             actualParameter: [
+                    additionalDslArguments: '$[additionalDslArguments]',
                     directory: '$[/javascript if (myCall.relPath) { myCall.dest + \'/\' + myCall.relPath;} else {myCall.dest;}]',
                     pool     : '$[/myJob/usedResource]',
                     overwrite: '$[overwrite]',
