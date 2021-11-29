@@ -43,6 +43,7 @@ project args.applicationProject, {
     }
 
     trigger 'app-webhook', {
+      accessTokenPublicId = 'ieqfpqgixfmfrajtswxdk1swwp11dx'
       triggerType='webhook'
       pluginKey = 'webhook-plugin'
       pluginParameter = ['pushEvent': 'true']
