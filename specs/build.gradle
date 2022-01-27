@@ -10,20 +10,31 @@ sourceCompatibility = 1.8
 defaultTasks 'test'
 
 repositories {
-    jcenter()
+    mavenLocal()
     mavenCentral()
+
     maven {
-        url 'https://oss.sonatype.org/content/repositories/snapshots'
+        url 'https://nexus-internal.cloudbees.com/content/repositories/snapshots'
+        credentials {
+            username = System.getenv('NEXUS_USERNAME') ?: nexusUsername
+            password = System.getenv('NEXUS_PASSWORD') ?: nexusPassword
+        }
     }
     maven {
-        url  "https://dl.bintray.com/ecpluginsdev/maven"
+        url 'https://nexus-internal.cloudbees.com/content/groups/mirror'
+        credentials {
+            username = System.getenv('NEXUS_USERNAME') ?: nexusUsername
+            password = System.getenv('NEXUS_PASSWORD') ?: nexusPassword
+        }
     }
 }
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.5:indy'
     compile 'org.spockframework:spock-core:1.1-groovy-2.4'
-    compile 'com.electriccloud:ec-specs-plugins-core:1.9.1'
+    implementation ('com.electriccloud:ec-specs-plugins-core:1.9.2') {
+        exclude(group: "org.codehaus.groovy", module: "groovy-all")
+    }
     compile 'com.jayway.restassured:rest-assured:2.4.0'
     compile 'org.apache.ant:ant:1.9.4'
     compile 'xom:xom:1.2.5'
