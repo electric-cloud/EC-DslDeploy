@@ -1,7 +1,7 @@
 version: '3'
 services:
   electric-flow:
-    image: "electricflow/efserver:latest"
+    image: "electricflow/efserver:full-CloudBeesFlow-x64-10.4.0.153077"
     ports:
       - "8000:8000"
       - "8443:8443"
