@@ -327,6 +327,9 @@ abstract class BaseObject extends DslDelegatingScript {
         // println "Found children: "
         children[objType].each { child ->
           // println "  processing $child"
+          /////// MDA 2022MAR11 - a hard-coded "s" will run into trouble when processing "processes"
+          ///////      that are children of either applications or components
+          ///////      should use getPluralForm(${objType})
           def childrenCounter
           "${objType}" objName, {
             childrenCounter = loadObjects(child, objDir,
