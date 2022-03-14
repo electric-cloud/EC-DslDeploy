@@ -5,9 +5,9 @@ my $clientFilesCompatible = checkClientFilesCompatibility();
 
 # deploy sub project entities
 my @subProjectEntities = ("project", "credentialProvider", "credential",
-"pluginConfiguration","procedure", "resourceTemplate", "workflowDefinition",
-"environmentTemplate", "environment", "component",
-"application", "pipeline", "release", "schedule", "catalog", "report", "dashboard");
+    "pluginConfiguration","procedure", "resourceTemplate", "workflowDefinition",
+    "environmentTemplate", "environment", "component",
+    "application", "pipeline", "release", "schedule", "catalog", "report", "dashboard");
 
 my ($userTimeout) = ("$[additionalDslArguments]" =~ m/--timeout\s+([0-9]+)/);
 print("User timeout is: '$userTimeout'\n");
@@ -21,10 +21,53 @@ if ("$timeout" eq "") {
 }
 print("Timeout is: '$timeout'\n");
 
+print("EC-DslDeploy / Procedure: installProject / Step: deployProjectEntities\n");
+print("pathToFileList      : $[pathToFileList]\n");
+print("propertyWithFileList: $[propertyWithFileList]\n");
+
+# Gather change list text from either a property name or a filename
+my $changeListText = "";
+# Is there a property named to hold a change list?
+#  resolve the property name and resolve the named property's value
+if ("$[propertyWithFileList]" ne "") {
+    eval {
+        $changeListText = $ec->getProperty("$[propertyWithFileList]")->findNodes("//value")->string_value();
+    } or do {
+        print("Could not find property '$[propertyWithFileList]'\n");
+    }
+}
+# Is there a file path to a change list file
+if ("$[pathToFileList]" ne "") {
+    # if file exists, is not a folder and is readable...
+    if (-e "$[pathToFileList]" && -f _ && -r _ ) {
+        if (open(my $fileHandle, '<', "$[pathToFileList]")) {
+            $changeListText = "opened $[pathToFileList]";
+            read $fileHandle, $changeListText, -s $fileHandle;
+            close($fileHandle);
+        } else {
+            print("Could not open $[pathToFileList] due to $!\n");
+        }
+    } else {
+        print("$[pathToFileList] may be a folder or unreadable or not exist.\n");
+    }
+}
+print("ChangeListText      : '$changeListText'\n");
+
+
 foreach my $objectType (@subProjectEntities ) {
+    my $pluralObjectTypeName = pluralForm($objectType);
+    # Check change list if it is "incremental"
+    if (index($changeListText, '"what":"INCREMENTAL"') != -1) {
+        # If that object type is not found in the list skip them
+        if (index($changeListText, "/".$objectType.".dsl\"") == -1) {
+            print("Skip importing of $pluralObjectTypeName as those are not in the change list\n");
+            next;
+        }
+    }
+
     my $shell   = 'ectool --timeout ' . $timeout . ' evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl" $[additionalDslArguments]';
 
-    # without Perl variables usage / substitution 
+    # without Perl variables usage / substitution
     my $command1 = <<'END_COMMAND';
 import groovy.transform.BaseScript
 import com.electriccloud.commander.dsl.util.BaseObject
@@ -51,35 +94,58 @@ if (!excludeObjectsParam.isEmpty()) {
 }
 END_COMMAND
 
-    # with Perl variables usage / substitution 
+    # with Perl variables usage / substitution
     my $command2;
 
 
     # check if corresponding directory exists
     if ("project" eq "$objectType" && -d '$[projDir]/') {
+        $command2 = "def changeListText = '''" . $changeListText . "'''";
         $command2 = <<"END_COMMAND";
-def counter
 
+println "OUTER DSL for processing project: " + projectName
+println '''  changeListText: $changeListText'''
+def changeList = [:]
+def jsonSlurp = new groovy.json.JsonSlurper()
+try {
+    changeList = jsonSlurp.parseText('''$changeListText''')
+} catch (Exception ex) {
+    println "Error parsing change list text: " + ex.getMessage()
+}
+
+def counter
 project projectName, {
-  counter = loadProject(projectDir, projectName, overwrite)
-  loadProjectProperties(projectDir, projectName, overwrite)
-  loadProjectAcls(projectDir, projectName)
+  counter = loadProject(projectDir, projectName, overwrite, changeList)
+  loadProjectProperties(projectDir, projectName, overwrite, changeList)
+  loadProjectAcls(projectDir, projectName, changeList)
 }
 
 if (counter == 0) {
-  setProperty(propertyName: "summary", value: "No project.groovy or project.dsl found")
+  setProperty(propertyName: "summary", value: "No project.groovy or project.dsl processed")
   setProperty(propertyName: "outcome", value: "warning")
 }
 return ""
 END_COMMAND
     } elsif ("project" ne "$objectType" && -d '$[projDir]/' . pluralForm("$objectType")) {
+        $command2 = "def changeListText = '''" . $changeListText . "'''";
         $command2 = <<"END_COMMAND";
-def counters
 
+
+println "OUTER DSL for processing project's ${objectType}(ie)s - project: " + projectName
+println '''  changeListText: $changeListText'''
+def changeList = [:]
+def jsonSlurp = new groovy.json.JsonSlurper()
+try {
+    changeList = jsonSlurp.parseText('''$changeListText''')
+} catch (Exception ex) {
+    println "Error parsing change list text: " + ex.getMessage()
+}
+
+def counters
 project projectName, {
   counters = loadObjects("$objectType", projectDir, "/projects/" + projectName,
     [projectName: projectName, projectDir: projectDir], overwrite, ignoreFailed,
-     true, includeObjects, excludeObjects)
+     true, includeObjects, excludeObjects, changeList)
 }
 
 //pop up possible error
@@ -109,8 +175,8 @@ END_COMMAND
     my $objectTypePlural = pluralForm("$objectType");
     my $projectName = "$[projName]";
     if ($objectType eq "project"
-            || isIncluded("$[includeObjects]", "$[excludeObjects]",
-                "/projects/$projectName/$objectTypePlural")) {
+        || isIncluded("$[includeObjects]", "$[excludeObjects]",
+        "/projects/$projectName/$objectTypePlural")) {
 
         $ec->createJobStep({
             jobStepName    => "deploy $objectType",

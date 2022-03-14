@@ -73,11 +73,14 @@ abstract class BaseObject extends DslDelegatingScript {
     return found
   }
 
-  def loadProject(String projectDir, String projectName, String overwriteMode = "0") {
+  def loadProject(String projectDir, String projectName, String overwriteMode = "0", changeList = [:]) {
     // load the project.groovy if it exists
     // println "Entering loadProject"
-    // println "  Name:  $projectName"
-    // println "  dir  : $projectDir"
+    // println "  projectDir    : $projectDir"
+    // println "  projectName   : $projectName"
+    // println "  overwriteMode : $overwriteMode"
+    // println "  changeList    : $changeList"
+
     def counter=0
     File dslFile=getObjectDSLFile(new File(projectDir), "project")
     if (dslFile && dslFile?.exists()) {
@@ -91,31 +94,34 @@ abstract class BaseObject extends DslDelegatingScript {
     return counter
   }
 
-  def loadProjectProperties(String projectDir, String projectName, String overwrite = '0') {
-    // println "Entering loadProjectPropreties"
-    // println "  Name:  $projectName"
-    // println "  dir  : $projectDir"
+  def loadProjectProperties(String projectDir, String projectName, String overwrite = '0', changeList = [:]) {
+    // println "Entering loadProjectProperties"
+    // println "  projectDir  : $projectDir"
+    // println "  projectName : $projectName"
+    // println "  overwrite   : $overwrite"
+    // println "  changeList  : $changeList"
 
     def propDir=new File(projectDir, 'properties')
     if (propDir.directory) {
       def propertySheet = getProperties path: "/projects/$projectName"
       def propSheetId = propertySheet.propertySheetId.toString()
       loadNestedProperties("/projects/$projectName", propDir, overwrite,
-              propSheetId, true)
+              propSheetId, true, changeList)
     }  else {
       println "No properties directory for project $projectName"
     }
   }
 
-  def loadProjectAcls(String projectDir, String projectName) {
+  def loadProjectAcls(String projectDir, String projectName, changeList = [:]) {
     // println "Entering loadProjectAcls"
-    // println "  Name:  $projectName"
-    // println "  dir  : $projectDir"
+    // println "  projectDir  : $projectDir"
+    // println "  projectName : $projectName"
+    // println "  changeList  : $changeList"
 
     def aclDir=new File(projectDir, 'acls')
     if (aclDir.directory) {
       loadAcls(aclDir, "/projects/$projectName",
-               [projectName: projectName, projectDir: projectDir])
+               [projectName: projectName, projectDir: projectDir], changeList)
     }  else {
       println "No acls directory for project $projectName"
     }
@@ -131,9 +137,10 @@ abstract class BaseObject extends DslDelegatingScript {
                       in context. Typically objectName and objectDir
      ######################################################################## */
   def loadObject(String dslFile, Map bindingMap = [:], String overwriteMode = "0") {
-    // println "Load Object:"
-    // println "  dslFile: $dslFile"
-    // println "  map: " + bindingMap.toMapString(100)
+    // println "Entering loadObject:"
+    // println "  dslFile       : $dslFile"
+    // println "  bindingMap    : " + bindingMap.toMapString(100)
+    // println "  overwriteMode : $overwriteMode"
     return evalInlineDsl(dslFile, bindingMap, overwriteMode)
   }
 
@@ -145,21 +152,29 @@ abstract class BaseObject extends DslDelegatingScript {
         - bindingMap: a list of properties to pass dow to evaluate the DSL
                       in context. Typically objectName and objectDir.
      ######################################################################## */
-  def loadObjects(String objType, String topDir,
+  def loadObjects(String objType,
+                  String topDir,
                   String objPath = "/",
                   Map bindingMap = [:],
                   String overwriteMode = "0",
                   String ignoreFailed = "0",
                   Boolean pluginDeployMode = true,
                   def includeObjects = [],
-                  def excludeObjects = []) {
+                  def excludeObjects = [],
+                  def changeList = [:]) {
 
-    // println "Entering loadObjects"
-    // println "  Type:  $objType"
-    // println "  dir  : $topDir"
-    // println "  path : $objPath"
-    // println "   sub : " + subObjects.join(",")
-    // println "  map  : " + bindingMap.toMapString(250)
+//     println "Entering loadObjects"
+//     println "  objType          : $objType"
+//     println "  topDir           : $topDir"
+//     println "  objPath          : $objPath"
+//     println "  bindingMap       : " + bindingMap.toMapString(250)
+//     println "  overwriteMode    : $overwriteMode"
+//     println "  ignoreFailed     : $ignoreFailed"
+//     println "  pluginDeployMode : $pluginDeployMode"
+//     println "  includeObjects   : $includeObjects"
+//     println "  excludeObjects   : $excludeObjects"
+//     println "  changeList       : $changeList"
+
 
     def counters=[:]
     def nbObjs=0
@@ -196,7 +211,7 @@ abstract class BaseObject extends DslDelegatingScript {
             try {
               if (loadObjectFromDirectory(objDir, objType, objPath, plural,
                       bindingMap, overwriteMode, counters,
-                      includeObjects, excludeObjects)) {
+                      includeObjects, excludeObjects, changeList)) {
                 nbObjs++
               }
             } catch (Exception e) {
@@ -213,7 +228,7 @@ abstract class BaseObject extends DslDelegatingScript {
             try {
               if (loadObjectFromDirectory(it, objType, objPath, plural,
                       bindingMap, overwriteMode, counters,
-                      includeObjects, excludeObjects)) {
+                      includeObjects, excludeObjects, changeList)) {
                 nbObjs++
               }
             } catch (Exception e) {
@@ -242,31 +257,45 @@ abstract class BaseObject extends DslDelegatingScript {
                               plural, Map bindingMap, String overwriteMode,
                               counters,
                               includeObjects = [],
-                              excludeObjects = []) {
-    //println "Entering loadObjectFromDirectory with: $childDir, $objType, $plural, $bindingMap"
+                              excludeObjects = [],
+                              changeList = [:]) {
+     println "Entering loadObjectFromDirectory"
+     println "  childDir       : $childDir"
+     println "  objType        : $objType"
+     println "  objPath        : $objPath"
+     println "  plural         : $plural"
+     println "  bindingMap     : " + bindingMap.toMapString(250)
+     println "  overwriteMode  : $overwriteMode"
+     println "  counters       : $counters"
+     println "  includeObjects : $includeObjects"
+     println "  excludeObjects : $excludeObjects"
 
     def objName = decode(childDir.name)
     def objPathSize = objPath.split('/').size()
     def pathToCheck = objPath +
             (objPath != '/' ?  "/" : "") + plural + "/" +
             objName
+    def loaded = false
 
     if (objPathSize < 4 && !isIncluded(includeObjects, excludeObjects,
             pathToCheck)) {
       println("Skip import of " + pathToCheck + " as it doesn't match " +
               "includeObjects/excludeObjects parameters")
-      return false
+      return loaded
     }
 
     def objDir = childDir.absolutePath
     File dslFile = getObjectDSLFile(childDir, objType)
     if (dslFile == null) {
-      return
+      return loaded
     }
-    println "Processing $objType file $objPath/$plural/$objName/${dslFile.name}"
+    //println "Processing $objType file $objPath/$plural/$objName/${dslFile.name}"
     bindingMap[(objType + "Name")] = objName     //=> procedureName
     bindingMap[(objType + "Dir")] = objDir      //=> procedureDir
-    def obj = loadObject(dslFile.absolutePath, bindingMap, overwriteMode)
+    if(changeCheck("$objPath/$plural/$objName/${dslFile.name}", changeList, ["added", "changed"])) {
+      def obj = loadObject(dslFile.absolutePath, bindingMap, overwriteMode)
+      loaded = true
+    }
 
 
     // skip overwrite mode for parent object when
@@ -279,15 +308,15 @@ abstract class BaseObject extends DslDelegatingScript {
     ((Set<String>)bindingMap.get('skipOverwrite')).add(objKey)
 
     try {
-      // Load nested properties
+      // Load ACLs
       def aclDir = new File(childDir, 'acls')
       if (aclDir.directory) {
         println "Found acls for $objPath/$plural/$objName"
         "${objType}" objName, {
-          loadAcls(aclDir, "$objPath/$plural/$objName", bindingMap)
+          loadAcls(aclDir, "$objPath/$plural/$objName", bindingMap, changeList)
         }
       } else {
-        println "  No acls directory for $objType $objName"
+        println "No acls directory for $objType $objName"
       }
 
       // Load nested properties
@@ -297,10 +326,10 @@ abstract class BaseObject extends DslDelegatingScript {
         def propSheetId = propertySheet.propertySheetId.toString()
         "${objType}" objName, {
           loadNestedProperties("$objPath/$plural/$objName", propDir,
-                  overwriteMode, propSheetId)
+                  overwriteMode, propSheetId, false, changeList)
         }
       } else {
-        println "  No properties directory for $objType $objName"
+        println "No properties directory for $objType $objName"
       }
 
       def children = [
@@ -327,10 +356,21 @@ abstract class BaseObject extends DslDelegatingScript {
         // println "Found children: "
         children[objType].each { child ->
           // println "  processing $child"
+          // println "OUTER DSL for processing ${objType}'s $child - ${objType}: " + objName
+          // Note change to use getPluralForm() because hard-coded "s" would have skipped "processes"
           def childrenCounter
           "${objType}" objName, {
-            childrenCounter = loadObjects(child, objDir,
-                    "$objPath/${objType}s['$objName']", bindingMap)
+            childrenCounter = loadObjects(
+                child,
+                objDir,
+                objPath + "/" + getPluralForm(objType) + "['$objName']",
+                bindingMap,
+                overwriteMode,
+                "0",
+                true,
+                includeObjects,
+                excludeObjects,
+                changeList)
           }
 
           if (childrenCounter) {
@@ -349,14 +389,17 @@ abstract class BaseObject extends DslDelegatingScript {
       // allow overwrite mode for parent type
       ((Set<String>) bindingMap.get('skipOverwrite')).remove(objKey)
     }
-    return true
+    return loaded
   }     // loadObjects
 
 
   // Helper function to load another dsl script and evaluate it in-context
   def evalInlineDsl(String dslFile, Map bindingMap, String overwriteMode = "0", Boolean pluginDeployMode = true) {
-    // println "evalInlineDsl: $dslFile"
-    // println "  Map: " + bindingMap
+     println "Entering evalInlineDsl"
+     println "  dslFile          : $dslFile"
+     println "  bindingMap       : " + bindingMap
+     println "  overwriteMode    : $overwriteMode"
+     println "  pluginDeployMode : $pluginDeployMode"
     CompilerConfiguration cc = new CompilerConfiguration();
     cc.setScriptBaseClass(InnerDelegatingScript.class.getName());
     //println "Class loader class name: ${th
@@ -371,18 +414,19 @@ abstract class BaseObject extends DslDelegatingScript {
       println "  Add overwrite flag to DSLDelegate vars: " + overwriteMode.toBoolean()
       script.getDelegate().getBinding().setVariable("overwrite", overwriteMode.toBoolean())
     }
-    println "  Add binding map to DSLDelegate vars: " + bindingMap
+    //println "  Add binding map to DSLDelegate vars: " + bindingMap
     script.getDelegate().getBinding().setVariable("bindingMap", bindingMap)
     script.getDelegate().getBinding().setVariable("pluginDeployMode", pluginDeployMode)
     return script.run();
   }
 
-  def loadAcls (File aclDir, String objPath,
-                Map bindingMap) {
-   println "Entering loadAcls"
-   println "  dir  : $aclDir"
-   println "  path : $objPath"
-   println "  map  : " + bindingMap.toMapString(250)
+  def loadAcls (File aclDir, String objPath, Map bindingMap, changeList = [:]) {
+    println "Entering loadAcls"
+    println "  aclDir     : $aclDir"
+    println "  objPath    : $objPath"
+    println "  bindingMap : " + bindingMap.toMapString(250)
+    println "  changeList : $changeList"
+
 
     aclDir.eachFileMatch(FileType.FILES, ~/(?i)^.*\.(groovy|dsl)/) { dslFile ->
       println "  Processing ACL file $objPath/acls/${dslFile.name}"
@@ -390,9 +434,16 @@ abstract class BaseObject extends DslDelegatingScript {
     }
   }
 
-  def loadNestedProperties(String propRoot, File propsDir, String overwrite = '0',
-                           String pSheetId,
-                           boolean projectRootProps=false) {
+  def loadNestedProperties(String propRoot, File propsDir, String overwrite = '0', String pSheetId,
+                           boolean projectRootProps=false, changeList = [:]) {
+    // println "Entering loadNestedProperties"
+    // println "  propRoot         : $propRoot"
+    // println "  propsDir         : $propsDir"
+    // println "  overwrite        : $overwrite"
+    // println "  pSheetId         : $pSheetId"
+    // println "  projectRootProps : $projectRootProps"
+    // println "  changeList       : $changeList"
+
     def allProperties = []
     propsDir.eachFile { dir ->
       println "  parsing " + dir.toString()
@@ -407,23 +458,32 @@ abstract class BaseObject extends DslDelegatingScript {
                 propertyName: propName, expand: false)
 
         if (dir.directory) {
-          def propSheetId
-          if (existsProp) {
-            propSheetId = existsProp.propertySheetId
-          } else {
-            def res = createProperty(objectId: "propertySheet-$pSheetId",
-                    propertyName: propName, propertyType:
-                    'sheet')
-            propSheetId = res.propertySheetId
+          if (changeCheck("$propPath", changeList, ["added", "changed"])) {
+            def propSheetId
+            if (existsProp) {
+              propSheetId = existsProp
+                  .propertySheetId
+            }
+            else {
+              def res = createProperty(objectId: "propertySheet-$pSheetId",
+                  propertyName: propName, propertyType: 'sheet')
+              propSheetId = res
+                  .propertySheetId
+            }
+            loadNestedProperties(propPath, dir, overwrite, propSheetId, projectRootProps, changeList)
           }
-          loadNestedProperties(propPath, dir, overwrite, propSheetId)
         } else {
-          if (existsProp) {
-            modifyProperty(propertyName: propName, value: dir.text,
-                    objectId: "propertySheet-$pSheetId")
-          } else {
-            createProperty( propertyName: propName, value: dir.text,
-                    objectId: "propertySheet-$pSheetId")
+          if (changeCheck("${propPath}.text", changeList, ["added", "changed"])) {
+            if (existsProp) {
+              modifyProperty(propertyName: propName, value: dir
+                  .text,
+                  objectId: "propertySheet-$pSheetId")
+            }
+            else {
+              createProperty(propertyName: propName, value: dir
+                  .text,
+                  objectId: "propertySheet-$pSheetId")
+            }
           }
         }
       } catch (Exception e) {
@@ -469,7 +529,7 @@ abstract class BaseObject extends DslDelegatingScript {
   public def getDelegate(){
     this.delegate
   }
-  
+
   def getPluralForm(String objType){
     this.getBinding().setVariable("pluginDeployMode", true)
     switch (objType){
@@ -481,4 +541,52 @@ abstract class BaseObject extends DslDelegatingScript {
           return objType + 's'
     }
   }
+
+  /**
+   * Is the input file named in the change list
+   *   in order to operate on the change list, the change list must declare itself to be "INCREMENTAL"
+   *   otherwise we assume it is "INITIAL" even if it is badly formed
+   */
+  def changeCheck(String filePath, changeList = [:], changeTypes = ["changed", "added"]) {
+    // The change list will only apply if it is marked "INCREMENTAL" and if the supplied file is found in the list
+    //  Otherwise the change list does NOT apply (make all changes by applying all files)
+    if (filePath.startsWith("/")) {
+      filePath = filePath.substring(1)
+    }
+    println "changeCheck: look for path '$filePath' in $changeList"
+    boolean change = true;
+    if (changeList?.what == "INCREMENTAL") {
+      // The change list applies and this file may be found or not
+      change = changeTypes.any{changeType ->
+        changeList[changeType].any{fileName ->
+          fileName.contains(filePath) // Using contains allows us to check nested properties better
+        }
+      }
+    }
+    println "found change: $change"
+    return change
+  }
+
+  /**
+   * Is the input object type referenced in the change list
+   *   in order to operate on the change list, the change list must declare itself to be "INCREMENTAL"
+   *   otherwise we assume it is "INITIAL" even if it is badly formed
+   */
+  def changedObjectTypeCheck(String pluralObjectTypeName, changeList = [:], changeTypes = ["changed", "added"]) {
+    // The change list will only apply if it is marked "INCREMENTAL" and if the supplied string is found embedded in the list
+    //  Otherwise the change list does NOT apply (make all changes by applying all files)
+    println "changedObjectTypeCheck: look for object type '$pluralObjectTypeName' in $changeList"
+    boolean change = true;
+    if (changeList?.what == "INCREMENTAL") {
+      // The change list applies and the string may be found or not
+      change = changeTypes.any{changeType ->
+        changeList[changeType].any{fileName ->
+          fileName.contains("/${pluralObjectTypeName}/")
+        }
+      }
+    }
+    println "found change: $change"
+    return change
+  }
+
 }

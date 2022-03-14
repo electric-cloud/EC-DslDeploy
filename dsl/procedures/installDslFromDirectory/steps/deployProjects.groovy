@@ -30,11 +30,38 @@ def excludeObjects = [];
 if (!excludeObjectsParam.isEmpty()) {
   excludeObjects = excludeObjectsParam.split( '\n' )
 }
+
+println "EC-DslDeploy / Procedure: installDslFromDirectory / Step: deployProjects"
+println "pathToFileList      : $[pathToFileList]"
+println "propertyWithFileList: $[propertyWithFileList]"
+
+// Gather change list text from either a property name or a filename
+def changeListText = "";
+// Is there a property named to hold a change list
+if ('$[propertyWithFileList]'.size() > 0) {
+    try {
+        changeListText = getProperty("$[propertyWithFileList]").value
+    } catch (Exception ex) {
+        println("${ex.message}")
+    }
+}
+// Is there a file path to a change list file
+if ('$[pathToFileList]'.size() > 0) {
+    // if file exists, is not a folder and is readable...
+    def changeListFile = new File('$[pathToFileList]')
+    if (changeListFile.exists() && changeListFile.isFile()) {
+        changeListText = changeListFile.text
+    } else {
+        println("'$[pathToFileList]' may be a folder or unreadable or not exist");
+    }
+}
+println("changeListText      : '$changeListText'");
+
 File pDir=new File("projects")
 if (pDir.exists()) {
 
-  println(includeObjects)
-  println(excludeObjects)
+  //println("includeObjects    : $includeObjects")
+  //println("excludeObjects    : $excludeObjects")
   if (!isIncluded(includeObjects, excludeObjects, "/projects")) {
     println("not included")
     return
