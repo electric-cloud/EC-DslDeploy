@@ -259,16 +259,16 @@ abstract class BaseObject extends DslDelegatingScript {
                               includeObjects = [],
                               excludeObjects = [],
                               changeList = [:]) {
-     println "Entering loadObjectFromDirectory"
-     println "  childDir       : $childDir"
-     println "  objType        : $objType"
-     println "  objPath        : $objPath"
-     println "  plural         : $plural"
-     println "  bindingMap     : " + bindingMap.toMapString(250)
-     println "  overwriteMode  : $overwriteMode"
-     println "  counters       : $counters"
-     println "  includeObjects : $includeObjects"
-     println "  excludeObjects : $excludeObjects"
+//     println "Entering loadObjectFromDirectory"
+//     println "  childDir       : $childDir"
+//     println "  objType        : $objType"
+//     println "  objPath        : $objPath"
+//     println "  plural         : $plural"
+//     println "  bindingMap     : " + bindingMap.toMapString(250)
+//     println "  overwriteMode  : $overwriteMode"
+//     println "  counters       : $counters"
+//     println "  includeObjects : $includeObjects"
+//     println "  excludeObjects : $excludeObjects"
 
     def objName = decode(childDir.name)
     def objPathSize = objPath.split('/').size()
@@ -421,11 +421,11 @@ abstract class BaseObject extends DslDelegatingScript {
   }
 
   def loadAcls (File aclDir, String objPath, Map bindingMap, changeList = [:]) {
-    println "Entering loadAcls"
-    println "  aclDir     : $aclDir"
-    println "  objPath    : $objPath"
-    println "  bindingMap : " + bindingMap.toMapString(250)
-    println "  changeList : $changeList"
+//    println "Entering loadAcls"
+//    println "  aclDir     : $aclDir"
+//    println "  objPath    : $objPath"
+//    println "  bindingMap : " + bindingMap.toMapString(250)
+//    println "  changeList : $changeList"
 
 
     aclDir.eachFileMatch(FileType.FILES, ~/(?i)^.*\.(groovy|dsl)/) { dslFile ->
@@ -553,7 +553,7 @@ abstract class BaseObject extends DslDelegatingScript {
     if (filePath.startsWith("/")) {
       filePath = filePath.substring(1)
     }
-    println "changeCheck: look for path '$filePath' in $changeList"
+    // println "changeCheck: look for path '$filePath' in $changeList"
     boolean change = true;
     if (changeList?.what == "INCREMENTAL") {
       // The change list applies and this file may be found or not
@@ -563,29 +563,7 @@ abstract class BaseObject extends DslDelegatingScript {
         }
       }
     }
-    println "found change: $change"
-    return change
-  }
-
-  /**
-   * Is the input object type referenced in the change list
-   *   in order to operate on the change list, the change list must declare itself to be "INCREMENTAL"
-   *   otherwise we assume it is "INITIAL" even if it is badly formed
-   */
-  def changedObjectTypeCheck(String pluralObjectTypeName, changeList = [:], changeTypes = ["changed", "added"]) {
-    // The change list will only apply if it is marked "INCREMENTAL" and if the supplied string is found embedded in the list
-    //  Otherwise the change list does NOT apply (make all changes by applying all files)
-    println "changedObjectTypeCheck: look for object type '$pluralObjectTypeName' in $changeList"
-    boolean change = true;
-    if (changeList?.what == "INCREMENTAL") {
-      // The change list applies and the string may be found or not
-      change = changeTypes.any{changeType ->
-        changeList[changeType].any{fileName ->
-          fileName.contains("/${pluralObjectTypeName}/")
-        }
-      }
-    }
-    println "found change: $change"
+    // println "found change: $change"
     return change
   }
 

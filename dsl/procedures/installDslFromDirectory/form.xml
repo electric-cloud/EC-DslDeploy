@@ -83,4 +83,28 @@
     <required>0</required>
     <documentation>List of paths to objects to exclude. Nothing by default</documentation>
   </formElement>
+
+  <formElement>
+    <type>entry</type>
+    <label>Metadata Property Path:</label>
+    <property>metadataPropertyPath</property>
+    <required>0</required>
+    <documentation>The name of the property which holds Git commit information i.e. a commit id</documentation>
+  </formElement>
+
+  <formElement>
+    <type>entry</type>
+    <label>Path to a Change List:</label>
+    <property>pathToFileList</property>
+    <required>0</required>
+    <documentation>File path to a JSON formatted text file with change information - compares the latest on the (specified) branch to <&quot;>Git Metadata Property Path<&quot;></documentation>
+  </formElement>
+
+  <formElement>
+    <type>entry</type>
+    <label>Property Containing a Change List:</label>
+    <property>propertyWithFileList</property>
+    <required>0</required>
+    <documentation>Property name of a property which contains JSON formatted change information - same information as <&quot;>Path to a Change List<&quot;></documentation>
+  </formElement>
 </editor>

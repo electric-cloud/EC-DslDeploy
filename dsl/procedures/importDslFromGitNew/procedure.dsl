@@ -32,7 +32,9 @@ procedure procName, {
                     localMode: '$[localMode]',
                     ignoreFailed: '$[ignoreFailed]',
                     includeObjects: '''$[includeObjects]''',
-                    excludeObjects: '''$[excludeObjects]'''
+                    excludeObjects: '''$[excludeObjects]''',
+                    pathToFileList: '''$[pathToFileList]''',
+                    propertyWithFileList: '''$[propertyWithFileList]'''
             ]
 
     step 'Cleanup', {
