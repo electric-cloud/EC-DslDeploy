@@ -30,7 +30,7 @@ class DslDeployPersonaSpec
         plugDir = getP("/server/settings/pluginsDirectory")
     }
 
-    def "deploy presona, personaPage, personaCategory, user, group"()
+    def "deploy persona, personaPage, personaCategory, user, group"()
     {
          given: "the top level objects code (persona, personaPage, personaCategory, user, group)"
         when: "Load DSL Code"

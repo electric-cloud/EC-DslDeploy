@@ -67,7 +67,7 @@ if (pDir.exists()) {
     return
   }
 
-  // sort projects alpahbetically
+  // sort projects alphabetically
   dlist=[]
   pDir.eachDir {dlist << it }
   dlist.sort({it.name}).each { projDir ->

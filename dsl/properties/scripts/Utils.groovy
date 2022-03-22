@@ -40,6 +40,94 @@ def pluralForm(String objType) {
     }
 }
 
+def singularForm(String pluralForm) {
+    def result = "";
+    if (pluralForm.endsWith("ies")) {
+        result = pluralForm[0..-4] + "y"
+    } else if (pluralForm.endsWith("ses")) {
+        result = pluralForm[0..-3]
+    } else if (pluralForm.endsWith("s")) {
+        result = pluralForm[0..-2]
+    } else {
+        result = pluralForm
+    }
+    return result
+}
+def pluralToParameterName(String pluralForm) {
+    def result = singularForm((String)pluralForm).toLowerCase() + "Name"
+    return result
+}
+def pathToParameterList(String filePath) {
+    def result = [];
+    def pathParts = [];
+    pathParts = filePath.tokenize(File.separatorChar)
+    def isProperty = false;
+    for (def i = 0; i < pathParts.size() - 1; i = i+2) {
+        // For properties do NOT include nested property sheets
+        //   But DO include the property nam - which is the last piece
+        if (pathParts[i] == "properties") {
+            isProperty = true;
+            result.add("propertyName:'" + pathParts[-1].take(pathParts[-1].lastIndexOf('.')) + "'")
+            break;
+        }
+        result.add(pluralToParameterName(pathParts[i]) + ":'" + pathParts[i+1] + "'")
+    }
+    // For Properties add the path parameter to properly locate the property in nested sheets
+    if (isProperty) {
+        result.add("path:'" + (!filePath.startsWith("/") ? "/" : "") + filePath.take(filePath.lastIndexOf('.')) + "'")
+    }
+    return result
+}
+def  pathToObjectName(String filePath) {
+    def result = "";
+    def pathParts = [];
+    pathParts = filePath.tokenize(File.separatorChar)
+    /* Properties text file names the property e.g. .../a_property_name.txt
+       and that file contains the property value.
+       Some steps have 2 files a .dsl file and a .cmd, .groovy, .pl or .sh file.
+       In the case of such steps we don't mind if we stumble upon the same object name and delete it twice.
+     */
+    if (!filePath.endsWith(".dsl")) {
+        result = pathParts[-1]
+        result = result.take(result.lastIndexOf('.')) // Strip file extension
+    } else {
+        // All other objects derive their name from the folder above the DSL file:
+        //   .../an_object_name/object.dsl
+        result = pathParts[-2]
+    }
+    return result;
+}
+def pathToDeleteCommand(String filePath){
+    return pathToCommand(filePath, "delete")
+}
+def pathToModifyCommand(String filePath){
+    return pathToCommand(filePath, "modify")
+}
+
+def pathToCommand(String filePath, String command) {
+    def result = command
+    def pathParts = [];
+    pathParts = pathParts + filePath.tokenize(File.separatorChar)
+    if (filePath.contains("/properties/")) {
+        result = result + "Property"
+    } else if (!filePath.endsWith(".dsl")) {
+        result = ""
+    } else if (filePath.contains("/steps/")) {
+        if (filepath.contains("/processes/")) {
+            result = result + "ProcessStep"
+        } else if (filePath.contains("/procedures/")) {
+            result = result + "ProcedureStep"
+        } else {
+            result = ""
+        }
+    } else {
+        result = result + singularForm((String) pathParts[-3])
+            .toLowerCase()
+            .capitalize()
+    }
+    return result
+}
+
 def summaryString (def counters) {
   String summary=""
 

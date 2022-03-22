@@ -113,7 +113,7 @@ class overwrite_installDslFromDirectory extends PluginTestHelper {
         assert getTaskResult.contains("NoSuchStage")
     }
 
-    def "deploy presona, personaPage, personaCategory, user, group"(){
+    def "deploy persona, personaPage, personaCategory, user, group"(){
 
         given: "the top level objects code (persona, personaPage, personaCategory, user, group)"
         when: "Load DSL Code"
@@ -217,7 +217,7 @@ class overwrite_installDslFromDirectory extends PluginTestHelper {
                               homePageName: 'myPersonaPage1'               
                               )"""
 
-        then: "pesona was modified"
+        then: "persona was modified"
         assert modifiedPersona?.persona?.description == 'new description'
         assert modifiedPersona?.persona?.isDefault == '1'
         assert modifiedPersona?.persona?.homePageName == 'myPersonaPage1'
@@ -275,7 +275,7 @@ class overwrite_installDslFromDirectory extends PluginTestHelper {
             overwrite: '1'
           ]
         )""")
-        then: "job compeled with success"
+        then: "job completed with success"
         assert p2.jobId
         assert getJobProperty("outcome", p2.jobId) == "success"
 
@@ -325,7 +325,7 @@ class overwrite_installDslFromDirectory extends PluginTestHelper {
 
     }
 
-    def "deploy project with slashed in names"(){
+    def "deploy project with slashes in names"(){
 
         def projName = 'proj / new / name \\\\'
         def procName = 'Test / procedure'

@@ -37,6 +37,24 @@ procedure procName, {
                     propertyWithFileList: '''$[propertyWithFileList]'''
             ]
 
+    step 'deleteObjectsInChangeList', {
+        description = 'Issue delete commands based on the change list data'
+        alwaysRun = '0'
+        broadcast = '0'
+        command = new File(pluginDir, "dsl/procedures/$procName/steps/deleteObjectsInChangeList.groovy").text
+        resourceName = '$[/myJob/usedResource]'
+        shell = 'ec-groovy'
+    }
+
+    step 'renameObjectsInChangeList', {
+        description = 'Issue rename commands based on the change list data'
+        alwaysRun = '0'
+        broadcast = '0'
+        command = new File(pluginDir, "dsl/procedures/$procName/steps/renameObjectsInChangeList.groovy").text
+        resourceName = '$[/myJob/usedResource]'
+        shell = 'ec-groovy'
+    }
+
     step 'Cleanup', {
         condition = '''$[/javascript
           var cleanup= \'$[cleanup]\';
