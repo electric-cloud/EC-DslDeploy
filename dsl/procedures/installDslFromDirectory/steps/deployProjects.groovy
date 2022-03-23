@@ -86,7 +86,9 @@ if (pDir.exists()) {
               new ActualParameter('ignoreFailed', '$[ignoreFailed]'),
               new ActualParameter('localMode', '$[localMode]'),
               new ActualParameter('includeObjects', '''$[includeObjects]'''),
-              new ActualParameter('excludeObjects', '''$[excludeObjects]''')
+              new ActualParameter('excludeObjects', '''$[excludeObjects]'''),
+              new ActualParameter('pathToFileList', '''$[pathToFileList]'''),
+              new ActualParameter('propertyWithFileList', '''$[propertyWithFileList]''')
       ]
 
       ef.createJobStep(

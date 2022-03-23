@@ -18,8 +18,20 @@ procedure procName, {
                         config: '$[config]',
                         gitRepoFolder: '$[dest]',
                         branch: '$[branch]',
-                        repoUrl: '$[repoUrl]'
+                        repoUrl: '$[repoUrl]',
+                        pathToFileList: '$[pathToFileList]',
+                        propertyWithFileList: '$[propertyWithFileList]',
+                        metadataPropertyPath: '$[metadataPropertyPath]'
                 ]
+
+    step 'renameObjectsInChangeList', {
+        description = 'Issue rename commands based on the change list data'
+        alwaysRun = '0'
+        broadcast = '0'
+        command = new File(pluginDir, "dsl/procedures/$procName/steps/renameObjectsInChangeList.groovy").text
+        resourceName = '$[/myJob/usedResource]'
+        shell = 'ec-groovy'
+    }
 
     step 'Import DSL from directory',
             subprocedure: 'installDslFromDirectory',
@@ -46,14 +58,6 @@ procedure procName, {
         shell = 'ec-groovy'
     }
 
-    step 'renameObjectsInChangeList', {
-        description = 'Issue rename commands based on the change list data'
-        alwaysRun = '0'
-        broadcast = '0'
-        command = new File(pluginDir, "dsl/procedures/$procName/steps/renameObjectsInChangeList.groovy").text
-        resourceName = '$[/myJob/usedResource]'
-        shell = 'ec-groovy'
-    }
 
     step 'Cleanup', {
         condition = '''$[/javascript
