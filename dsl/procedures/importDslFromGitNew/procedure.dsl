@@ -13,6 +13,7 @@ procedure procName, {
             subprocedure: 'PullClone',
             subproject:'/plugins/EC-Git/project',
             resourceName: '$[/myJob/usedResource]',
+            condition: '$[/javascript (getProperty("repoUrl")!="skip_checkout_changes_step_please");]',
             errorHandling: 'abortProcedure',
                 actualParameter: [
                         config: '$[config]',
