@@ -4,7 +4,7 @@
 #
 #  Author: L.Rochette
 #
-#  Copyright 2017-2019 Electric-Cloud Inc.
+#  Copyright 2017-2022 Electric-Cloud Inc.
 #
 #     Licensed under the Apache License, Version 2.0 (the "License");
 #     you may not use this file except in compliance with the License.
@@ -20,7 +20,8 @@
 #
 # History
 # ---------------------------------------------------------------------------
-# 2019-04-02 lrochette  Inbitial version
+# 2022-03-25 mayasse    Add ability to process a change list from git
+# 2019-04-02 lrochette  Initial version
 ############################################################################ */
 package com.electriccloud.commander.dsl.util
 

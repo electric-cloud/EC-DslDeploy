@@ -30,9 +30,11 @@ ElectricFlow ef = new ElectricFlow()
 // Gather change list text from either a property name or a filename
 println "pathToFileList      : $[pathToFileList]"
 println "propertyWithFileList: $[propertyWithFileList]"
+def incremental = false
 def changeListText = "";
 // Is there a property named to hold a change list
 if ('$[propertyWithFileList]'.size() > 0) {
+    incremental = true
     try {
         changeListText = getProperty("$[propertyWithFileList]").value
     } catch (Exception ex) {
@@ -41,6 +43,7 @@ if ('$[propertyWithFileList]'.size() > 0) {
 }
 // Is there a file path to a change list file
 if ('$[pathToFileList]'.size() > 0) {
+    incremental = true
     // if file exists, is not a folder and is readable...
     def changeListFile = new File('$[pathToFileList]')
     if (changeListFile.exists() && changeListFile.isFile()) {
@@ -96,5 +99,9 @@ success;
 
     ef.setProperty(propertyName:"summary", value:"$countSuccess deletes issued")
 } else {
-    ef.setProperty(propertyName:"summary", value:"No renames in the change list")
+    if (incremental) {
+        ef.setProperty(propertyName: "summary", value: "No deletes in the change list")
+    } else {
+        ef.setProperty(propertyName: "summary", value: "Skipped ... not an incremental import")
+    }
 }

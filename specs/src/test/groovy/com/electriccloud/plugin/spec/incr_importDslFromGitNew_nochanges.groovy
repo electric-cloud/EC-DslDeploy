@@ -70,9 +70,9 @@ class incr_importDslFromGitNew_nochanges extends PluginTestHelper {
           projectName: "/plugins/$pName/project",
           procedureName: "importDslFromGitNew",
           actualParameter: [
-            config: "this value doies not matter but is required",
+            config: "this value does not matter when skipping Checkout changes, but is required",
             dest: "$plugDir/$pName-$pVersion/lib/dslCode/top_objects",
-            pathToFileList: "$plugDir/$pName-$pVersion/lib/dslCode/top_objects/change_list_na",
+            pathToFileList: "$plugDir/$pName-$pVersion/lib/dslCode/top_objects/change_list_na.json",
             repoUrl: "skip_checkout_changes_step_please",
             rsrcName: "local"          
           ]
@@ -91,4 +91,31 @@ class incr_importDslFromGitNew_nochanges extends PluginTestHelper {
 
     }
 
+
+    def "incremental import project entities with No-OP change list"() {
+        given: "project with procedure and step"
+        when: "Load DSL Code"
+        def projects = dsl """getProjects()"""
+        def projectCount = projects.size()
+        def runProc = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "importDslFromGitNew",
+          actualParameter: [
+            config: "this value does not matter when skipping Checkout changes, but is required",
+            dest: "$plugDir/$pName-$pVersion/lib/dslCode/proj_with_slashes",
+            pathToFileList: "$plugDir/$pName-$pVersion/lib/dslCode/top_objects/change_list_na.json",
+            repoUrl: "skip_checkout_changes_step_please",
+            rsrcName: "local"          
+          ]
+        )""")
+        then: "job succeeds"
+        assert runProc.jobId
+        assert getJobProperty("outcome", runProc.jobId) == "success"
+
+        then: "check project was NOT created"
+        def testProjects = dsl """getProjects()"""
+        assert testProjects.size() == projectCount
+
+    }
 }
