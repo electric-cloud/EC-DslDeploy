@@ -12,21 +12,21 @@ class incr_importDslFromGitNew_nochanges extends PluginTestHelper {
     @Shared
     String plugDir
     static String projName = "incr_project"
-    def personaPageName1 = 'myPersonaPage1'
-    def personaPageName2 = 'myPersonaPage2'
-    def personaPageName3 = 'myPersonaPage3'
+    static def personaPageName1 = 'myPersonaPage1'
+    static def personaPageName2 = 'myPersonaPage2'
+    static def personaPageName3 = 'myPersonaPage3'
 
-    def personaCategoryName1 = 'myPersonaCategory1'
-    def personaCategoryName2 = 'myPersonaCategory2'
-    def personaCategoryName3 = 'myPersonaCategory3'
+    static def personaCategoryName1 = 'myPersonaCategory1'
+    static def personaCategoryName2 = 'myPersonaCategory2'
+    static def personaCategoryName3 = 'myPersonaCategory3'
 
-    def personaName1 = 'vip1'
-    def personaName2 = 'vip2'
+    static def personaName1 = 'vip1'
+    static def personaName2 = 'vip2'
 
-    def userName = 'testUser'
-    def userName1 = 'testUser1'
-    def groupName  = 'testGroup'
-    def groupName1  = 'testGroup1'
+    static def userName = 'testUser'
+    static def userName1 = 'testUser1'
+    static def groupName  = 'testGroup'
+    static def groupName1  = 'testGroup1'
 
     def doSetupSpec() {
         pVersion = getP("/plugins/$pName/pluginVersion")
