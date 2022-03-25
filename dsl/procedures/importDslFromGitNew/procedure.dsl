@@ -13,6 +13,10 @@ procedure procName, {
             subprocedure: 'PullClone',
             subproject:'/plugins/EC-Git/project',
             resourceName: '$[/myJob/usedResource]',
+            description: """
+                EC-DslDeploy spec tests rely on the value of [Run]condition.
+                Do not change [Run]condition without successfully running those tests.
+            """,
             condition: '$[/javascript (getProperty("repoUrl")!="skip_checkout_changes_step_please");]',
             errorHandling: 'abortProcedure',
                 actualParameter: [
