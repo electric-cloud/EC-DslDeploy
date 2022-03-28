@@ -52,7 +52,7 @@ if ('$[pathToFileList]'.size() > 0) {
         println("'$[pathToFileList]' may be a folder or unreadable or not exist");
     }
 }
-println("changeListText      : '$changeListText'");
+//println("changeListText      : '$changeListText'");
 
 // Parse the change list checking for files which should be renamed
 def renames = false
@@ -61,9 +61,10 @@ def jsonSlurp = new groovy.json.JsonSlurper()
 if ("$changeListText" != "") {
     try {
         changeList = jsonSlurp.parseText(changeListText)
-        if (changeList instanceof Map && changeList.what == "INCREMENTAL" && changeList.renmed instanceof Map && changeList.renamed.size() > 0) {
+        if (changeList instanceof Map && changeList.what == "INCREMENTAL" && changeList.renamed instanceof Map && changeList.renamed.size() > 0) {
             renames = true
         }
+        println changeList
     } catch (Exception ex) {
         println "Error parsing change list text: " + ex.getMessage()
     }
@@ -75,7 +76,8 @@ if (renames) {
     changeList.renamed.each {oldFilePath, newFilePath ->
         def command = pathToModifyCommand(oldFilePath as String)
         def parameters = pathToParameterList(oldFilePath as String)
-        def newNameParameters = pathToObjectName(newFilePath as String)
+        def newName = pathToObjectName(newFilePath as String)
+        parameters.add("newName:'" + newName + "'")
         def groovyDsl = """
 import com.electriccloud.client.groovy.ElectricFlow;
 import com.electriccloud.client.groovy.models.*;
@@ -100,7 +102,7 @@ success;
     ef.setProperty(propertyName:"summary", value:"$countSuccess deletes issued")
 } else {
     if (incremental) {
-        ef.setProperty(propertyName: "summary", value: "No deletes in the change list")
+        ef.setProperty(propertyName: "summary", value: "No renames in the change list")
     } else {
         ef.setProperty(propertyName: "summary", value: "Skipped ... not an incremental import")
     }

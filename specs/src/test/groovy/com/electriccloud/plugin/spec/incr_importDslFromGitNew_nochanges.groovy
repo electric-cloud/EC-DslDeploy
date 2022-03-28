@@ -82,13 +82,12 @@ class incr_importDslFromGitNew_nochanges extends PluginTestHelper {
         assert getJobProperty("outcome", runProc.jobId) == "success"
 
         then: "check users were NOT created"
-        def users = dsl """getUsers(filter : 'vip*')"""
+        def users = dsl """getUsers(filter : 'testUser*')"""
         assert users.size() == 0
 
         then: "check groups were NOT created"
         def groups = dsl """getGroups(filter : 'testGroup*')"""
         assert groups.size() == 0
-
     }
 
 

@@ -61,6 +61,7 @@ if ("$changeListText" != "") {
         if (changeList instanceof Map && changeList.what == "INCREMENTAL" && changeList.deleted instanceof List && changeList.deleted.size() > 0) {
             deletes = true
         }
+        //println changeList
     } catch (Exception ex) {
         println "Error parsing change list text: " + ex.getMessage()
     }
@@ -81,14 +82,16 @@ try {
     ef.${command}(${parameters.join(",")});
     success = true;
 } catch (Exception ex) {
+    println ""
     println "${command}(${parameters.join(",")})"
     println ex.getMessage();
+    println ""
 }
 success;
 """
         // command could come back blank if we were not able to determine the proper command
         if (command != "" && evaluate(groovyDsl)) {
-            println "Evaluate: " + groovyDsl
+            println "Evaluate: " + "${command}(${parameters.join(",")})"
             countSuccess++
         }
     }

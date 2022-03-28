@@ -70,7 +70,7 @@ def singularForm(String pluralForm) {
     def result = "";
     if (pluralForm.endsWith("ies")) {
         result = pluralForm[0..-4] + "y"
-    } else if (pluralForm.endsWith("ses")) {
+    } else if (pluralForm.endsWith("sses")) {
         result = pluralForm[0..-3]
     } else if (pluralForm.endsWith("s")) {
         result = pluralForm[0..-2]
@@ -98,11 +98,15 @@ def pathToParameterList(String filePath) {
         //   But DO include the property name - which is the last piece
         if (pathParts[i] == "properties") {
             isProperty = true;
-            result.add("propertyName:'" + pathParts[-1].take(pathParts[-1].lastIndexOf('.')) + "'")
+            result.add(pluralToParameterName(pathParts[i]) + ":'" + pathParts[-1].take(pathParts[-1].lastIndexOf('.')) + "'")
             break;
         }
-        def parameterName = pluralToParameterName(pathParts[i])
-        result.add(parameterName + ":'" + pathParts[i+1] + "'")
+        // For resources and resource Pools the *.dsl file is the object name
+        if (pathParts[i] == "resources" || pathParts[i] == "resourcePools") {
+            result.add(pluralToParameterName(pathParts[i]) + ":'" + pathParts[-1].take(pathParts[-1].lastIndexOf('.')) + "'")
+        } else {
+            result.add(pluralToParameterName(pathParts[i]) + ":'" + pathParts[i + 1] + "'")
+        }
     }
     // For Properties add the path parameter to properly locate the property in nested sheets
     if (isProperty) {
@@ -114,14 +118,20 @@ def  pathToObjectName(String filePath) {
     def result = "";
     def pathParts = [];
     pathParts = filePath.tokenize(File.separatorChar)
-    /* Properties text file names the property e.g. .../a_property_name.txt
-       and that file contains the property value.
+    /* Properties values are stored the leaf-node which is a text file (*.txt)
+       And the text file name is the property name.
+       In all case not *.dsl (including porperties) the leaf-node also names the object.
+
+       Resources and ResourcePools use the .dsl file to determine the object's name
+
        Some steps have 2 files a .dsl file and a .cmd, .groovy, .pl or .sh file.
        In the case of such steps we don't mind if we stumble upon the same object name and delete it twice.
      */
-    if (!filePath.endsWith(".dsl")) {
+    if (!filePath.endsWith(".dsl") || pathParts[1] == "resources" || pathParts[1] == "resourcePools") {
         result = pathParts[-1]
-        result = result.take(result.lastIndexOf('.')) // Strip file extension
+        result = result
+            .take(result
+                .lastIndexOf('.')) // Strip file extension
     } else {
         // All other objects derive their name from the folder above the DSL file:
         //   .../an_object_name/object.dsl
@@ -145,16 +155,21 @@ def pathToCommand(String filePath, String command) {
     } else if (!filePath.endsWith(".dsl")) {
         result = ""
     } else if (filePath.contains("/steps/")) {
-        if (filepath.contains("/processes/")) {
+        if (filePath
+            .contains("/processes/")) {
             result = result + "ProcessStep"
-        } else if (filePath.contains("/procedures/")) {
+        }
+        else if (filePath
+            .contains("/procedures/")) {
             result = result + "Step"
-        } else {
+        }
+        else {
             result = ""
         }
+    } else if (filePath.contains("/resources/") || filePath.contains("/resourcePools/")) {
+        result = result + singularForm((String) pathParts[-2]).capitalize()
     } else {
-        result = result + singularForm((String) pathParts[-3])
-            .capitalize()
+        result = result + singularForm((String) pathParts[-3]).capitalize()
     }
     return result
 }
