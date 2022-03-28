@@ -80,7 +80,12 @@ def singularForm(String pluralForm) {
     return result
 }
 def pluralToParameterName(String pluralForm) {
-    def result = singularForm((String)pluralForm).toLowerCase() + "Name"
+    def result = singularForm((String)pluralForm) + "Name"
+    //  There are always exceptions to the rules
+    //   EmailNotifier uses "notifierName"
+    if (pluralForm == "emailNotifiers") {
+        result = "notifierName"
+    }
     return result
 }
 def pathToParameterList(String filePath) {
@@ -90,13 +95,14 @@ def pathToParameterList(String filePath) {
     def isProperty = false;
     for (def i = 0; i < pathParts.size() - 1; i = i+2) {
         // For properties do NOT include nested property sheets
-        //   But DO include the property nam - which is the last piece
+        //   But DO include the property name - which is the last piece
         if (pathParts[i] == "properties") {
             isProperty = true;
             result.add("propertyName:'" + pathParts[-1].take(pathParts[-1].lastIndexOf('.')) + "'")
             break;
         }
-        result.add(pluralToParameterName(pathParts[i]) + ":'" + pathParts[i+1] + "'")
+        def parameterName = pluralToParameterName(pathParts[i])
+        result.add(parameterName + ":'" + pathParts[i+1] + "'")
     }
     // For Properties add the path parameter to properly locate the property in nested sheets
     if (isProperty) {
@@ -142,13 +148,12 @@ def pathToCommand(String filePath, String command) {
         if (filepath.contains("/processes/")) {
             result = result + "ProcessStep"
         } else if (filePath.contains("/procedures/")) {
-            result = result + "ProcedureStep"
+            result = result + "Step"
         } else {
             result = ""
         }
     } else {
         result = result + singularForm((String) pathParts[-3])
-            .toLowerCase()
             .capitalize()
     }
     return result
