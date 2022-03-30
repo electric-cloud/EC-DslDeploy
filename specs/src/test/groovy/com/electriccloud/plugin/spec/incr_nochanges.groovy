@@ -5,7 +5,8 @@ import spock.lang.Shared
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-class incr_importDslFromGitNew_nochanges extends PluginTestHelper {
+class incr_nochanges
+    extends PluginTestHelper {
     static String pName = 'EC-DslDeploy'
     @Shared
     String pVersion
@@ -72,9 +73,10 @@ class incr_importDslFromGitNew_nochanges extends PluginTestHelper {
           actualParameter: [
             config: "this value does not matter when skipping Checkout changes, but is required",
             dest: "$plugDir/$pName-$pVersion/lib/dslCode/top_objects",
-            pathToFileList: "$plugDir/$pName-$pVersion/lib/dslCode/top_objects/change_list_na.json",
+            incrementalImport: "$plugDir/$pName-$pVersion/lib/dslCode/top_objects/change_list_na.json",
             repoUrl: "skip_checkout_changes_step_please",
-            rsrcName: "local"          
+            rsrcName: "local",
+            incrementalImport: "1"
           ]
         )""")
         then: "job succeeds"
@@ -82,11 +84,11 @@ class incr_importDslFromGitNew_nochanges extends PluginTestHelper {
         assert getJobProperty("outcome", runProc.jobId) == "success"
 
         then: "check users were NOT created"
-        def users = dsl """getUsers(filter : 'testUser*')"""
+        def users = dsl """getUsers(filter : '$userName1')"""
         assert users.size() == 0
 
         then: "check groups were NOT created"
-        def groups = dsl """getGroups(filter : 'testGroup*')"""
+        def groups = dsl """getGroups(filter : '$groupName1')"""
         assert groups.size() == 0
     }
 
@@ -103,9 +105,10 @@ class incr_importDslFromGitNew_nochanges extends PluginTestHelper {
           actualParameter: [
             config: "this value does not matter when skipping Checkout changes, but is required",
             dest: "$plugDir/$pName-$pVersion/lib/dslCode/proj_with_slashes",
-            pathToFileList: "$plugDir/$pName-$pVersion/lib/dslCode/top_objects/change_list_na.json",
+            incrementalImport: "$plugDir/$pName-$pVersion/lib/dslCode/top_objects/change_list_na.json",
             repoUrl: "skip_checkout_changes_step_please",
-            rsrcName: "local"          
+            rsrcName: "local",
+            incrementalImport: "$plugDir/$pName-$pVersion/lib/dslCode/top_objects/change_list_na.json"         
           ]
         )""")
         then: "job succeeds"

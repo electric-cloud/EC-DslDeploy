@@ -58,8 +58,7 @@
 
         "/projects/incr_project_deletes/releases/does_not_exist/pipelines/does_not_exist/pipeline.dsl",
 
-        "/projects/incr_project_deletes/procedures/does_not_exist/steps/does_not_exist/emailNotifiers/does_not_exist/emailNotifier.dsl",
-
+        "/projects/incr_project_deletes/procedures/does_not_exist/steps/does_not_exist/emailNotifiers/does_not_exist/emailNotifier.dsl"
     ],
     "renamed":{}
 }
