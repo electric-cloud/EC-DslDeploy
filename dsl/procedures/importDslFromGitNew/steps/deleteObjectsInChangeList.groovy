@@ -14,7 +14,6 @@ import groovy.transform.BaseScript
 import com.electriccloud.client.groovy.ElectricFlow
 import com.electriccloud.client.groovy.apis.model.*
 import com.electriccloud.client.groovy.models.ActualParameter
-//import com.electriccloud.commander.dsl.util.BaseObject
 import java.io.File
 
 //noinspection GroovyUnusedAssignment
@@ -24,29 +23,19 @@ $[/myProject/scripts/Utils]
 
 ElectricFlow ef = new ElectricFlow()
 
-// Gather change list text from either a property name or a filename
-println "pathToFileList      : $[pathToFileList]"
-println "propertyWithFileList: $[propertyWithFileList]"
-def incremental = false
+/// Gather change list text from a specified or default file name
+println "Incremental Import: $[incrementalImport]"
+
+def incremental = ("$[incrementalImport]" != "0")
 def changeListText = "";
-// Is there a property named to hold a change list
-if ('$[propertyWithFileList]'.size() > 0) {
-    incremental = true
-    try {
-        changeListText = getProperty("$[propertyWithFileList]").value
-    } catch (Exception ex) {
-        println("${ex.message}")
-    }
-}
-// Is there a file path to a change list file
-if ('$[pathToFileList]'.size() > 0) {
-    incremental = true
+if (incremental) {
+    def fileName = "$[incrementalImport]" == "1" ? "$[dest]/change_list.json" : "$[incrementalImport]"
     // if file exists, is not a folder and is readable...
-    def changeListFile = new File('$[pathToFileList]')
+    def changeListFile = new File(fileName)
     if (changeListFile.exists() && changeListFile.isFile()) {
         changeListText = changeListFile.text
     } else {
-        println("'$[pathToFileList]' may be a folder or unreadable or not exist");
+        println("'$fileName' may be a folder or unreadable or not exist");
     }
 }
 println("changeListText      : '$changeListText'");
@@ -70,6 +59,7 @@ if ("$changeListText" != "") {
 // Process delete actions and/or summarize activity
 if (deletes) {
     def countSuccess = 0
+    def count = 0
     changeList.deleted.each {filePathToDelete ->
         def command = pathToDeleteCommand(filePathToDelete as String)
         def parameters = pathToParameterList(filePathToDelete as String)
@@ -89,14 +79,18 @@ try {
 }
 success;
 """
+        count++
         // command could come back blank if we were not able to determine the proper command
         if (command != "" && evaluate(groovyDsl)) {
-            println "Evaluate: " + "${command}(${parameters.join(",")})"
+            println "Evaluated: " + "${command}(${parameters.join(",")})"
             countSuccess++
         }
     }
 
-    ef.setProperty(propertyName:"summary", value:"$countSuccess deletes issued")
+    ef.setProperty(propertyName:"summary", value:"$countSuccess deletes completed of $count")
+    if (countSuccess < count) {
+        ef.setProperty(propertyName:"outcome", value:"warning")
+    }
 } else {
     if (incremental) {
         ef.setProperty(propertyName: "summary", value: "No deletes in the change list")

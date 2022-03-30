@@ -24,9 +24,7 @@ procedure procName, {
                         gitRepoFolder: '$[dest]',
                         branch: '$[branch]',
                         repoUrl: '$[repoUrl]',
-                        pathToFileList: '$[pathToFileList]',
-                        propertyWithFileList: '$[propertyWithFileList]',
-                        metadataPropertyPath: '$[metadataPropertyPath]'
+                        pathToFileList: '$[dest]/change_list.json'
                 ]
 
     step 'renameObjectsInChangeList', {
@@ -50,8 +48,7 @@ procedure procName, {
                     ignoreFailed: '$[ignoreFailed]',
                     includeObjects: '''$[includeObjects]''',
                     excludeObjects: '''$[excludeObjects]''',
-                    pathToFileList: '''$[pathToFileList]''',
-                    propertyWithFileList: '''$[propertyWithFileList]'''
+                    incrementalImport: '''$[incrementalImport]'''
             ]
 
     step 'deleteObjectsInChangeList', {

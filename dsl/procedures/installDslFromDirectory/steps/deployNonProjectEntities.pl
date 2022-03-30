@@ -28,34 +28,24 @@ if ("$timeout" eq "") {
 }
 print("Timeout is: '$timeout'\n");
 
-print("EC-DslDeploy / Procedure: installDslFromDirectory / Step: deployNonProjectEntities\n");
-print("pathToFileList      : $[pathToFileList]\n");
-print("propertyWithFileList: $[propertyWithFileList]\n");
-
-# Gather change list text from either a property name or a filename
+# print("EC-DslDeploy / Procedure: installDslFromDirectory / Step: deployNonProjectEntities\n");
+# Gather change list text from a specified or default file name
+print("Incremental Import: $[incrementalImport]\n");
 my $changeListText = "";
-# Is there a property named to hold a change list?
-#  resolve the property name and resolve the named property's value
-if ("$[propertyWithFileList]" ne "") {
-    eval {
-        $changeListText = $ec->getProperty("$[propertyWithFileList]")->findNodes("//value")->string_value();
-    } or do {
-        print("$@\n");
-    }
-}
 # Is there a file path to a change list file
-if ("$[pathToFileList]" ne "") {
+if ("$[incrementalImport]" ne "" && "$[incrementalImport]" ne "0") {
+    my $changeListFileName = (("$[incrementalImport]" == "1") ? "$[directory]/change_list.json" : "$[incrementalImport]");
+    print("ChangeListFileName: $changeListFileName\n");
     # if file exists, is not a folder and is readable...
-    if (-e "$[pathToFileList]" && -f _ && -r _ ) {
-        if (open(my $fileHandle, '<', "$[pathToFileList]")) {
-            $changeListText = "opened $[pathToFileList]";
+    if (-e $changeListFileName && -f _ && -r _ ) {
+        if (open(my $fileHandle, '<', $changeListFileName)) {
             read $fileHandle, $changeListText, -s $fileHandle;
             close($fileHandle);
         } else {
-            print("Could not open $[pathToFileList] due to $!\n");
+            print("Could not open $changeListFileName due to $!\n");
         }
     } else {
-        print("$[pathToFileList] may be a folder or unreadable or not exist.\n");
+        print("$changeListFileName may be a folder or unreadable or not exist.\n");
     }
 }
 print("ChangeListText      : '$changeListText'\n");
@@ -120,10 +110,12 @@ if (!excludeObjectsParam.isEmpty()) {
 println '''  changeListText: $changeListText'''
 def changeList = [:]
 def jsonSlurp = new groovy.json.JsonSlurper()
-try {
-    changeList = jsonSlurp.parseText('''$changeListText''')
-} catch (Exception ex) {
-    println "Error parsing change list text: " + ex.getMessage()
+if (changeListText != null && changeListText.size() > 0) {
+    try {
+        changeList = jsonSlurp.parseText('''$changeListText''')
+    } catch (Exception ex) {
+        println "Error parsing change list text: " + ex.getMessage()
+    }
 }
 File dir      = new File(absDir, pluralForm("$objectType"))
 
