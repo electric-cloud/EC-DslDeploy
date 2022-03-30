@@ -103,7 +103,12 @@ def pathToParameterList(String filePath) {
         }
         // For resources and resource Pools the *.dsl file is the object name
         if (pathParts[i] == "resources" || pathParts[i] == "resourcePools") {
-            result.add(pluralToParameterName(pathParts[i]) + ":'" + pathParts[-1].take(pathParts[-1].lastIndexOf('.')) + "'")
+            result
+                .add(pluralToParameterName(pathParts[i]) + ":'" + pathParts[-1]
+                    .take(pathParts[-1]
+                        .lastIndexOf('.')) + "'")
+        } else if (filePath.endsWith("/deployerApplication.dsl") && pathParts[i] == "deployerApplications") {
+            result.add("applicationName:'" + pathParts[i + 1] + "'")
         } else {
             result.add(pluralToParameterName(pathParts[i]) + ":'" + pathParts[i + 1] + "'")
         }
@@ -155,12 +160,10 @@ def pathToCommand(String filePath, String command) {
     } else if (!filePath.endsWith(".dsl")) {
         result = ""
     } else if (filePath.contains("/steps/")) {
-        if (filePath
-            .contains("/processes/")) {
+        if (filePath.contains("/processes/")) {
             result = result + "ProcessStep"
         }
-        else if (filePath
-            .contains("/procedures/")) {
+        else if (filePath.contains("/procedures/")) {
             result = result + "Step"
         }
         else {
@@ -168,6 +171,8 @@ def pathToCommand(String filePath, String command) {
         }
     } else if (filePath.contains("/resources/") || filePath.contains("/resourcePools/")) {
         result = result + singularForm((String) pathParts[-2]).capitalize()
+    } else if (filePath.contains("/deployerApplications/") && command == "delete") {
+        result = "removeDeployerApplication"
     } else {
         result = result + singularForm((String) pathParts[-3]).capitalize()
     }
