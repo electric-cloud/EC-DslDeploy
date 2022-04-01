@@ -34,23 +34,30 @@ if ($error ne "") {
 print("Incremental Import: $incremental\n");
 
 my $changeListText = "";
-# Is there a file path to a change list file
 if ($incremental) {
-    my @dirParts = split '/', "$[projDir]";
-    @dirParts = splice @dirParts, 0, -2;
-    my $rootDir = join '/', @dirParts;
-    my $changeListFileName = $rootDir . "/change_list.json";
-    print("ChangeListFileName: $changeListFileName\n");
-    # if file exists, is not a folder and is readable...
-    if (-e $changeListFileName && -f _ && -r _ ) {
-        if (open(my $fileHandle, '<', $changeListFileName)) {
-            read $fileHandle, $changeListText, -s $fileHandle;
-            close($fileHandle);
-        } else {
-            print("Could not open $changeListFileName due to $!\n");
-        }
-    } else {
-        print("$changeListFileName may be a folder or unreadable or not exist.\n");
+    ### Gather change list text
+    # my @dirParts = split '/', "$[projDir]";
+    # @dirParts = splice @dirParts, 0, -2;
+    # my $rootDir = join '/', @dirParts;
+    # my $changeListFileName = $rootDir . "/change_list.json";
+    # print("ChangeListFileName: $changeListFileName\n");
+    # # if file exists, is not a folder and is readable...
+    # if (-e $changeListFileName && -f _ && -r _ ) {
+    #     if (open(my $fileHandle, '<', $changeListFileName)) {
+    #         read $fileHandle, $changeListText, -s $fileHandle;
+    #         close($fileHandle);
+    #     } else {
+    #         print("Could not open $changeListFileName due to $!\n");
+    #     }
+    # } else {
+    #     print("$changeListFileName may be a folder or unreadable or not exist.\n");
+    # }
+    $ec->abortOnError(0);
+    $changeListText = $ec->getProperty("/myJob/change_list.json")->findvalue("//value");
+    $ec->abortOnError(1);
+    my $error = $ec->getError();
+    if ($error ne "") {
+        $changeListText = ""
     }
 }
 print("ChangeListText      : '$changeListText'\n");
