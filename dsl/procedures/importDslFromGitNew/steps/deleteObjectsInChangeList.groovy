@@ -36,7 +36,7 @@ println "Incremental Import: $incremental"
 
 def changeListText = "";
 if (incremental) {
-//    // Gather change list text
+//    Gather change list text
 //    def fileName = "[dest]/change_list.json"
 //    // if file exists, is not a folder and is readable...
 //    def changeListFile = new File(fileName)
@@ -49,7 +49,7 @@ if (incremental) {
         changeListText = ef.getProperty(propertyName: "/myJob/change_list.json").property.value
     } catch (Exception ex) {
         changeListText = "";
-
+    }
 }
 println("changeListText      : '$changeListText'");
 
