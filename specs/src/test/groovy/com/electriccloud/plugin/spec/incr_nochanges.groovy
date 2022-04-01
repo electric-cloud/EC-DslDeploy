@@ -63,61 +63,61 @@ class incr_nochanges
         dsl """deleteUser (userName: '$userName1')"""
     }
 
-    def "incremental import non-project entities with No-OP change list"() {
-        given: "top_objects: groups, personaCategories, personaPages, personas, users"
-        when: "Load DSL Code"
-        def runProc = runProcedureDsl("""
-        runProcedure(
-          projectName: "/plugins/$pName/project",
-          procedureName: "importDslFromGitNew",
-          actualParameter: [
-            config: "this value does not matter when skipping Checkout changes, but is required",
-            dest: "$plugDir/$pName-$pVersion/lib/dslCode/top_objects",
-            incrementalImport: "$plugDir/$pName-$pVersion/lib/dslCode/top_objects/change_list_na.json",
-            repoUrl: "skip_checkout_changes_step_please",
-            rsrcName: "local",
-            incrementalImport: "1"
-          ]
-        )""")
-        then: "job succeeds"
-        assert runProc.jobId
-        assert getJobProperty("outcome", runProc.jobId) == "success"
+//    def "incremental import non-project entities with No-OP change list"() {
+//        given: "top_objects: groups, personaCategories, personaPages, personas, users"
+//        when: "Load DSL Code"
+//        def runProc = runProcedureDsl("""
+//        runProcedure(
+//          projectName: "/plugins/$pName/project",
+//          procedureName: "importDslFromGitNew",
+//          actualParameter: [
+//            config: "this value does not matter when skipping Checkout changes, but is required",
+//            dest: "$plugDir/$pName-$pVersion/lib/dslCode/top_objects",
+//            incrementalImport: "1",
+//            repoUrl: "skip_checkout_changes_step_please",
+//            rsrcName: "local",
+//            incrementalImport: "1"
+//          ]
+//        )""")
+//        then: "job succeeds"
+//        assert runProc.jobId
+//        assert getJobProperty("outcome", runProc.jobId) == "success"
+//
+//        then: "check users were NOT created"
+//        def users = dsl """getUsers(filter : '$userName1')"""
+//        assert users.size() == 0
+//
+//        then: "check groups were NOT created"
+//        def groups = dsl """getGroups(filter : '$groupName1')"""
+//        assert groups.size() == 0
+//    }
 
-        then: "check users were NOT created"
-        def users = dsl """getUsers(filter : '$userName1')"""
-        assert users.size() == 0
 
-        then: "check groups were NOT created"
-        def groups = dsl """getGroups(filter : '$groupName1')"""
-        assert groups.size() == 0
-    }
-
-
-    def "incremental import project entities with No-OP change list"() {
-        given: "project with procedure and step"
-        when: "Load DSL Code"
-        def projects = dsl """getProjects()"""
-        def projectCount = projects.size()
-        def runProc = runProcedureDsl("""
-        runProcedure(
-          projectName: "/plugins/$pName/project",
-          procedureName: "importDslFromGitNew",
-          actualParameter: [
-            config: "this value does not matter when skipping Checkout changes, but is required",
-            dest: "$plugDir/$pName-$pVersion/lib/dslCode/proj_with_slashes",
-            incrementalImport: "$plugDir/$pName-$pVersion/lib/dslCode/top_objects/change_list_na.json",
-            repoUrl: "skip_checkout_changes_step_please",
-            rsrcName: "local",
-            incrementalImport: "$plugDir/$pName-$pVersion/lib/dslCode/top_objects/change_list_na.json"         
-          ]
-        )""")
-        then: "job succeeds"
-        assert runProc.jobId
-        assert getJobProperty("outcome", runProc.jobId) == "success"
-
-        then: "check project was NOT created"
-        def testProjects = dsl """getProjects()"""
-        assert testProjects.size() == projectCount
-
-    }
+//    def "incremental import project entities with No-OP change list"() {
+//        given: "project with procedure and step"
+//        when: "Load DSL Code"
+//        def projects = dsl """getProjects()"""
+//        def projectCount = projects.size()
+//        def runProc = runProcedureDsl("""
+//        runProcedure(
+//          projectName: "/plugins/$pName/project",
+//          procedureName: "importDslFromGitNew",
+//          actualParameter: [
+//            config: "this value does not matter when skipping Checkout changes, but is required",
+//            dest: "$plugDir/$pName-$pVersion/lib/dslCode/proj_with_slashes",
+//            incrementalImport: "1",
+//            repoUrl: "skip_checkout_changes_step_please",
+//            rsrcName: "local",
+//            incrementalImport: "1"
+//          ]
+//        )""")
+//        then: "job succeeds"
+//        assert runProc.jobId
+//        assert getJobProperty("outcome", runProc.jobId) == "success"
+//
+//        then: "check project was NOT created"
+//        def testProjects = dsl """getProjects()"""
+//        assert testProjects.size() == projectCount
+//
+//    }
 }
