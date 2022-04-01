@@ -21,16 +21,25 @@ if ("$timeout" eq "") {
 }
 print("Timeout is: '$timeout'\n");
 
-# print("EC-DslDeploy / Procedure: installProject / Step: deployProjectEntities\n");
-# Gather change list text from a specified or default file name
-print("Incremental Import: $[incrementalImport]\n");
+# Is this an incremental import?
+my $incremental = 0;
+$ec->abortOnError(0);
+$incremental = ($ec->getProperty("/myJob/incrementalImport")->findvalue("//value") eq "1");
+$ec->abortOnError(1);
+my $error = $ec->getError();
+if ($error ne "") {
+    #print("Could not get incrementalImport value due to: " . $error . "\n");
+    $incremental = 0;
+}
+print("Incremental Import: $incremental\n");
+
 my $changeListText = "";
 # Is there a file path to a change list file
-if ("$[incrementalImport]" ne "" && "$[incrementalImport]" ne "0") {
+if ($incremental) {
     my @dirParts = split '/', "$[projDir]";
     @dirParts = splice @dirParts, 0, -2;
     my $rootDir = join '/', @dirParts;
-    my $changeListFileName = (("$[incrementalImport]" == "1") ? $rootDir . "/change_list.json" : "$[incrementalImport]");
+    my $changeListFileName = $rootDir . "/change_list.json";
     print("ChangeListFileName: $changeListFileName\n");
     # if file exists, is not a folder and is readable...
     if (-e $changeListFileName && -f _ && -r _ ) {

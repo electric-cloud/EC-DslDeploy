@@ -32,20 +32,27 @@ if (!excludeObjectsParam.isEmpty()) {
   excludeObjects = excludeObjectsParam.split( '\n' )
 }
 
-// println "EC-DslDeploy / Procedure: installDslFromDirectory / Step: deployProjects"
-// Gather change list text from a specified or default file name
-println "Incremental Import: $[incrementalImport]"
-def changeListText = ""
-// Is there a file path to a change list file
-if ("$[incrementalImport]".size() > 0 && "$[incrementalImport]" != "0") {
-    def changeListFileName = (("$[incrementalImport]" == "1") ? "$[directory]/change_list.json" : "$[incrementalImport]")
-    println "ChangeListFileName: $changeListFileName"
+// Is this an incremental import?
+def incremental = false
+try {
+    incremental = (ef.getProperty(propertyName:"/myJob/incrementalImport").property.value == "1") ? true : false
+} catch (Exception ex) {
+    println "Could not get incrementalImport value due to: ${ex.message}"
+    incremental = false
+}
+
+println "Incremental Import: $incremental"
+
+def changeListText = "";
+if (incremental) {
+   // Gather change list text
+    def fileName = "[dest]/change_list.json"
     // if file exists, is not a folder and is readable...
-    def changeListFile = new File(changeListFileName)
+    def changeListFile = new File(fileName)
     if (changeListFile.exists() && changeListFile.isFile()) {
         changeListText = changeListFile.text
     } else {
-        println "'$changeListFileName' may be a folder or unreadable or not exist"
+        println("'$fileName' may be a folder or unreadable or not exist");
     }
 }
 println("changeListText      : '$changeListText'");
@@ -68,27 +75,32 @@ if (pDir.exists()) {
     def basename = decode(projDir.getName().toString())
 
     if (isIncluded(includeObjects, excludeObjects, "/projects/$basename")) {
-
-      println "Processing project $basename"
-      def escapedProjName = StringEscapeUtils.escapeJava(basename)
-      def params = [
-              new ActualParameter('projName', escapedProjName),
-              new ActualParameter('projDir', projDir.absolutePath.toString().replace('\\', '/')),
-              new ActualParameter('overwrite', '$[overwrite]'),
-              new ActualParameter('additionalDslArguments', '$[additionalDslArguments]'),
-              new ActualParameter('ignoreFailed', '$[ignoreFailed]'),
-              new ActualParameter('localMode', '$[localMode]'),
-              new ActualParameter('incrementalImport', '$[incrementalImport]'),
-              new ActualParameter('includeObjects', '''$[includeObjects]'''),
-              new ActualParameter('excludeObjects', '''$[excludeObjects]''')
-      ]
-
-      ef.createJobStep(
-              jobStepName: basename,
-              subproject: '$[/myProject]',
-              subprocedure: 'installProject',
-              actualParameters: params
-      )
+        if (!incremental || (
+                incremental && (
+                    changeListText.indexOf('"what":"INITIAL"') > -1) ||
+                    changeListText.indexOf("projects/$basename/") > -1)) {
+            println "Processing project $basename"
+            def escapedProjName = StringEscapeUtils
+                .escapeJava(basename)
+            def params = [new ActualParameter('projName', escapedProjName),
+                          new ActualParameter('projDir', projDir
+                              .absolutePath
+                              .toString()
+                              .replace('\\', '/')),
+                          new ActualParameter('overwrite', '$[overwrite]'),
+                          new ActualParameter('additionalDslArguments', '$[additionalDslArguments]'),
+                          new ActualParameter('ignoreFailed', '$[ignoreFailed]'),
+                          new ActualParameter('localMode', '$[localMode]'),
+                          new ActualParameter('includeObjects', '''$[includeObjects]'''),
+                          new ActualParameter('excludeObjects', '''$[excludeObjects]''')]
+            ef
+                .createJobStep(jobStepName: basename,
+                    subproject: '$[/myProject]',
+                    subprocedure: 'installProject',
+                    actualParameters: params)
+        } else {
+            println("Skip importing $basename project, it is not in the change list ")
+        }
     } else {
       println("Skip importing of $basename project as it's not answer " +
               "includeObjects/excludeObjects parameters")

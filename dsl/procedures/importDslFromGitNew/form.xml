@@ -129,7 +129,6 @@
     <required>0</required>
     <documentation>List of paths to objects to exclude. Nothing by default</documentation>
   </formElement>
-
   <formElement>
     <type>checkbox</type>
     <label>Incremental Import:</label>

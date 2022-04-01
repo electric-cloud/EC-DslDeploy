@@ -24,7 +24,7 @@ procedure procName, {
                         gitRepoFolder: '$[dest]',
                         branch: '$[branch]',
                         repoUrl: '$[repoUrl]',
-                        pathToFileList: '$[dest]/change_list.json'
+                        propertyWithFileList: '$[/javascript if (myJob.incrementalImport == "1") { "/myJob/change_list.json";}]'
                 ]
 
     step 'renameObjectsInChangeList', {
@@ -47,8 +47,7 @@ procedure procName, {
                     localMode: '$[localMode]',
                     ignoreFailed: '$[ignoreFailed]',
                     includeObjects: '''$[includeObjects]''',
-                    excludeObjects: '''$[excludeObjects]''',
-                    incrementalImport: '''$[incrementalImport]'''
+                    excludeObjects: '''$[excludeObjects]'''
             ]
 
     step 'deleteObjectsInChangeList', {

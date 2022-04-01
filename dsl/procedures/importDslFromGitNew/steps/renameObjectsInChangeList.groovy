@@ -26,13 +26,21 @@ $[/myProject/scripts/Utils]
 
 ElectricFlow ef = new ElectricFlow()
 
-// Gather change list text from a specified or default file name
-println "Incremental Import: $[incrementalImport]"
+// Is this an incremental import?
+def incremental = false
+try {
+    incremental = (ef.getProperty(propertyName:"/myJob/incrementalImport").property.value == "1") ? true : false
+} catch (Exception ex) {
+    println "Could not get incrementalImport value due to: ${ex.message}"
+    incremental = false
+}
 
-def incremental = ("$[incrementalImport]" != "0")
+println "Incremental Import: $incremental"
+
 def changeListText = "";
 if (incremental) {
-    def fileName = ("$[incrementalImport]" == "1") ? "$[dest]/change_list.json" : "$[incrementalImport]"
+    // Gather change list text
+    def fileName = "[dest]/change_list.json"
     // if file exists, is not a folder and is readable...
     def changeListFile = new File(fileName)
     if (changeListFile.exists() && changeListFile.isFile()) {
@@ -42,7 +50,6 @@ if (incremental) {
     }
 }
 println("changeListText      : '$changeListText'");
-
 // Parse the change list checking for files which should be renamed
 def renames = false
 def changeList = [:]
