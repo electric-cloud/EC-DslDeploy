@@ -68,7 +68,8 @@ foreach my $objectType (@subProjectEntities ) {
     # Check change list if it is "incremental"
     if (index($changeListText, '"what":"INCREMENTAL"') != -1) {
         # If that object type is not found in the list skip them
-        if (index($changeListText, "/".$objectType.".dsl\"") == -1) {
+        my $toMatch = "$pluralObjectTypeName/.*/properties/";
+        if (index($changeListText, "/".$objectType.".dsl\"") == -1 && ($changeListText !=~ $toMatch)) {
             print("Skip importing of $pluralObjectTypeName as those are not in the change list\n");
             next;
         }

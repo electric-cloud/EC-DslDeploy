@@ -85,10 +85,12 @@ abstract class BaseObject extends DslDelegatingScript {
     def counter=0
     File dslFile=getObjectDSLFile(new File(projectDir), "project")
     if (dslFile && dslFile?.exists()) {
-      println "Processing project file projects/$projectName/${dslFile.name}"
-      def proj=evalInlineDsl(dslFile.toString(),
-                            [projectName: projectName, projectDir: projectDir], overwriteMode, true)
-      counter ++
+      if (changeCheck("projects/$projectName/${dslFile.name}", changeList, ["added", "changed"])) {
+        println "Processing project file projects/$projectName/${dslFile.name}"
+        def proj=evalInlineDsl(dslFile.toString(),
+            [projectName: projectName, projectDir: projectDir], overwriteMode, true)
+        counter ++
+      }
     } else {
       println "No project.groovy or project.dsl found"
     }

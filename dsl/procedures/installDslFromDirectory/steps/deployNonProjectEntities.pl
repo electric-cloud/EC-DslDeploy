@@ -82,7 +82,8 @@ foreach my $objectType (@nonProjectEntities) {
     # Check change list if it is "incremental"
     if (index($changeListText, '"what":"INCREMENTAL"') != -1) {
         # If that object type is not found in the list skip them
-        if (index($changeListText, "/".$objectType.".dsl\"") == -1) {
+        my $toMatch = "$pluralType/.*/properties/";
+        if (index($changeListText, "/".$objectType.".dsl\"") == -1 && ($changeListText !=~ $toMatch)) {
             print("Skip importing of $pluralType as those are not in the change list\n");
             next;
         }
@@ -148,7 +149,7 @@ END_COMMAND
 
         # check support of clientFiles argument
         if ($localMode eq '0' && $clientFilesCompatible) {
-            $shell .= " --clientFiles \"$[directory]\""
+            $shell .= " --clientFiles \"$[/myJob/CWD]" . "/" . pluralForm($objectType) . "\""
         }
     } else {
         $command2 = <<"END_COMMAND";
