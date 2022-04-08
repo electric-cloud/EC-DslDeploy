@@ -19,6 +19,14 @@ class PluginTestHelper extends PluginSpockTestSupport {
   static def defaultPool = System.getenv('DSL_DEPLOY_POOL') ?: 'local'
   static def password = System.getProperty("COMMANDER_PASSWORD", "changeme")
 
+  static String GIT_TOKEN = getAssertedEnvVariable("GIT_TOKEN")
+
+  static String getAssertedEnvVariable(String name) {
+    def value = System.getenv(name)
+    assert value: "Environment value ${name} is empty"
+    return value
+  }
+
   def redirectLogs(String parentProperty = '/myJob') {
     def propertyLogName = parentProperty + '/debug_logs'
     dsl """

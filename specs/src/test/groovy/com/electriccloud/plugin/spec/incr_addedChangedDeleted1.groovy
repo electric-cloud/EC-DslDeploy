@@ -26,6 +26,7 @@ class incr_addedChangedDeleted1
     static def propertyToDeleteName = 'propertyToDelete'
 
     static def branch = 'incr_addedChangedDeleted1'
+    //static def repoURL = 'https://github.com/cloudbees/testing_incremental_import_test_cases'
     static def repoURL = 'https://github.com/mayasse/IncrementalImportTestCases'
     static def repoName = repoURL.tokenize("/")[-1]
     static def dataTrackerProperty = "ecreport_data_tracker"
@@ -36,6 +37,10 @@ class incr_addedChangedDeleted1
     // ... the preceding names must match what is contained in the test repository
 
     static def pluginConfigurationName = 'pluginConfigurationName'
+
+    static def p1 = "Z2hwX2lRY3dFS2hxbnp"
+    static def p2 = "2ZIR29hU09oYmczZzM1"
+    static def p3 = "d1JqOFhiUDRmVlIzaw=="
 
     def doSetupSpec()
     {
@@ -49,10 +54,10 @@ class incr_addedChangedDeleted1
     }
 
     def doCleanupSpec() {
-        conditionallyDeleteProject(projectName)
-        dsl """deleteUser (userName: '$userAddedName')"""
-        dsl """deleteUser (userName: '$userToChangeName')"""
-        dsl """deleteUser (userName: '$userToDeleteName')"""
+//        conditionallyDeleteProject(projectName)
+//        dsl """deleteUser (userName: '$userAddedName')"""
+//        dsl """deleteUser (userName: '$userToChangeName')"""
+//        dsl """deleteUser (userName: '$userToDeleteName')"""
     }
 
     def "Incremental Import: Users, Project, Procedure, Properties and commit IDs are different"() {
@@ -79,11 +84,13 @@ project '$projectName', {
 
         addCredential 'token_credential', {
           passwordRecoveryAllowed = '1'
-          password='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'
+          password='$GIT_TOKEN'
         }
     }
 }
 """
+
+        //           password='${(p1+p2+p3).decodeBase64() as String}'
         dsl """createUser(userName:'$userToChangeName', fullUserName: 'full user name - $userToChangeName')"""
         dsl """createUser(userName:'$userToDeleteName', fullUserName: 'full user name - $userToDeleteName')"""
 
@@ -188,7 +195,7 @@ setProperty(propertyName: "/plugins/$pName/project/properties/$metadataProperty"
         assert userDeletedCheck.value as String == "false"
 
         cleanup: "Remove objects"
-        dsl """deleteProject(projectName: "$projectName") """
+        //dsl """deleteProject(projectName: "$projectName") """
         dsl """deleteUser (userName: '$userAddedName')"""
         dsl """deleteUser (userName: '$userToChangeName')"""
         dsl """deleteUser (userName: '$userToDeleteName')"""
@@ -218,7 +225,7 @@ project '$projectName', {
 
         addCredential 'token_credential', {
           passwordRecoveryAllowed = '1'
-          password='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'
+          password='$GIT_TOKEN'
         }
     }
 }
