@@ -432,8 +432,10 @@ abstract class BaseObject extends DslDelegatingScript {
 
 
     aclDir.eachFileMatch(FileType.FILES, ~/(?i)^.*\.(groovy|dsl)/) { dslFile ->
-      println "  Processing ACL file $objPath/acls/${dslFile.name}"
-      evalInlineDsl(dslFile.toString(), bindingMap)
+      if (changeCheck("$objPath/acls/${dslFile.name}", changeList, ["changed", "added"])) {
+        println "  Processing ACL file $objPath/acls/${dslFile.name}"
+        evalInlineDsl(dslFile.toString(), bindingMap)
+      }
     }
   }
 
