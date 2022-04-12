@@ -19,7 +19,7 @@ class PluginTestHelper extends PluginSpockTestSupport {
   static def defaultPool = System.getenv('DSL_DEPLOY_POOL') ?: 'local'
   static def password = System.getProperty("COMMANDER_PASSWORD", "changeme")
 
-  static String GIT_TOKEN = getAssertedEnvVariable("GIT_TOKEN")
+  static String GIT_TOKEN_CLOUDBEES_CD_PLUGINS_BOT = getAssertedEnvVariable("GIT_TOKEN_CLOUDBEES_CD_PLUGINS_BOT")
 
   static String getAssertedEnvVariable(String name) {
     def value = System.getenv(name)

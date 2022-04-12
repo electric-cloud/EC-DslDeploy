@@ -26,8 +26,7 @@ class incr_addedChangedDeleted1
     static def propertyToDeleteName = 'propertyToDelete'
 
     static def branch = 'incr_addedChangedDeleted1'
-    //static def repoURL = 'https://github.com/cloudbees/testing_incremental_import_test_cases'
-    static def repoURL = 'https://github.com/mayasse/IncrementalImportTestCases'
+    static def repoURL = 'https://github.com/cloudbees/CD_EC-DslDeploy_BuildTests_Data'
     static def repoName = repoURL.tokenize("/")[-1]
     static def dataTrackerProperty = "ecreport_data_tracker"
     static def metadataProperty = "$dataTrackerProperty/EC-Git-$repoName-git_changelog"
@@ -38,14 +37,9 @@ class incr_addedChangedDeleted1
 
     static def pluginConfigurationName = 'pluginConfigurationName'
 
-    static def p1 = "Z2hwX2lRY3dFS2hxbnp"
-    static def p2 = "2ZIR29hU09oYmczZzM1"
-    static def p3 = "d1JqOFhiUDRmVlIzaw=="
-
     def doSetupSpec()
     {
-        pVersion = getP("/plugins/$pName/pluginVersion")    //static final String configName = randomize("specs_config_" + projectName.replaceAll('/[: ]+/', '_'))
-
+        pVersion = getP("/plugins/$pName/pluginVersion")
         plugDir = getP("/server/settings/pluginsDirectory")
         dsl """deleteProject(projectName: "$projectName") """
         dsl """deleteUser (userName: '$userAddedName')"""
@@ -54,10 +48,10 @@ class incr_addedChangedDeleted1
     }
 
     def doCleanupSpec() {
-//        conditionallyDeleteProject(projectName)
-//        dsl """deleteUser (userName: '$userAddedName')"""
-//        dsl """deleteUser (userName: '$userToChangeName')"""
-//        dsl """deleteUser (userName: '$userToDeleteName')"""
+        conditionallyDeleteProject(projectName)
+        dsl """deleteUser (userName: '$userAddedName')"""
+        dsl """deleteUser (userName: '$userToChangeName')"""
+        dsl """deleteUser (userName: '$userToDeleteName')"""
     }
 
     def "Incremental Import: Users, Project, Procedure, Properties and commit IDs are different"() {
@@ -84,7 +78,7 @@ project '$projectName', {
 
         addCredential 'token_credential', {
           passwordRecoveryAllowed = '1'
-          password='$GIT_TOKEN'
+          password='$GIT_TOKEN_CLOUDBEES_CD_PLUGINS_BOT'
         }
     }
 }
@@ -195,7 +189,7 @@ setProperty(propertyName: "/plugins/$pName/project/properties/$metadataProperty"
         assert userDeletedCheck.value as String == "false"
 
         cleanup: "Remove objects"
-        //dsl """deleteProject(projectName: "$projectName") """
+        dsl """deleteProject(projectName: "$projectName") """
         dsl """deleteUser (userName: '$userAddedName')"""
         dsl """deleteUser (userName: '$userToChangeName')"""
         dsl """deleteUser (userName: '$userToDeleteName')"""
@@ -225,7 +219,7 @@ project '$projectName', {
 
         addCredential 'token_credential', {
           passwordRecoveryAllowed = '1'
-          password='$GIT_TOKEN'
+          password='$GIT_TOKEN_CLOUDBEES_CD_PLUGINS_BOT'
         }
     }
 }
