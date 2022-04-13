@@ -5,9 +5,9 @@ my $clientFilesCompatible = checkClientFilesCompatibility();
 
 # deploy sub project entities
 my @subProjectEntities = ("project", "credentialProvider", "credential",
-"pluginConfiguration","procedure", "resourceTemplate", "workflowDefinition",
-"environmentTemplate", "environment", "component",
-"application", "pipeline", "release", "schedule", "catalog", "report", "dashboard");
+    "pluginConfiguration","procedure", "resourceTemplate", "workflowDefinition",
+    "environmentTemplate", "environment", "component",
+    "application", "pipeline", "release", "schedule", "catalog", "report", "dashboard");
 
 my ($userTimeout) = ("$[additionalDslArguments]" =~ m/--timeout\s+([0-9]+)/);
 print("User timeout is: '$userTimeout'\n");
@@ -21,10 +21,63 @@ if ("$timeout" eq "") {
 }
 print("Timeout is: '$timeout'\n");
 
+# Is this an incremental import?
+my $incremental = 0;
+$ec->abortOnError(0);
+$incremental = ($ec->getProperty("/myJob/incrementalImport")->findvalue("//value") eq "1");
+$ec->abortOnError(1);
+my $error = $ec->getError();
+if ($error ne "") {
+    #print("Could not get incrementalImport value due to: " . $error . "\n");
+    $incremental = 0;
+}
+print("Incremental Import: $incremental\n");
+
+my $changeListText = "";
+if ($incremental) {
+    ### Gather change list text
+    # my @dirParts = split '/', "$[projDir]";
+    # @dirParts = splice @dirParts, 0, -2;
+    # my $rootDir = join '/', @dirParts;
+    # my $changeListFileName = $rootDir . "/change_list.json";
+    # print("ChangeListFileName: $changeListFileName\n");
+    # # if file exists, is not a folder and is readable...
+    # if (-e $changeListFileName && -f _ && -r _ ) {
+    #     if (open(my $fileHandle, '<', $changeListFileName)) {
+    #         read $fileHandle, $changeListText, -s $fileHandle;
+    #         close($fileHandle);
+    #     } else {
+    #         print("Could not open $changeListFileName due to $!\n");
+    #     }
+    # } else {
+    #     print("$changeListFileName may be a folder or unreadable or not exist.\n");
+    # }
+    $ec->abortOnError(0);
+    $changeListText = $ec->getProperty("/myJob/change_list.json")->findvalue("//value");
+    $ec->abortOnError(1);
+    my $error = $ec->getError();
+    if ($error ne "") {
+        $changeListText = ""
+    }
+}
+print("ChangeListText      : '$changeListText'\n");
+
+
 foreach my $objectType (@subProjectEntities ) {
+    my $pluralObjectTypeName = pluralForm($objectType);
+    # Check change list if it is "incremental"
+    if (index($changeListText, '"what":"INCREMENTAL"') != -1) {
+        # If that object type is not found in the list skip them
+        my $toMatch = "$pluralObjectTypeName/.*/properties/";
+        if (index($changeListText, "/".$objectType.".dsl\"") == -1 && ($changeListText !=~ $toMatch)) {
+            print("Skip importing of $pluralObjectTypeName as those are not in the change list\n");
+            next;
+        }
+    }
+
     my $shell   = 'ectool --timeout ' . $timeout . ' evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl" $[additionalDslArguments]';
 
-    # without Perl variables usage / substitution 
+    # without Perl variables usage / substitution
     my $command1 = <<'END_COMMAND';
 import groovy.transform.BaseScript
 import com.electriccloud.commander.dsl.util.BaseObject
@@ -51,35 +104,62 @@ if (!excludeObjectsParam.isEmpty()) {
 }
 END_COMMAND
 
-    # with Perl variables usage / substitution 
+    # with Perl variables usage / substitution
     my $command2;
 
 
     # check if corresponding directory exists
     if ("project" eq "$objectType" && -d '$[projDir]/') {
+        $command2 = "def changeListText = '''" . $changeListText . "'''";
         $command2 = <<"END_COMMAND";
-def counter
 
+println "OUTER DSL for processing project: " + projectName
+println '''  changeListText: $changeListText'''
+def changeList = [:]
+def jsonSlurp = new groovy.json.JsonSlurper()
+if (changeListText != null && changeListText.size() > 0) {
+    try {
+        changeList = jsonSlurp.parseText('''$changeListText''')
+    } catch (Exception ex) {
+      println "Error parsing change list text: " + ex.getMessage()
+    }
+}
+
+def counter
 project projectName, {
-  counter = loadProject(projectDir, projectName, overwrite)
-  loadProjectProperties(projectDir, projectName, overwrite)
-  loadProjectAcls(projectDir, projectName)
+  counter = loadProject(projectDir, projectName, overwrite, changeList)
+  loadProjectProperties(projectDir, projectName, overwrite, changeList)
+  loadProjectAcls(projectDir, projectName, changeList)
 }
 
 if (counter == 0) {
-  setProperty(propertyName: "summary", value: "No project.groovy or project.dsl found")
+  setProperty(propertyName: "summary", value: "No project.groovy or project.dsl processed")
   setProperty(propertyName: "outcome", value: "warning")
 }
 return ""
 END_COMMAND
     } elsif ("project" ne "$objectType" && -d '$[projDir]/' . pluralForm("$objectType")) {
+        $command2 = "def changeListText = '''" . $changeListText . "'''";
         $command2 = <<"END_COMMAND";
-def counters
 
+
+println "OUTER DSL for processing project's ${objectType}(ie)s - project: " + projectName
+println '''  changeListText: $changeListText'''
+def changeList = [:]
+def jsonSlurp = new groovy.json.JsonSlurper()
+if (changeListText != null && changeListText.size() > 0) {
+    try {
+        changeList = jsonSlurp.parseText('''$changeListText''')
+    } catch (Exception ex) {
+      println "Error parsing change list text: " + ex.getMessage()
+    }
+}
+
+def counters
 project projectName, {
   counters = loadObjects("$objectType", projectDir, "/projects/" + projectName,
     [projectName: projectName, projectDir: projectDir], overwrite, ignoreFailed,
-     true, includeObjects, excludeObjects)
+     true, includeObjects, excludeObjects, changeList)
 }
 
 //pop up possible error
@@ -109,8 +189,8 @@ END_COMMAND
     my $objectTypePlural = pluralForm("$objectType");
     my $projectName = "$[projName]";
     if ($objectType eq "project"
-            || isIncluded("$[includeObjects]", "$[excludeObjects]",
-                "/projects/$projectName/$objectTypePlural")) {
+        || isIncluded("$[includeObjects]", "$[excludeObjects]",
+        "/projects/$projectName/$objectTypePlural")) {
 
         $ec->createJobStep({
             jobStepName    => "deploy $objectType",

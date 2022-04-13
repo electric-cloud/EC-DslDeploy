@@ -11,7 +11,7 @@
 use Cwd;
 $[/myProject/scripts/perlHeaderJSON]
 
-# "." returns the Flow installa directory instead of the workspace
+# "." returns the Flow installation directory instead of the workspace
 $ec->setProperty("/myJob/CWD", getcwd);
 
 my $counter=0;

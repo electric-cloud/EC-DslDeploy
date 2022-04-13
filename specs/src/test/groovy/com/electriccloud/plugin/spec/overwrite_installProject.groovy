@@ -1399,21 +1399,21 @@ class overwrite_installProject extends PluginTestHelper {
         def ec_1 = projPropResult.propertySheet.property.find{it.propertyName == 'ec_1'}
 
         def ec_1Res = dsl "getProperties propertySheetId: '$ec_1.propertySheetId'"
-        assert ec_1Res.propertySheet.property.size() == 2
+        assert ec_1Res.propertySheet.property.size() == 3
 
         def ec_prop1 = ec_1Res.propertySheet.property.find{it.propertyName == 'ec_prop1'}
         assert ec_prop1.value == '1'
 
         def ec_11 = ec_1Res.propertySheet.property.find{it.propertyName == 'ec_11'}
         def ec_11Res = dsl "getProperties propertySheetId: '$ec_11.propertySheetId'"
-        assert ec_11Res.propertySheet.property.size() == 2
+        assert ec_11Res.propertySheet.property.size() == 3
 
         def ec_prop11 =  ec_11Res.propertySheet.property.find{it.propertyName == 'ec_prop11'}
         assert ec_prop11.value == '11'
 
         def ec_111 = ec_11Res.propertySheet.property.find{it.propertyName == 'ec_111'}
         def ec_111Res = dsl "getProperties propertySheetId: '$ec_111.propertySheetId'"
-        assert ec_111Res.propertySheet.property.size() == 1
+        assert ec_111Res.propertySheet.property.size() == 2
 
 
         def projPipeResult2 = dsl "getProperties projectName: 'overwrite_properties', pipelineName: 'pipe1'"

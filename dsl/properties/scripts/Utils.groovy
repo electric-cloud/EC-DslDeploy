@@ -1,3 +1,29 @@
+/* ###########################################################################
+#
+#  Utils: Utility groovy functions accessible throughout the plugin
+#
+#  Author: known
+#
+#  Copyright 2017-2022 Electric-Cloud Inc.
+#
+#     Licensed under the Apache License, Version 2.0 (the "License");
+#     you may not use this file except in compliance with the License.
+#     You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#     Unless required by applicable law or agreed to in writing, software
+#     distributed under the License is distributed on an "AS IS" BASIS,
+#     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#     See the License for the specific language governing permissions and
+#     limitations under the License.
+#
+# History
+# ---------------------------------------------------------------------------
+# 2022-03-25 mayasse  Add functions to get DSL parameters,
+#                     modify and delete commands from export file/folder paths
+# 2019-??-?? unknown  Initial version
+############################################################################ */
 
 class Const {
 
@@ -38,6 +64,119 @@ def pluralForm(String objType) {
     default:
       return objType + 's'
     }
+}
+
+def singularForm(String pluralForm) {
+    def result = "";
+    if (pluralForm.endsWith("ies")) {
+        result = pluralForm[0..-4] + "y"
+    } else if (pluralForm.endsWith("sses")) {
+        result = pluralForm[0..-3]
+    } else if (pluralForm.endsWith("s")) {
+        result = pluralForm[0..-2]
+    } else {
+        result = pluralForm
+    }
+    return result
+}
+def pluralToParameterName(String pluralForm) {
+    def result = singularForm((String)pluralForm) + "Name"
+    //  There are always exceptions to the rules
+    //   EmailNotifier uses "notifierName"
+    if (pluralForm == "emailNotifiers") {
+        result = "notifierName"
+    }
+    return result
+}
+def pathToParameterList(String filePath) {
+    def result = [];
+    def pathParts = [];
+    pathParts = filePath.tokenize(File.separatorChar)
+    def isProperty = false;
+    for (def i = 0; i < pathParts.size() - 1; i = i+2) {
+        // For properties do NOT include nested property sheets
+        //   But DO include the property name - which is the last piece
+        if (pathParts[i] == "properties") {
+            isProperty = true;
+            result.add(pluralToParameterName(pathParts[i]) + ":'" + pathParts[-1].take(pathParts[-1].lastIndexOf('.')) + "'")
+            break;
+        }
+        // For resources and resource Pools the *.dsl file is the object name
+        if (pathParts[i] == "resources" || pathParts[i] == "resourcePools") {
+            result
+                .add(pluralToParameterName(pathParts[i]) + ":'" + pathParts[-1]
+                    .take(pathParts[-1]
+                        .lastIndexOf('.')) + "'")
+        } else if (filePath.endsWith("/deployerApplication.dsl") && pathParts[i] == "deployerApplications") {
+            result.add("applicationName:'" + pathParts[i + 1] + "'")
+        } else {
+            result.add(pluralToParameterName(pathParts[i]) + ":'" + pathParts[i + 1] + "'")
+        }
+    }
+    // For Properties add the path parameter to properly locate the property in nested sheets
+    if (isProperty) {
+        result.add("path:'" + (!filePath.startsWith("/") ? "/" : "") + filePath.take(filePath.lastIndexOf('.')) + "'")
+    }
+    return result
+}
+def  pathToObjectName(String filePath) {
+    def result = "";
+    def pathParts = [];
+    pathParts = filePath.tokenize(File.separatorChar)
+    /* Properties values are stored the leaf-node which is a text file (*.txt)
+       And the text file name is the property name.
+       In all case not *.dsl (including porperties) the leaf-node also names the object.
+
+       Resources and ResourcePools use the .dsl file to determine the object's name
+
+       Some steps have 2 files a .dsl file and a .cmd, .groovy, .pl or .sh file.
+       In the case of such steps we don't mind if we stumble upon the same object name and delete it twice.
+     */
+    if (!filePath.endsWith(".dsl") || pathParts[1] == "resources" || pathParts[1] == "resourcePools") {
+        result = pathParts[-1]
+        result = result
+            .take(result
+                .lastIndexOf('.')) // Strip file extension
+    } else {
+        // All other objects derive their name from the folder above the DSL file:
+        //   .../an_object_name/object.dsl
+        result = pathParts[-2]
+    }
+    return result;
+}
+def pathToDeleteCommand(String filePath){
+    return pathToCommand(filePath, "delete")
+}
+def pathToModifyCommand(String filePath){
+    return pathToCommand(filePath, "modify")
+}
+
+def pathToCommand(String filePath, String command) {
+    def result = command
+    def pathParts = [];
+    pathParts = pathParts + filePath.tokenize(File.separatorChar)
+    if (filePath.contains("/properties/")) {
+        result = result + "Property"
+    } else if (!filePath.endsWith(".dsl")) {
+        result = ""
+    } else if (filePath.contains("/steps/")) {
+        if (filePath.contains("/processes/")) {
+            result = result + "ProcessStep"
+        }
+        else if (filePath.contains("/procedures/")) {
+            result = result + "Step"
+        }
+        else {
+            result = ""
+        }
+    } else if (filePath.contains("/resources/") || filePath.contains("/resourcePools/")) {
+        result = result + singularForm((String) pathParts[-2]).capitalize()
+    } else if (filePath.contains("/deployerApplications/") && command == "delete") {
+        result = "removeDeployerApplication"
+    } else {
+        result = result + singularForm((String) pathParts[-3]).capitalize()
+    }
+    return result
 }
 
 def summaryString (def counters) {

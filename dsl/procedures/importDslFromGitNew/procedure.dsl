@@ -13,13 +13,28 @@ procedure procName, {
             subprocedure: 'PullClone',
             subproject:'/plugins/EC-Git/project',
             resourceName: '$[/myJob/usedResource]',
+            description: """
+                EC-DslDeploy spec tests rely on the value of [Run]condition.
+                Do not change [Run]condition without successfully running those tests.
+            """,
+            condition: '$[/javascript (getProperty("repoUrl")!="skip_checkout_changes_step_please");]',
             errorHandling: 'abortProcedure',
                 actualParameter: [
                         config: '$[config]',
                         gitRepoFolder: '$[dest]',
                         branch: '$[branch]',
-                        repoUrl: '$[repoUrl]'
+                        repoUrl: '$[repoUrl]',
+                        propertyWithFileList: '$[/javascript if (myJob.incrementalImport == "1") { "/myJob/change_list.json";}]'
                 ]
+
+    step 'renameObjectsInChangeList', {
+        description = 'Issue rename commands based on the change list data'
+        alwaysRun = '0'
+        broadcast = '0'
+        command = new File(pluginDir, "dsl/procedures/$procName/steps/renameObjectsInChangeList.groovy").text
+        resourceName = '$[/myJob/usedResource]'
+        shell = 'ec-groovy'
+    }
 
     step 'Import DSL from directory',
             subprocedure: 'installDslFromDirectory',
@@ -34,6 +49,16 @@ procedure procName, {
                     includeObjects: '''$[includeObjects]''',
                     excludeObjects: '''$[excludeObjects]'''
             ]
+
+    step 'deleteObjectsInChangeList', {
+        description = 'Issue delete commands based on the change list data'
+        alwaysRun = '0'
+        broadcast = '0'
+        command = new File(pluginDir, "dsl/procedures/$procName/steps/deleteObjectsInChangeList.groovy").text
+        resourceName = '$[/myJob/usedResource]'
+        shell = 'ec-groovy'
+    }
+
 
     step 'Cleanup', {
         condition = '''$[/javascript

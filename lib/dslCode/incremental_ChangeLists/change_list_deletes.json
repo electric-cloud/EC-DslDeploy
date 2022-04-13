@@ -1,0 +1,64 @@
+{"what":"INCREMENTAL",
+    "changed":[],
+    "added":[],
+    "deleted":[
+        "/tags/does_not_exist/tags.dsl",
+        "/personaPages/does_not_exist/personaPage.dsl",
+        "/personaCategories/does_not_exist/personaCategory.dsl",
+        "/personas/does_not_exist/persona.dsl",
+        "/users/does_not_exist/user.dsl",
+        "/groups/does_not_exist/group.dsl",
+        "/reportObjectTypes/does_not_exist/reportObjectType.dsl",
+        "/resources/does_not_exist.dsl",
+        "/resourcePools/does_not_exist.dsl",
+        "/projects/incr_project_deletes/project.dsl",
+
+        "/projects/incr_project_deletes/credentialProviders/does_not_exist/credentialProvider.dsl",
+        "/projects/incr_project_deletes/credentials/does_not_exist/credential.dsl",
+        "/projects/incr_project_deletes/pluginConfigurations/does_not_exist/pluginConfiguration.dsl",
+
+        "/projects/incr_project_deletes/procedures/does_not_exist/procedure.dsl",
+        "/projects/incr_project_deletes/resourceTemplates/does_not_exist/resourceTemplate.dsl",
+        "/projects/incr_project_deletes/workflowDefinitions/does_not_exist/workflowDefinition.dsl",
+
+        "/projects/incr_project_deletes/environmentTemplates/does_not_exist/environmentTemplate.dsl",
+        "/projects/incr_project_deletes/environments/does_not_exist/environment.dsl",
+        "/projects/incr_project_deletes/components/does_not_exist/component.dsl",
+
+        "/projects/incr_project_deletes/applications/does_not_exist/application.dsl",
+        "/projects/incr_project_deletes/pipelines/does_not_exist/pipeline.dsl",
+        "/projects/incr_project_deletes/releases/does_not_exist/release.dsl",
+
+        "/projects/incr_project_deletes/schedules/does_not_exist/schedule.dsl",
+        "/projects/incr_project_deletes/catalogs/does_not_exist/catalog.dsl",
+        "/projects/incr_project_deletes/reports/does_not_exist/report.dsl",
+        "/projects/incr_project_deletes/dashboards/does_not_exist/dashboard.dsl",
+
+        "/projects/incr_project_deletes/applications/does_not_exist/applicationTiers/does_not_exist/applicationTier.dsl",
+        "/projects/incr_project_deletes/applications/does_not_exist/microservices/does_not_exist/microservice.dsl",
+        "/projects/incr_project_deletes/applications/does_not_exist/processes/does_not_exist/process.dsl",
+        "/projects/incr_project_deletes/applications/does_not_exist/snapshots/does_not_exist/snapshots.dsl",
+
+        "/projects/incr_project_deletes/applications/does_not_exist/applicationTiers/does_not_exist/components/does_not_exist/component.dsl",
+        "/projects/incr_project_deletes/catalogs/does_not_exist/catalogItems/does_not_exist/catalogItem.dsl",
+
+        "/projects/incr_project_deletes/components/does_not_exist/processes/does_not_exist/process.dsl",
+
+        "/projects/incr_project_deletes/dashboards/does_not_exist/widgets/does_not_exist/widget.dsl",
+
+        "/projects/incr_project_deletes/environments/does_not_exist/clusters/does_not_exist/cluster.dsl",
+        "/projects/incr_project_deletes/environments/does_not_exist/environmentTiers/does_not_exist/environmentTier.dsl",
+
+        "/projects/incr_project_deletes/pipelines/does_not_exist/stages/does_not_exist/stage.dsl",
+
+        "/projects/incr_project_deletes/applications/does_not_exist/processes/does_not_exist/processSteps/does_not_exist/processStep.dsl",
+        "/projects/incr_project_deletes/components/does_not_exist/processes/does_not_exist/processSteps/does_not_exist/processStep.dsl",
+
+        "/projects/incr_project_deletes/procedures/does_not_exist/steps/does_not_exist/step.dsl",
+
+        "/projects/incr_project_deletes/releases/does_not_exist/pipelines/does_not_exist/pipeline.dsl",
+
+        "/projects/incr_project_deletes/procedures/does_not_exist/steps/does_not_exist/emailNotifiers/does_not_exist/emailNotifier.dsl"
+    ],
+    "renamed":{}
+}

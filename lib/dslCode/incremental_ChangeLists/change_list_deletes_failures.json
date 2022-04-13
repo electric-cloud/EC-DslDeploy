@@ -1,0 +1,33 @@
+{"what":"INCREMENTAL",
+    "changed":[],
+    "added":[],
+    "deleted":[
+        "/projects/incr_project_deletes/applications/does_not_exist/tierMaps/does_not_exist/tierMap.dsl",
+        "/projects/incr_project_deletes/applications/does_not_exist/environmentTemplateTierMaps/does_not_exist/environmentTemplateTierMap.dsl",
+        "/projects/incr_project_deletes/catalogs/does_not_exist/catalogItems/does_not_exist/triggers/does_not_exist/triggers.dsl",
+
+        "/projects/incr_project_deletes/applications/does_not_exist/applicationTiers/does_not_exist/components/does_not_exist/processes/does_not_exist/process.dsl",
+
+        "/projects/incr_project_deletes/dashboards/does_not_exist/reportingFilters/does_not_exist/reportingFilters.dsl",
+
+        "/projects/incr_project_deletes/pipelines/does_not_exist/stages/does_not_exist/gates/does_not_exist/gate.dsl",
+        "/projects/incr_project_deletes/pipelines/does_not_exist/stages/does_not_exist/tasks/does_not_exist/task.dsl",
+
+        "/projects/incr_project_deletes/pipelines/does_not_exist/stages/does_not_exist/gates/does_not_exist/tasks/does_not_exist/task.dsl",
+
+        "/projects/incr_project_deletes/applications/does_not_exist/applicationTiers/does_not_exist/components/does_not_exist/processes/does_not_exist/processSteps/does_not_exist/processStep.dsl",
+
+        "/projects/incr_project_deletes/procedures/does_not_exist/emailNotifiers/does_not_exist/emailNotifier.dsl",
+
+        "/projects/incr_project_deletes/releases/does_not_exist/deployerApplications/does_not_exist/deployerApplication.dsl",
+
+        "/projects/incr_project_deletes/dashboards/does_not_exist/widgets/does_not_exist/reportingFilters/does_not_exist/reportingFilter.dsl",
+        "/projects/incr_project_deletes/dashboards/does_not_exist/widgets/does_not_exist/widgetFilterOverrides/does_not_exist/widgetFilterOverride.dsl",
+
+        "/projects/incr_project_deletes/applications/does_not_exist/triggers/does_not_exist/triggers.dsl",
+        "/projects/incr_project_deletes/pipelines/does_not_exist/triggers/does_not_exist/trigger.dsl",
+        "/projects/incr_project_deletes/procedures/does_not_exist/triggers/does_not_exist/trigger.dsl",
+        "/projects/incr_project_deletes/releases/does_not_exist/triggers/does_not_exist/triggers.dsl"
+    ],
+    "renamed":{}
+}

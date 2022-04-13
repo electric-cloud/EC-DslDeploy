@@ -1,6 +1,6 @@
 <!--
 
-     Copyright 2019 Electric Cloud, Inc.
+     Copyright 2022 Electric Cloud, Inc.
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -128,5 +128,15 @@
     <property>excludeObjects</property>
     <required>0</required>
     <documentation>List of paths to objects to exclude. Nothing by default</documentation>
+  </formElement>
+  <formElement>
+    <type>checkbox</type>
+    <label>Incremental Import:</label>
+    <property>incrementalImport</property>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <initiallyChecked>0</initiallyChecked>
+    <documentation>This is an <B>experimental</B> feature, that is under review.<BR/>Use at your own risk.<BR/>It imports only changes thereby shortening the import process. To do so it relies on a change list from the source code repository plugin.</documentation>
+    <required>0</required>
   </formElement>
 </editor>
