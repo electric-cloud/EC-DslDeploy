@@ -83,7 +83,7 @@ if (pDir.exists()) {
         if (!incremental || (
                 incremental && (
                     changeListText.indexOf('"what":"INITIAL"') > -1) ||
-                    changeListText.indexOf("projects/$basename/") > -1)) {
+                    changeListText.indexOf(""""projects/$basename/""") > -1)) {
             println "Processing project $basename"
             def escapedProjName = StringEscapeUtils
                 .escapeJava(basename)
