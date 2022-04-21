@@ -70,9 +70,9 @@ foreach my $objectType (@subProjectEntities ) {
         # If that object type is not found in the list skip them
         my $toMatch;
         if ("$pluralObjectTypeName" eq "projects") {
-            $toMatch = "\"projects/";
+            $toMatch = "\"projects/$[projName]/";
         } else {
-            $toMatch = "\"projects/.*/$pluralObjectTypeName/"
+            $toMatch = "\"projects/$[projName]/$pluralObjectTypeName/"
         }
         if ($changeListText !~ m[$toMatch]) {
             print("Skip importing of $pluralObjectTypeName as those are not in the change list\n");
