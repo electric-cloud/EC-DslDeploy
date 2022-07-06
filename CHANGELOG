@@ -1,3 +1,6 @@
+2022-07-06 Valera Fessler <vfezler@cloudbees.com>
+  * 4.1.2: Added support for overwrite mode in the main deploy step for single DSL files
+
 2019-06-25 Laurent Rochette <lrochette@cloudbees.com>
   * 2.1.3: Fixed issue with "." on DSL
 

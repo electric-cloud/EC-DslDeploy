@@ -113,6 +113,57 @@ class overwrite_installDslFromDirectory extends PluginTestHelper {
         assert getTaskResult.contains("NoSuchStage")
     }
 
+    def "overwrite_installDslFromDirectory overwrite single DSL file"() {
+        given: "the overwrite_installDslFromDirectory code"
+        when: "Load deafult DSL Code"
+        dsl """
+        project 'BEE-19095', {
+            tracked = '1'
+        
+            pipeline 'test', {
+        
+                formalParameter 'ec_stagesToRun', {
+                    expansionDeferred = '1'
+                }
+        
+                stage 'Stage 1', {
+                    colorCode = '#289ce1'
+                    pipelineName = 'test'
+        
+                    gate 'PRE'
+        
+                    gate 'POST'
+                }
+            }
+        }"""
+        and: "overwrite existing project and replace stage with new one"
+        def p = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installDslFromDirectory",
+          actualParameter: [
+            directory: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_single_DSL",
+            pool: 'local',
+            overwrite: '1'
+          ]
+        )""")
+        then: "job completed with success"
+        assert p.jobId
+        assert getJobProperty("outcome", p.jobId) == "success"
+
+        then: "old stage does not exist"
+        def resut = dslWithXmlResponse(
+                        """getStage(projectName: 'BEE-19095', pipelineName: 'test', stageName: 'Stage 1')""",
+                        null, [ignoreStatusCode: true])
+
+        assert resut
+        assert resut.contains("NoSuchStage")
+
+        then: "Check the new stage is present"
+        def result = dsl """getStage(projectName: 'BEE-19095', pipelineName: 'test', stageName: 'Stage 1_changed')"""
+        assert result.stage.stageName == "Stage 1_changed"
+    }
+
     def "deploy persona, personaPage, personaCategory, user, group"(){
 
         given: "the top level objects code (persona, personaPage, personaCategory, user, group)"
