@@ -118,9 +118,25 @@ class overwrite_installDslFromDirectory extends PluginTestHelper {
         when: "Load deafult DSL Code"
         dsl """
         project 'BEE-19095', {
-            procedure 'oldProcedure'
+            tracked = '1'
+        
+            pipeline 'test', {
+        
+                formalParameter 'ec_stagesToRun', {
+                    expansionDeferred = '1'
+                }
+        
+                stage 'Stage 1', {
+                    colorCode = '#289ce1'
+                    pipelineName = 'test'
+        
+                    gate 'PRE'
+        
+                    gate 'POST'
+                }
+            }
         }"""
-        and: "overwrite existing project and replace oldProcedure with newProcedure"
+        and: "overwrite existing project and replace stage with new one"
         def p = runProcedureDsl("""
         runProcedure(
           projectName: "/plugins/$pName/project",
@@ -135,17 +151,17 @@ class overwrite_installDslFromDirectory extends PluginTestHelper {
         assert p.jobId
         assert getJobProperty("outcome", p.jobId) == "success"
 
-        then: "oldProcedure not exists"
+        then: "old stage does not exist"
         def resut = dslWithXmlResponse(
-                        """getProcedure(projectName: 'BEE-19095', procedureName: 'oldProcedure')""",
+                        """getStage(projectName: 'BEE-19095', pipelineName: 'test', stageName: 'Stage 1')""",
                         null, [ignoreStatusCode: true])
 
         assert resut
-        assert resut.contains("NoSuchProcedure")
+        assert resut.contains("NoSuchStage")
 
-        then: "Check the stage is present"
-        def result = dsl """getProcedure(projectName: 'BEE-19095', procedureName: 'newProcedure')"""
-        assert result.procedure.procedureName == "newProcedure"
+        then: "Check the new stage is present"
+        def result = dsl """getStage(projectName: 'BEE-19095', pipelineName: 'test', stageName: 'Stage 1_changed')"""
+        assert result.stage.stageName == "Stage 1_changed"
     }
 
     def "deploy persona, personaPage, personaCategory, user, group"(){
