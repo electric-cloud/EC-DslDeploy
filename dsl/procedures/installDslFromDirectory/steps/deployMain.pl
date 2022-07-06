@@ -18,11 +18,9 @@ my $counter=0;
 opendir(my $topDslDir, ".") || die ("cannot read top level directory");
 
 # Support 0/1 and true/false values for overwrite parameter
-my $ovrwrt = "$[overwrite]";
-if (lc($ovrwrt) eq "true" || $ovrwrt) {
+my $ovrwrt = 0;
+if (lc("$[overwrite]") eq "true" || "$[overwrite]") {
     $ovrwrt = 1;
-} else {
-    $ovrwrt = 0;
 }
 
 while (my $file = readdir($topDslDir)) {
