@@ -144,7 +144,7 @@ class overwrite_installDslFromDirectory extends PluginTestHelper {
         assert resut.contains("NoSuchProcedure")
 
         then: "Check the stage is present"
-        result = dsl """getProcedure(projectName: 'BEE-19095', procedureName: 'newProcedure')"""
+        def result = dsl """getProcedure(projectName: 'BEE-19095', procedureName: 'newProcedure')"""
         assert result.procedure.procedureName == "newProcedure"
     }
 
