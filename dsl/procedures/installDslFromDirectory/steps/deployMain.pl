@@ -20,7 +20,7 @@ opendir(my $topDslDir, ".") || die ("cannot read top level directory");
 while (my $file = readdir($topDslDir)) {
   if ($file =~ m/^.*\.(dsl|groovy)$/) {
     printf ("Processing top level file $file\n");
-    $ec->evalDsl({dslFile => $file});
+    $ec->evalDsl({dslFile => $file, overwrite => $[overwrite]});
     $counter++
   }
 }

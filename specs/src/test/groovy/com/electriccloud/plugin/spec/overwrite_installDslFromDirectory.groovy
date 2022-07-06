@@ -113,6 +113,41 @@ class overwrite_installDslFromDirectory extends PluginTestHelper {
         assert getTaskResult.contains("NoSuchStage")
     }
 
+    def "overwrite_installDslFromDirectory overwrite single DSL file"() {
+        given: "the overwrite_installDslFromDirectory code"
+        when: "Load deafult DSL Code"
+        dsl """
+        project 'BEE-19095', {
+            procedure 'oldProcedure'
+        }"""
+        and: "overwrite existing project and replace oldProcedure with newProcedure"
+        def p = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installDslFromDirectory",
+          actualParameter: [
+            directory: "$plugDir/$pName-$pVersion/lib/dslCode/overwrite_single_DSL",
+            pool: 'local',
+            overwrite: '1'
+          ]
+        )""")
+        then: "job completed with success"
+        assert p.jobId
+        assert getJobProperty("outcome", p.jobId) == "success"
+
+        then: "oldProcedure not exists"
+        def resut = dslWithXmlResponse(
+                        """getProcedure(projectName: 'BEE-19095', procedureName: 'oldProcedure')""",
+                        null, [ignoreStatusCode: true])
+
+        assert resut
+        assert resut.contains("NoSuchProcedure")
+
+        then: "Check the stage is present"
+        result = dsl """getProcedure(projectName: 'BEE-19095', procedureName: 'newProcedure')"""
+        assert result.procedure.procedureName == "newProcedure"
+    }
+
     def "deploy persona, personaPage, personaCategory, user, group"(){
 
         given: "the top level objects code (persona, personaPage, personaCategory, user, group)"
