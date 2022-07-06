@@ -17,10 +17,18 @@ $ec->setProperty("/myJob/CWD", getcwd);
 my $counter=0;
 opendir(my $topDslDir, ".") || die ("cannot read top level directory");
 
+# Support 0/1 and true/false values for overwrite parameter
+my $ovrwrt = "$[overwrite]";
+if (lc($ovrwrt) eq "true" || $ovrwrt) {
+    $ovrwrt = 1;
+} else {
+    $ovrwrt = 0;
+}
+
 while (my $file = readdir($topDslDir)) {
   if ($file =~ m/^.*\.(dsl|groovy)$/) {
     printf ("Processing top level file $file\n");
-    $ec->evalDsl({dslFile => $file, overwrite => $[overwrite]});
+    $ec->evalDsl({dslFile => $file, overwrite => $ovrwrt});
     $counter++
   }
 }
