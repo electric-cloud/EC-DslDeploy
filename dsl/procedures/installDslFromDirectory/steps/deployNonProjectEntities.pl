@@ -109,8 +109,8 @@ END_COMMAND
 
     # check if corresponding directory exists
     if (-d pluralForm("$objectType")) {
-        $command2 = "def changeListText = '''" + $changeListText + "'''";
         $command2 = <<"END_COMMAND";
+
 def absDir    = '$[/myJob/CWD]'
 def overwrite = '$[overwrite]'
 def ignoreFailed = '$[ignoreFailed]'
@@ -144,6 +144,7 @@ if (dir.exists()) {
   setProperty(propertyName: "summary", value: "no " + pluralForm("$objectType"))
 }
 END_COMMAND
+        $command2 = "def changeListText = '''" + $changeListText + "''' $command2";
 
         my $localMode = '$[localMode]';
 
@@ -156,6 +157,7 @@ END_COMMAND
 
 setProperty(propertyName: "summary", value: "no " + pluralForm("$objectType"))
 END_COMMAND
+        $command2 = "def changeListText = '''''' $command2";
     }
 
     my $command  = "$command1" . "$command2";
