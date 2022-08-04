@@ -152,9 +152,9 @@ setProperty(propertyName: "/plugins/$pName/project/properties/$metadataProperty"
             rsrcName: "local"
           ]
         )""")
-        then: "job is not failed"
+        then: "job succeeds"
         assert runProc.jobId
-        assert getJobProperty("outcome", runProc.jobId) != "error"
+        assert getJobProperty("outcome", runProc.jobId) == "success"
 
         when: "Old and new objects are retrieved"
         userAdded = dsl """getUser(userName: '$userAddedName')"""
