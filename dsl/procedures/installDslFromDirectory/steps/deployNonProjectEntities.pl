@@ -131,7 +131,7 @@ if (changeListText != null && changeListText.size() > 0) {
     try {
         changeList = jsonSlurp.parseText('''$changeListText''')
     } catch (Exception ex) {
-        println "Error parsing change list text: " + ex.getMessage()
+        println "Error parsing change list text: " . ex.getMessage()
     }
 }
 File dir      = new File(absDir, pluralForm("$objectType"))
@@ -144,7 +144,7 @@ if (dir.exists()) {
   setProperty(propertyName: "summary", value: "no " + pluralForm("$objectType"))
 }
 END_COMMAND
-        $command2 = "def changeListText = '''" + $changeListText + "''' $command2";
+        $command2 = "def changeListText = '''" . $changeListText . "''' $command2";
 
         my $localMode = '$[localMode]';
 
