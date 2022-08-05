@@ -456,6 +456,7 @@ abstract class BaseObject extends DslDelegatingScript {
       int endIndex = extension > -1 ? extension : dir.name.length()
       String propName = dir.name.substring(0, endIndex)
       String propPath = "${propRoot}/${propName}"
+      String propPath2 = "${propRoot}/properties/${propName}"
       allProperties<<propName
 
       try {
@@ -463,7 +464,8 @@ abstract class BaseObject extends DslDelegatingScript {
                 propertyName: propName, expand: false)
 
         if (dir.directory) {
-          if (changeCheck("$propPath", changeList, ["added", "changed"])) {
+          if (changeCheck("$propPath", changeList, ["added", "changed"])
+              || changeCheck("$propPath2", changeList, ["added", "changed"])) {
             def propSheetId
             if (existsProp) {
               propSheetId = existsProp
@@ -478,7 +480,8 @@ abstract class BaseObject extends DslDelegatingScript {
             loadNestedProperties(propPath, dir, overwrite, propSheetId, projectRootProps, changeList)
           }
         } else {
-          if (changeCheck("${propPath}.text", changeList, ["added", "changed"])) {
+          if (changeCheck("${propPath}.txt", changeList, ["added", "changed"])
+              || changeCheck("${propPath2}.txt", changeList, ["added", "changed"])) {
             if (existsProp) {
               modifyProperty(propertyName: propName, value: dir
                   .text,
@@ -555,21 +558,27 @@ abstract class BaseObject extends DslDelegatingScript {
   def changeCheck(String filePath, changeList = [:], changeTypes = ["changed", "added"]) {
     // The change list will only apply if it is marked "INCREMENTAL" and if the supplied file is found in the list
     //  Otherwise the change list does NOT apply (make all changes by applying all files)
-    if (filePath.startsWith("/")) {
-      filePath = filePath.substring(1)
-    }
-    // println "changeCheck: look for path '$filePath' in $changeList"
+    println "changeCheck: look for path '$filePath' in $changeList"
     boolean change = true;
     if (changeList?.what == "INCREMENTAL") {
       // The change list applies and this file may be found or not
       change = changeTypes.any{changeType ->
         changeList[changeType].any{fileName ->
-          fileName.contains(filePath) // Using contains allows us to check nested properties better
+          // Using contains allows us to check nested properties better
+          removeSlashesAtStart(fileName).contains(removeSlashesAtStart(filePath))
         }
       }
     }
-    // println "found change: $change"
+    println "found change: $change"
     return change
   }
 
+  static String removeSlashesAtStart(String value)
+  {
+    while (value.startsWith("/")) {
+      value = value.substring(1)
+    }
+
+    return value;
+  }
 }
