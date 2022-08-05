@@ -107,10 +107,8 @@ END_COMMAND
     # with Perl variables usage / substitution
     my $command2;
 
-
     # check if corresponding directory exists
     if ("project" eq "$objectType" && -d '$[projDir]/') {
-        $command2 = "def changeListText = '''" . $changeListText . "'''";
         $command2 = <<"END_COMMAND";
 
 println "OUTER DSL for processing project: " + projectName
@@ -138,10 +136,9 @@ if (counter == 0) {
 }
 return ""
 END_COMMAND
+        $command2 = "def changeListText = '''" . $changeListText . "''' $command2";
     } elsif ("project" ne "$objectType" && -d '$[projDir]/' . pluralForm("$objectType")) {
-        $command2 = "def changeListText = '''" . $changeListText . "'''";
         $command2 = <<"END_COMMAND";
-
 
 println "OUTER DSL for processing project's ${objectType}(ie)s - project: " + projectName
 println '''  changeListText: $changeListText'''
@@ -171,11 +168,13 @@ if (counters.get("Error") != null) {
 setProperty(propertyName: "summary", value: summaryString(counters))
 return ""
 END_COMMAND
+        $command2 = "def changeListText = '''" . $changeListText . "''' $command2";
     } else {
         $command2 = <<"END_COMMAND";
 
 setProperty(propertyName: "summary", value: "no " + pluralForm("$objectType"))
 END_COMMAND
+        $command2 = "def changeListText = '''''' $command2";
     }
 
     my $command   = "$command1" . "$command2";
