@@ -250,6 +250,7 @@ abstract class BaseObject extends DslDelegatingScript {
       } catch (Exception e) {
         println("Error: " + e)
         counters.put("Error", e.message)
+        throw e
       }
     }   // directory for "objects" exists
     counters.put(objType, nbObjs)
