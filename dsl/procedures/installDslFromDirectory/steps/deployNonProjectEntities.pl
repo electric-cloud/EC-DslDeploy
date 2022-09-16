@@ -4,7 +4,7 @@ $[/myProject/scripts/perlHeaderJSON]
 my $clientFilesCompatible = checkClientFilesCompatibility();
 
 # deploy non project entities
-my @nonProjectEntities = ("tag", "personaPage", "personaCategory", "persona", "user", "group", "reportObjectType", "resource", "resourcePool");
+my @nonProjectEntities = ("tag", "personaPage", "personaCategory", "persona", "user", "group", "reportObjectType", "resource", "resourcePool", "serviceAccount");
 
 my @includeObjects = ();
 if ("$[includeObjects]" ne "") {
