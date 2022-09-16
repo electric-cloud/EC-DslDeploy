@@ -1,5 +1,6 @@
-2022-09-14 Valera Fessler <vfezler@cloudbees.com>
+2022-09-16 Valera Fessler <vfezler@cloudbees.com>
   * 4.1.4: BEE-23820 - Fixed issue with exceptions that should be retried
+           BEE-23482 - Added support for serviceAccount objects
 
 2022-08-05 Valera Fessler <vfezler@cloudbees.com>
   * 4.1.3: Fixed a few bugs that were caused by incremental import support
