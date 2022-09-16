@@ -19,13 +19,13 @@ class ServiceAccountSpec
   }
 
   def doCleanupSpec() {
-    dsl """deleteServieAccount (serviceAccountName: '$serviceAccountName')"""
+    dsl """deleteServiceAccount (serviceAccountName: '$serviceAccountName')"""
   }
 
   // Service account tests
   def "import service account"() {
     given: "service account"
-      dsl """createServieAccount (serviceAccountName: '$serviceAccountName')"""
+      dsl """createServiceAccount (serviceAccountName: '$serviceAccountName')"""
 
     when: "Load DSL Code"
       def response= runProcedureDsl("""
@@ -42,7 +42,7 @@ class ServiceAccountSpec
       assert getJobProperty("outcome", response.jobId) == "success"
 
     then: "check that service account is created"
-      def result = dsl """getServieAccount (serviceAccountName: '$serviceAccountName')"""
+      def result = dsl """getServiceAccount (serviceAccountName: '$serviceAccountName')"""
       assert result?.serviceAccount?.size == 1
    }
 }
