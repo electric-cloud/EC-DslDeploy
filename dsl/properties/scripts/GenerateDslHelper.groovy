@@ -109,7 +109,8 @@ class GenerateDslHelper {
             def order = []
 
             objectTypeDetail.objects.object.each{
-                order.add(it.name)
+                // put encoded name into the metadata file
+                order.add(encode(it.name))
             }
 
             data << [order: order]

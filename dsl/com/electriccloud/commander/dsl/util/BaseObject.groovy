@@ -247,6 +247,10 @@ abstract class BaseObject extends DslDelegatingScript {
         if (exc != null) {
           throw exc
         }
+      } catch (FileNotFoundException e) {
+        // BEE-24274: we should now throw this exception for backward compatibility
+        println("Error: " + e)
+        counters.put("Error", e.message)
       } catch (Exception e) {
         println("Error: " + e)
         counters.put("Error", e.message)
