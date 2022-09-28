@@ -1,3 +1,6 @@
+2022-09-28 Valera Fessler <vfezler@cloudbees.com>
+  * 4.1.5: BEE-24274 - Fixed exception during import DSL using service catalog item
+
 2022-09-16 Valera Fessler <vfezler@cloudbees.com>
   * 4.1.4: BEE-23820 - Fixed issue with exceptions that should be retried
            BEE-23482 - Added support for serviceAccount objects
