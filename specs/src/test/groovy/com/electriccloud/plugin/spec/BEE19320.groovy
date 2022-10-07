@@ -152,7 +152,7 @@ project '$projName', {
         def userName = randomize('\'test\'user\'')
         def artName = "art:" + randomize('art_name')
 
-        given: 'create project with single quotes in the name'
+        given: 'create user with single quotes in the name'
         dsl """ createUser(userName: "$userName") """
 
         when: 'run generate Dsl procedure'
@@ -182,7 +182,7 @@ project '$projName', {
         assert userDir.exists()
 
         assertFile(new File(userDir, 'user.dsl'), """
-project '$userName', {
+user '$userName', {
   email = null
   fullUserName = null
 }
@@ -320,7 +320,7 @@ project '$projName', {
         def userName = randomize('"test"user"')
         def artName = "art:" + randomize('art_name')
 
-        given: 'create project with single quotes in the name'
+        given: 'create user with single quotes in the name'
         dsl """ createUser(userName: "$userName") """
 
         when: 'run generate Dsl procedure'
@@ -350,7 +350,7 @@ project '$projName', {
         assert userDir.exists()
 
         assertFile(new File(userDir, 'user.dsl'), """
-project '$userName', {
+user '$userName', {
   email = null
   fullUserName = null
 }
