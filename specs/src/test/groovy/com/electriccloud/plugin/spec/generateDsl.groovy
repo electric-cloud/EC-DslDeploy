@@ -1093,9 +1093,9 @@ project '$projName', {
 
     def "generate DSL for project with special symbol in project names"() {
         dslDir = 'build/proj_spec_symbols'
-        def projName = 'proj | new > name \\'
-        def procName = 'Procedure: Verify QA / Notify'
-        def procStepName = 'step [1/2]'
+        def projName = 'proj \'" | new > name \\'
+        def procName = 'Procedure: \' Verify QA / Notify'
+        def procStepName = 'step \' [1/2]'
         args << [projectName: projName,
                  procedureName: procName,
                  procStepName: procStepName]
@@ -1112,7 +1112,7 @@ project '$projName', {
                           actualParameter: [
                             directory: "$dslDir",
                             objectType: 'project',
-                            objectName: "proj | new > name \\\\\\\\",
+                            objectName: "proj '" | new > name \\\\\\\\",
                             includeAllChildren: '1',
                             includeAcls: '0',
                             includeAclsInDifferentFile: '0',
@@ -1135,7 +1135,7 @@ project '$projName', {
         and: "check project was created"
         assert projDir.exists()
         assertFile(new File(projDir, 'project.dsl'), """
-project 'proj | new > name \\\\', {
+project 'proj '" | new > name \\\\', {
   tracked = '1'
 }
 """)
