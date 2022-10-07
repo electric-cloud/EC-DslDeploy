@@ -300,7 +300,11 @@ abstract class BaseObject extends DslDelegatingScript {
     //println "Processing $objType file $objPath/$plural/$objName/${dslFile.name}"
     bindingMap[(objType + "Name")] = objName     //=> procedureName
     bindingMap[(objType + "Dir")] = objDir      //=> procedureDir
-    if(changeCheck("$objPath/$plural/$objName/${dslFile.name}", changeList, ["added", "changed"])) {
+
+    def path = "$objPath".endsWith('/')
+                  ? ("$objPath" + "$plural/$objName")
+                  : "$objPath/$plural/$objName"
+    if(changeCheck("$path/${dslFile.name}", changeList, ["added", "changed"])) {
       def obj = loadObject(dslFile.absolutePath, bindingMap, overwriteMode)
       loaded = true
     }
@@ -319,9 +323,9 @@ abstract class BaseObject extends DslDelegatingScript {
       // Load ACLs
       def aclDir = new File(childDir, 'acls')
       if (aclDir.directory) {
-        println "Found acls for $objPath/$plural/$objName"
+        println "Found acls for $path"
         "${objType}" objName, {
-          loadAcls(aclDir, "$objPath/$plural/$objName", bindingMap, changeList)
+          loadAcls(aclDir, "$path", bindingMap, changeList)
         }
       } else {
         println "No acls directory for $objType $objName"
@@ -330,10 +334,10 @@ abstract class BaseObject extends DslDelegatingScript {
       // Load nested properties
       def propDir = new File(childDir, 'properties')
       if (propDir.directory) {
-        def propertySheet = getProperties path: "$objPath/$plural['$objName']"
+        def propertySheet = getProperties path: "$objPath/$plural[$objName]"
         def propSheetId = propertySheet.propertySheetId.toString()
         "${objType}" objName, {
-          loadNestedProperties("$objPath/$plural/$objName", propDir,
+          loadNestedProperties("$path", propDir,
                   overwriteMode, propSheetId, false, changeList)
         }
       } else {
