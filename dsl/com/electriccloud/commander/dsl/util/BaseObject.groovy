@@ -330,7 +330,7 @@ abstract class BaseObject extends DslDelegatingScript {
       // Load nested properties
       def propDir = new File(childDir, 'properties')
       if (propDir.directory) {
-        def propertySheet = getProperties path: "$objPath/$plural['$objName']"
+        def propertySheet = getProperties path: "$objPath/$plural/$objName"
         def propSheetId = propertySheet.propertySheetId.toString()
         "${objType}" objName, {
           loadNestedProperties("$objPath/$plural/$objName", propDir,

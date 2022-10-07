@@ -3,9 +3,16 @@ import com.electriccloud.client.groovy.ElectricFlow
 $[/myProject/scripts/GenerateDslHelper]
 
 ElectricFlow ef = new ElectricFlow()
+
+// BEE-19320: Escape single quote character in the entity name like 'te'st'
+def objectName = ef.getProperty(propertyName: "objectName")?.property?.value
+if (objectName) {
+    objectName = objectName.replace('\'','\\\'')
+}
+
 new GenerateDslBuilder(ef)
         .objectType('$[objectType]')
-        .objectName('$[objectName]')
+        .objectName("$objectName")
         .toDirectory('$[directory]')
         .includeAllChildren('$[includeAllChildren]'.equals('1'))
         .includeChildren('$[includeChildren]')
