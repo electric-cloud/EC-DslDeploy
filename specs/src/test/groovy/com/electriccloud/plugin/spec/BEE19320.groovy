@@ -32,7 +32,7 @@ class BEE19320 extends PluginTestHelper
         dslDir = 'build/' + randomize('dsl_dir')
         def projName = randomize('\'test\'project\'')
         args << [projectName: projName]
-        def artName = randomize('art_name')
+        def artName = "art:" + randomize('art_name')
 
         given: 'create project with single quotes in the name'
         dsl """ createProject(projectName: "$projName") """
@@ -81,7 +81,7 @@ project '$projName', {
         dslDir = 'build/' + randomize('dsl_dir')
         def projName = randomize('\'test\'project\'')
         args << [projectName: projName]
-        def artName = randomize('art_name')
+        def artName = "art:" + randomize('art_name')
 
         given: 'create project with single quotes in the name'
         dsl """ createProject(projectName: "$projName") """
@@ -150,7 +150,7 @@ project '$projName', {
 
         dslDir = 'build/' + randomize('dsl_dir')
         def userName = randomize('\'test\'user\'')
-        def artName = randomize('art_name')
+        def artName = "art:" + randomize('art_name')
 
         given: 'create project with single quotes in the name'
         dsl """ createUser(userName: "$userName") """
@@ -200,7 +200,7 @@ project '$userName', {
         dslDir = 'build/' + randomize('dsl_dir')
         def projName = randomize('"test"project"')
         args << [projectName: projName]
-        def artName = randomize('art_name')
+        def artName = "art:" + randomize('art_name')
 
         given: 'create project with double quotes in the name'
         dsl """ createProject(projectName: "$projName") """
@@ -249,7 +249,7 @@ project '$projName', {
         dslDir = 'build/' + randomize('dsl_dir')
         def projName = randomize('"test"project"')
         args << [projectName: projName]
-        def artName = randomize('art_name')
+        def artName = "art:" + randomize('art_name')
 
         given: 'create project with single quotes in the name'
         dsl """ createProject(projectName: "$projName") """
@@ -318,7 +318,7 @@ project '$projName', {
 
         dslDir = 'build/' + randomize('dsl_dir')
         def userName = randomize('"test"user"')
-        def artName = randomize('art_name')
+        def artName = "art:" + randomize('art_name')
 
         given: 'create project with single quotes in the name'
         dsl """ createUser(userName: "$userName") """
