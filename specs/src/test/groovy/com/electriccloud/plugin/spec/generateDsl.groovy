@@ -1051,9 +1051,9 @@ project '$projName', {
         def stepDir = new File(procStepDir, encStepName)
         assert stepDir.exists()
         assertFile(new File(stepDir, 'step.dsl'),
-                "import java.io.File\n\n\n"
-                        + "step '$procStepName', {\n"
-                        + "  command = new File(projectDir, \"./procedures/$encProcName/steps/$encStepName" + ".cmd\").text\n}\n")
+            "import java.io.File\n\n\n"
+                + "step '$procStepName', {\n"
+                + "  command = new File(projectDir, \"./procedures/$encProcName/steps/$encStepName" + ".cmd\").text\n}\n")
         assertFile(new File(procStepDir, encode(procStepName) + '.cmd'),
                 'echo Procedure is completed')
 
@@ -1062,11 +1062,11 @@ project '$projName', {
         def pipeDir = new File(projDir, "pipelines/"  + encPipeName)
         assert pipeDir.exists()
         assertFile(new File(pipeDir, 'pipeline.dsl'), "\n" +
-                "pipeline '$pipelineName', {\n\n"
-                + "  formalParameter 'ec_stagesToRun', {\n"
-                + "    expansionDeferred = '1'\n"
-                + "  }"
-                + "\n}\n")
+            "pipeline '$pipelineName', {\n\n"
+            + "  formalParameter 'ec_stagesToRun', {\n"
+            + "    expansionDeferred = '1'\n"
+            + "  }"
+            + "\n}\n")
         def encStageName = encode(pipeStageName)
         def pipeStageDir = new File(pipeDir, "stages/"  + encStageName)
         assert pipeStageDir.exists()
@@ -1075,15 +1075,15 @@ project '$projName', {
         def taskDir = new File(pipeStageDir, "tasks/" + encTaskName)
         assert taskDir.exists()
         assertFile(new File(taskDir, 'task.dsl'),
-                'import java.io.File\n\n\n'
-                        + "task '$pipeTaskName', {\n"
-                        + '  actualParameter = [\n'
-                        + "    \'commandToRun\': new File(projectDir, \"./pipelines/$encPipeName/stages/$encStageName/tasks/$encTaskName" + ".cmd\").text,\n  ]\n"
-                        + '  subpluginKey = \'EC-Core\'\n'
-                        + '  subprocedure = \'RunCommand\'\n'
-                        + '  taskType = \'COMMAND\'\n' + '}\n')
+            'import java.io.File\n\n\n'
+                + "task '$pipeTaskName', {\n"
+                + '  actualParameter = [\n'
+                + "    \'commandToRun\': new File(projectDir, \"./pipelines/$encPipeName/stages/$encStageName/tasks/$encTaskName" + ".cmd\").text,\n  ]\n"
+                + '  subpluginKey = \'EC-Core\'\n'
+                + '  subprocedure = \'RunCommand\'\n'
+                + '  taskType = \'COMMAND\'\n' + '}\n')
         assertFile(new File(pipeStageDir, "tasks/" + encTaskName + ".cmd"),
-                'echo task %1 completed')
+            'echo task %1 completed')
 
         cleanup:
         deleteProjects([projectName: projName], false)
@@ -1528,8 +1528,8 @@ project '$projName', {
     private static String encode(String arg)
     {
         Map<String, String> ENCODE_MAP = [
-                "/": "%2F", "\\": "%5C", ":": "%3A", "*": "%2A", "?": "%3F", "\"": "%22",
-                "<": "%3C", ">": "%3E", "|": "%7C"
+            "/": "%2F", "\\": "%5C", ":": "%3A", "*": "%2A", "?": "%3F", "\"": "%22",
+            "<": "%3C", ">": "%3E", "|": "%7C"
         ] as HashMap
         String result = arg
         ENCODE_MAP.each {key, value ->
