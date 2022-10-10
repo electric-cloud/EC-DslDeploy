@@ -17,6 +17,7 @@ class BEE19320 extends PluginTestHelper
     def doSetupSpec()
     {
         dsl """ deleteProject(projectName: "$jira") """
+        dslFile "generate_dsl_test_procedure.dsl"
         pVersion = getP("/plugins/$pName/pluginVersion")
         plugDir = getP("/server/settings/pluginsDirectory")
     }
@@ -30,8 +31,9 @@ class BEE19320 extends PluginTestHelper
     {
 
         dslDir = 'build/' + randomize('dsl_dir')
-        def projName = randomize('\'test\'project\'')
+        def projName = randomize("'test'project'")
         args << [projectName: projName]
+        def escapedProjName = projName.replace("'", "\\\'").replace("\"", "\\\"")
         def artName = "art:" + randomize('art_name')
 
         given: 'create project with single quotes in the name'
@@ -64,13 +66,13 @@ class BEE19320 extends PluginTestHelper
         assert projDir.exists()
 
         assertFile(new File(projDir, 'project.dsl'), """
-project '$projName', {
+project '$escapedProjName', {
   tracked = '1'
 }
 """)
 
         cleanup:
-        deleteProjects([projectName: projName], false)
+        dsl """ deleteProject(projectName: "$projName") """
         dsl """ deleteArtifact(artifactName: "$artName") """
         new File(dslDir).deleteDir()
     }
@@ -79,8 +81,9 @@ project '$projName', {
     {
 
         dslDir = 'build/' + randomize('dsl_dir')
-        def projName = randomize('\'test\'project\'')
+        def projName = randomize("'test'project'")
         args << [projectName: projName]
+        def escapedProjName = projName.replace("'", "\\\'").replace("\"", "\\\"")
         def artName = "art:" + randomize('art_name')
 
         given: 'create project with single quotes in the name'
@@ -116,7 +119,7 @@ project '$projName', {
         assert projDir.exists()
 
         assertFile(new File(projDir, 'project.dsl'), """
-project '$projName', {
+project '$escapedProjName', {
   tracked = '1'
 }
 """)
@@ -133,14 +136,8 @@ project '$projName', {
         File stepDir =  new File(procedureDir, "steps/" + projName)
         assert stepDir.exists()
 
-        assert new File(procedureDir, "formalParameters").exists()
-
-        // check formal parameter
-        File formalParamDir = new File(procedureDir, "formalParameters/" + projName)
-        assert formalParamDir.exists()
-
         cleanup:
-        deleteProjects([projectName: projName], false)
+        dsl """ deleteProject(projectName: "$projName") """
         dsl """ deleteArtifact(artifactName: "$artName") """
         new File(dslDir).deleteDir()
     }
@@ -149,7 +146,8 @@ project '$projName', {
     {
 
         dslDir = 'build/' + randomize('dsl_dir')
-        def userName = randomize('\'test\'user\'')
+        def userName = randomize("'test'user'")
+        def escapedUserName = userName.replace("'", "\\\'").replace("\"", "\\\"")
         def artName = "art:" + randomize('art_name')
 
         given: 'create user with single quotes in the name'
@@ -182,10 +180,7 @@ project '$projName', {
         assert userDir.exists()
 
         assertFile(new File(userDir, 'user.dsl'), """
-user '$userName', {
-  email = null
-  fullUserName = null
-}
+user '$escapedUserName'
 """)
 
         cleanup:
@@ -203,7 +198,7 @@ user '$userName', {
         def artName = "art:" + randomize('art_name')
 
         given: 'create project with double quotes in the name'
-        dsl """ createProject(projectName: "$projName") """
+        dsl """ createProject(projectName: '$projName') """
 
         when: 'run generate Dsl procedure'
         def result= runProcedureDsl("""
@@ -213,7 +208,7 @@ user '$userName', {
           actualParameter: [
             directory: "$dslDir",
             objectType: 'project',
-            objectName: "$projName",
+            objectName: '$projName',
             includeAllChildren: '1',
             artifactName: "$artName",
             artifactVersionVersion: '1.0',
@@ -228,7 +223,7 @@ user '$userName', {
         when: "retrieve artifact"
         retrieveArtifactVersion("$artName", "1.0", dslDir)
         then:
-        File projDir = new File (dslDir, "projects/" + projName)
+        File projDir = new File (dslDir, "projects/" + encode(projName))
         assert projDir.exists()
 
         assertFile(new File(projDir, 'project.dsl'), """
@@ -238,7 +233,7 @@ project '$projName', {
 """)
 
         cleanup:
-        deleteProjects([projectName: projName], false)
+        dsl """ deleteProject(projectName: '$projName') """
         dsl """ deleteArtifact(artifactName: "$artName") """
         new File(dslDir).deleteDir()
     }
@@ -252,10 +247,10 @@ project '$projName', {
         def artName = "art:" + randomize('art_name')
 
         given: 'create project with single quotes in the name'
-        dsl """ createProject(projectName: "$projName") """
-        dsl """ createProcedure(projectName: "$projName", procedureName: "$projName") """
-        dsl """ createStep(projectName: "$projName", procedureName: "$projName", stepName: "$projName") """
-        dsl """ createFormalParameter(projectName: "$projName", procedureName: "$projName", formalParameterName: "$projName") """
+        dsl """ createProject(projectName: '$projName') """
+        dsl """ createProcedure(projectName: '$projName', procedureName: '$projName') """
+        dsl """ createStep(projectName: '$projName', procedureName: '$projName', stepName: '$projName') """
+        dsl """ createFormalParameter(projectName: '$projName', procedureName: '$projName', formalParameterName: '$projName') """
 
         when: 'run generate Dsl procedure'
         def result= runProcedureDsl("""
@@ -265,7 +260,7 @@ project '$projName', {
           actualParameter: [
             directory: "$dslDir",
             objectType: 'project',
-            objectName: "$projName",
+            objectName: '$projName',
             includeAllChildren: '1',
             artifactName: "$artName",
             artifactVersionVersion: '1.0',
@@ -280,7 +275,7 @@ project '$projName', {
         when: "retrieve artifact"
         retrieveArtifactVersion("$artName", "1.0", dslDir)
         then:
-        File projDir = new File (dslDir, "projects/" + projName)
+        File projDir = new File (dslDir, "projects/" + encode(projName))
         assert projDir.exists()
 
         assertFile(new File(projDir, 'project.dsl'), """
@@ -292,23 +287,17 @@ project '$projName', {
         assert new File(projDir, "procedures").exists()
 
         // check procedure
-        File procedureDir = new File (projDir, "procedures/" + projName)
+        File procedureDir = new File (projDir, "procedures/" + encode(projName))
         assert procedureDir.exists()
 
         assert new File(procedureDir, "steps").exists()
 
         // check step
-        File stepDir =  new File(procedureDir, "steps/" + projName)
+        File stepDir =  new File(procedureDir, "steps/" + encode(projName))
         assert stepDir.exists()
 
-        assert new File(procedureDir, "formalParameters").exists()
-
-        // check formal parameter
-        File formalParamDir = new File(procedureDir, "formalParameters/" + projName)
-        assert formalParamDir.exists()
-
         cleanup:
-        deleteProjects([projectName: projName], false)
+        dsl """ deleteProject(projectName: '$projName') """
         dsl """ deleteArtifact(artifactName: "$artName") """
         new File(dslDir).deleteDir()
     }
@@ -321,7 +310,7 @@ project '$projName', {
         def artName = "art:" + randomize('art_name')
 
         given: 'create user with single quotes in the name'
-        dsl """ createUser(userName: "$userName") """
+        dsl """ createUser(userName: '$userName') """
 
         when: 'run generate Dsl procedure'
         def result= runProcedureDsl("""
@@ -331,7 +320,7 @@ project '$projName', {
           actualParameter: [
             directory: "$dslDir",
             objectType: 'user',
-            objectName: "$userName",
+            objectName: '$userName',
             includeAllChildren: '1',
             artifactName: "$artName",
             artifactVersionVersion: '1.0',
@@ -346,24 +335,21 @@ project '$projName', {
         when: "retrieve artifact"
         retrieveArtifactVersion("$artName", "1.0", dslDir)
         then:
-        File userDir = new File (dslDir, "users/" + userName)
+        File userDir = new File (dslDir, "users/" + encode(userName))
         assert userDir.exists()
 
         assertFile(new File(userDir, 'user.dsl'), """
-user '$userName', {
-  email = null
-  fullUserName = null
-}
+user '$userName'
 """)
 
         cleanup:
-        dsl """ deleteUser(userName: "$userName") """
+        dsl """ deleteUser(userName: '$userName') """
         dsl """ deleteArtifact(artifactName: "$artName") """
         new File(dslDir).deleteDir()
     }
 
     // Check import
-    def "installDslFromDirectory quotes"() {
+    def "installDslFromDirectory double quotes"() {
         given: "the overwrite_installDslFromDirectory code"
         when: "Load DSL Code"
         def p = runProcedureDsl("""
@@ -371,7 +357,7 @@ user '$userName', {
           projectName: "/plugins/$pName/project",
           procedureName: "installDslFromDirectory",
           actualParameter: [
-            directory: "$plugDir/$pName-$pVersion/lib/dslCode/quotes",
+            directory: "$plugDir/$pName-$pVersion/lib/dslCode/quotes/double",
             pool: 'local'
           ]
         )""")
@@ -380,6 +366,54 @@ user '$userName', {
         assert getJobProperty("outcome", p.jobId) == "success"
 
         cleanup:
-        deleteProjects([projectName: "\"'test\"'"], false)
+        dsl """ deleteProject(projectName: '"test"') """
+    }
+
+    def "installDslFromDirectory single quotes"() {
+        given: "the overwrite_installDslFromDirectory code"
+        when: "Load DSL Code"
+        def p = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installDslFromDirectory",
+          actualParameter: [
+            directory: "$plugDir/$pName-$pVersion/lib/dslCode/quotes/single",
+            pool: 'local'
+          ]
+        )""")
+        then: "job completes with success"
+        assert p.jobId
+        assert getJobProperty("outcome", p.jobId) == "success"
+
+        cleanup:
+        dsl """ deleteProject(projectName: "'test'") """
+    }
+
+    private static String encode(String arg)
+    {
+        Map<String, String> ENCODE_MAP = [
+                "/": "%2F", "\\": "%5C", ":": "%3A", "*": "%2A", "?": "%3F", "\"": "%22",
+                "<": "%3C", ">": "%3E", "|": "%7C"
+        ] as HashMap
+        String result = arg
+        ENCODE_MAP.each {key, value ->
+            result = result.replace(key, value)
+        }
+        return result
+    }
+
+    private void assertFile(File file, String content) {
+        assert file.exists()
+        assert content.equals(file.text.replace("\r\n", "\n"))
+    }
+
+    private void assertAcl(File file, String content) {
+        File aclFolder = new File (file, "acls")
+        assert aclFolder
+
+        File aclFile = aclFolder.listFiles().find()
+        assert aclFile && aclFile.isFile() && aclFile.name == "acl.dsl"
+
+        assertFile(aclFile, content)
     }
 }
