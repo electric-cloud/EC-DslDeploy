@@ -1055,7 +1055,7 @@ project '$projName', {
                 + "step '$procStepName', {\n"
                 + "  command = new File(projectDir, \"./procedures/$encProcName/steps/$encStepName" + ".cmd\").text\n}\n")
         assertFile(new File(procStepDir, encode(procStepName) + '.cmd'),
-                'echo Procedure is completed')
+            'echo Procedure is completed')
 
         then:"check pipelines directories were created"
         def encPipeName = encode(pipelineName)
@@ -1537,7 +1537,7 @@ project '$projName', {
         }
         return result
     }
-
+    
     private void assertFile(File file, String content) {
         assert file.exists()
         assert content.equals(file.text.replace("\r\n", "\n"))
