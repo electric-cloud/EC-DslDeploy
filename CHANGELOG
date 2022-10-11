@@ -1,3 +1,6 @@
+2022-10-11 Irina Tykhan <itykhan@cloudbees.com>
+  * 4.1.6: BEE-23021 - Handle DSL import of completed releases - EC-DslDeploy side
+
 2022-10-07 Valera Fessler <vfezler@cloudbees.com>
   * 4.1.6: BEE-19320 - Support single and double quotes in the entity names
 
