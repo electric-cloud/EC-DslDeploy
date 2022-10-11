@@ -143,6 +143,13 @@ if (dir.exists()) {
 } else {
   setProperty(propertyName: "summary", value: "no " + pluralForm("$objectType"))
 }
+
+// Print advisoryMessages
+if (context && context.advisoryMessages && context.advisoryMessages.size() > 0) {
+    for (def msg: context.advisoryMessages) {
+        println "Advisory message:" + msg
+    }
+}
 END_COMMAND
         $command2 = "def changeListText = '''" . $changeListText . "''' $command2";
 

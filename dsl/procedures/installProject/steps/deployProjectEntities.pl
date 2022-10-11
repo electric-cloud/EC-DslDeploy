@@ -140,6 +140,13 @@ if (counter == 0) {
   setProperty(propertyName: "summary", value: "No project.groovy or project.dsl processed")
   setProperty(propertyName: "outcome", value: "warning")
 }
+
+// Print advisoryMessages
+if (context && context.advisoryMessages && context.advisoryMessages.size() > 0) {
+    for (def msg: context.advisoryMessages) {
+        println "Advisory message:" + msg
+    }
+}
 return ""
 END_COMMAND
         $command2 = "def changeListText = '''" . $changeListText . "''' $command2";
@@ -172,6 +179,14 @@ if (counters.get("Error") != null) {
 }
 
 setProperty(propertyName: "summary", value: summaryString(counters))
+
+// Print advisoryMessages
+if (context && context.advisoryMessages && context.advisoryMessages.size() > 0) {
+    for (def msg: context.advisoryMessages) {
+        println "Advisory message:" + msg
+    }
+}
+
 return ""
 END_COMMAND
         $command2 = "def changeListText = '''" . $changeListText . "''' $command2";

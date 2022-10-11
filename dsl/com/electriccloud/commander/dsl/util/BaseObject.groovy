@@ -306,6 +306,16 @@ abstract class BaseObject extends DslDelegatingScript {
                   : "$objPath/$plural/$objName"
     if(changeCheck("$path/${dslFile.name}", changeList, ["added", "changed"])) {
       def obj = loadObject(dslFile.absolutePath, bindingMap, overwriteMode)
+
+      if (obj == null) {
+        // if response is null then it means an object wasn't imported because some error
+        // (for instance completed release can't be imported and just ignored)
+        println("Skip import of the object in $objPath/$plural/$objName/${dslFile.name} " +
+                "and all nested objects according to restrictions")
+
+        return false
+      }
+
       loaded = true
     }
 
