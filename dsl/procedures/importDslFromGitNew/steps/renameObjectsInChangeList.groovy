@@ -31,11 +31,23 @@ def incremental = false
 try {
     incremental = (ef.getProperty(propertyName:"/myJob/incrementalImport").property.value == "1") ? true : false
 } catch (Exception ex) {
-    println "Could not get incrementalImport value due to: ${ex.message}"
-    incremental = false
+    try {
+        incremental = (ef.getProperty(propertyName:"incrementalImport").property.value == "1") ? true : false
+    } catch (Exception ex2) {
+        println "Could not get incrementalImport value due to: ${ex2.message}"
+        incremental = false
+    }
 }
 
 println "Incremental Import: $incremental"
+
+// Set incrementalImport flag on job level to guarantee its availability
+if (incremental) {
+    ef.setProperty(propertyName:"/myJob/incrementalImport", value: "1")
+} else {
+    ef.setProperty(propertyName:"/myJob/incrementalImport", value: "0")
+}
+
 
 def changeListText = "";
 if (incremental) {
