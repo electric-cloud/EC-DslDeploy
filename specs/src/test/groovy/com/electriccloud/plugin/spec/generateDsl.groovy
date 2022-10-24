@@ -1445,7 +1445,6 @@ credential 'localCred', userName: 'localUser', {
         new File(dslDir).deleteDir()
     }
 
-
     /**
      * CEV-28512: EC-DslDeploy Duplicates Command Task Contents when Tasks are Contained in a Task Group
      * @return
@@ -1524,6 +1523,81 @@ project '$projName', {
         new File(dslDir).deleteDir()
     }
 
+    /**
+     * BEE-18910: EC-DslDeploy generates details for properties and property sheets
+     */
+    def "BEE-18910 generate property and property sheet details"() {
+        dslDir = 'build/dsl8'
+        def projName = 'BEE-18910'
+        args << [projectName: projName]
+        given: dslFile("nested_properties_with_details.dsl", args)
+
+        when: 'run generate Dsl procedure'
+        def result= runProcedureDsl("""
+        runProcedure(
+          projectName: "generateDslTestProject",
+          procedureName: "generateDslAndPublish",
+          actualParameter: [
+            directory: "$dslDir",
+            objectType: 'project',
+            objectName: "$projName",
+            includeAllChildren: '1',
+            artifactName: 'dsl:dslCode8',
+            artifactVersionVersion: '1.0',
+            runResourceName: '$defaultPool'
+          ]
+        )""")
+        then:
+        assert result.jobId
+        def outcome=getJobProperty("outcome", result.jobId)
+        assert outcome == "success"
+        //
+        when:
+        // retrieve artifact
+        retrieveArtifactVersion("dsl:dslCode8", "1.0", dslDir)
+        then:
+
+        //
+        File projDir = new File (dslDir, "projects/" + projName)
+        assert projDir.exists()
+
+        assertFile(new File(projDir, 'project.dsl'), """
+project '$projName', {
+  tracked = '1'
+}
+""")
+        assert new File(projDir, "properties").exists()
+
+        // check prop1
+        File prop1Dir = new File (projDir, "properties/prop1")
+        assert prop1Dir.exists()
+        assert projDir.isDirectory()
+        assertFile(new File(projDir, "properties/prop1.txt"), "prop1")
+        assertFile(new File(projDir, "properties/prop1/property.dsl"), """
+import java.io.File
+
+def propertyContent = new File(propsDir, 'prop1.txt').text
+
+property 'prop1', value: \"\"\"\$propertyContent\"\"\", {
+  description = 'prop1'
+}
+""")
+
+        // check propSheet1
+        File propSheet1Dir = new File (projDir, "properties/propSheet1")
+        assert propSheet1Dir.exists()
+        assert propSheet1Dir.isDirectory()
+        assertFile(new File(projDir, "properties/propSheet1/propertySheet.dsl"), """
+property 'propSheet1', {
+  description = 'propSheet1'
+}
+""")
+
+        cleanup:
+        deleteProjects([projectName: projName], false)
+        dsl 'deleteArtifact(artifactName: "dsl:dslCode8")'
+        new File(dslDir).deleteDir()
+    }
 
     private static String encode(String arg)
     {
