@@ -468,68 +468,110 @@ abstract class BaseObject extends DslDelegatingScript {
     // println "  projectRootProps : $projectRootProps"
     // println "  changeList       : $changeList"
 
-    def allProperties = []
-    propsDir.eachFile { dir ->
-      println "  parsing " + dir.toString()
-      int extension = dir.name.lastIndexOf('.')
-      int endIndex = extension > -1 ? extension : dir.name.length()
-      String propName = dir.name.substring(0, endIndex)
-      String propPath = "${propRoot}/${propName}"
-      String propPath2 = "${propRoot}/properties/${propName}"
-      allProperties<<propName
+    def current
+    def stack
+    try {
+      current = this.current
+      stack   = this.stack
 
-      try {
-        def existsProp = getProperty(objectId: "propertySheet-$pSheetId",
-                propertyName: propName, expand: false)
+      this.current = null
+      this.stack   = new LinkedList<>()
 
-        if (dir.directory) {
-          if (changeCheck("$propPath", changeList, ["added", "changed"])
-              || changeCheck("$propPath2", changeList, ["added", "changed"])) {
-            def propSheetId
-            if (existsProp) {
-              propSheetId = existsProp
-                  .propertySheetId
+      def allProperties = []
+      propsDir.eachFile { dir ->
+
+        if (dir.name.toString() in ["property.dsl", "propertySheet.dsl"]
+            || (dir.directory && new File(dir, "property.dsl").exists())) {
+          // BEE-18910: Skip processing files and folders with special meaning directly,
+          // these optional files and folders are handled directly.
+          return
+        }
+
+        println "  parsing " + dir.toString()
+        int extension = dir.name.lastIndexOf('.')
+        int endIndex = extension > -1 ? extension : dir.name.length()
+        String propName = dir.name.substring(0, endIndex)
+        String propPath = "${propRoot}/${propName}"
+        String propPath2 = "${propRoot}/properties/${propName}"
+        allProperties<<propName
+
+        try {
+          def existsProp = getProperty(objectId: "propertySheet-$pSheetId",
+                  propertyName: propName, expand: false)
+
+          if (dir.directory) {
+            if (changeCheck("$propPath", changeList, ["added", "changed"])
+                || changeCheck("$propPath2", changeList, ["added", "changed"])) {
+
+              def propSheetId
+              if (existsProp) {
+                propSheetId = existsProp.propertySheetId
+              }
+              else {
+                def res = createProperty(objectId: "propertySheet-$pSheetId",
+                                         propertyName: propName,
+                                         propertyType: 'sheet')
+                propSheetId = res.propertySheetId
+              }
+
+              // BEE-18910: Evaluate optional property sheet DSL file to restore description, etc.
+              File propertySheetDslFile = new File(dir, "propertySheet.dsl")
+              if (propertySheetDslFile.exists()) {
+                println "  Processing property sheet file $propertySheetDslFile.absolutePath as a $propPath"
+
+                // Map bindingMap = [propertySheetId: "$pSheetId", propertyType: 'sheet']
+                Map bindingMap = [objectId: "propertySheet-$pSheetId", propertyType: 'sheet', propsDir: propsDir]
+                evalInlineDsl(propertySheetDslFile.absolutePath, bindingMap)
+              }
+
+              loadNestedProperties(propPath, dir, overwrite, propSheetId, projectRootProps, changeList)
             }
-            else {
-              def res = createProperty(objectId: "propertySheet-$pSheetId",
-                  propertyName: propName, propertyType: 'sheet')
-              propSheetId = res
-                  .propertySheetId
+          } else {
+            if (changeCheck("${propPath}.txt", changeList, ["added", "changed"])
+                || changeCheck("${propPath2}.txt", changeList, ["added", "changed"])) {
+
+              if (existsProp) {
+                modifyProperty(propertyName: propName,
+                               value: dir.text,
+                               objectId: "propertySheet-$pSheetId")
+              }
+              else {
+                createProperty(propertyName: propName,
+                               value: dir.text,
+                               objectId: "propertySheet-$pSheetId")
+              }
+
+              // BEE-18910: Evaluate optional property.dsl file with property details.
+              File propertyDslFile = new File(propsDir, "$propName/property.dsl")
+              if (propertyDslFile.exists()) {
+                println "  Processing property file $propertyDslFile.absolutePath as a $propPath"
+
+                // Map bindingMap = [propertySheetId: "$pSheetId", propertyType: 'string']
+                Map bindingMap = [objectId: "propertySheet-$pSheetId", propertyType: 'string', propsDir: propsDir]
+                evalInlineDsl(propertyDslFile.absolutePath, bindingMap)
+              }
             }
-            loadNestedProperties(propPath, dir, overwrite, propSheetId, projectRootProps, changeList)
           }
-        } else {
-          if (changeCheck("${propPath}.txt", changeList, ["added", "changed"])
-              || changeCheck("${propPath2}.txt", changeList, ["added", "changed"])) {
-            if (existsProp) {
-              modifyProperty(propertyName: propName, value: dir
-                  .text,
-                  objectId: "propertySheet-$pSheetId")
-            }
-            else {
-              createProperty(propertyName: propName, value: dir
-                  .text,
-                  objectId: "propertySheet-$pSheetId")
-            }
+        } catch (Exception e) {
+          println(String.format("Error: cannot load property %s", propPath, e.getMessage()))
+          setProperty(propertyName: "outcome", value: "warning")
+        }
+      }
+
+      if (overwrite == '1' && !projectRootProps) {
+        //cleanup nonexistent properties
+        def properties = getProperties propertySheetId: "$pSheetId"
+        properties.property.each {
+          if (!allProperties.contains(it.name)) {
+            println "Delete property '${propRoot}/${it.name}'"
+            deleteProperty propertyName: "${it.name}", objectId: "propertySheet-$pSheetId"
           }
         }
-      } catch (Exception e) {
-        println(String.format("Error: cannot load property %s", propPath, e.getMessage()))
-        setProperty(propertyName: "outcome", value: "warning")
       }
+    } finally {
+      this.current = current
+      this.stack   = stack
     }
-
-    if (overwrite == '1' && !projectRootProps) {
-      //cleanup nonexistent properties
-      def properties = getProperties propertySheetId: "$pSheetId"
-      properties.property.each {
-        if (!allProperties.contains(it.name)) {
-          println "Delete property '${propRoot}/${it.name}'"
-          deleteProperty propertyName: "${it.name}", objectId: "propertySheet-$pSheetId"
-        }
-      }
-    }
-
   }
 
 
