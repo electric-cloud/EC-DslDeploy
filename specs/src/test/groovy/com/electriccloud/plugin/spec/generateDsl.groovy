@@ -1580,6 +1580,8 @@ def propertyContent = new File(propsDir, 'prop1.txt').text
 
 property 'prop1', value: \"\"\"\$propertyContent\"\"\", {
   description = 'prop1'
+  expandable = '1'
+  suppressValueTracking = '0'
 }
 """)
 
