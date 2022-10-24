@@ -2,7 +2,7 @@ package com.electriccloud.plugin.spec
 
 import spock.lang.*
 
-class NMB27865
+class BEE18910
       extends PluginTestHelper
 {
 
