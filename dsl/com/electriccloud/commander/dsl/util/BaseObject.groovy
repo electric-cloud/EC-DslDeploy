@@ -109,23 +109,8 @@ abstract class BaseObject extends DslDelegatingScript {
       def propertySheet = getProperties path: "/projects/$projectName"
       def propSheetId = propertySheet.propertySheetId.toString()
 
-      // We should save current DSL evaluation context and reset it during import properties
-      def tmpCurrent
-      def tmpStack = new LinkedList<>()
-
-      try {
-        tmpCurrent   = this.current
-        this.current = null
-
-        tmpStack.addAll(this.stack)
-        this.stack.clear()
-
-        loadNestedProperties("/projects/$projectName", propDir, overwrite,
-                propSheetId, true, changeList)
-      } finally {
-        this.current = tmpCurrent
-        this.stack.addAll(tmpStack)
-      }
+      loadNestedProperties("/projects/$projectName", propDir, overwrite,
+              propSheetId, true, changeList)
     }  else {
       println "No properties directory for project $projectName"
     }
@@ -363,24 +348,8 @@ abstract class BaseObject extends DslDelegatingScript {
         def propertySheet = getProperties path: "$objPath/$plural[$objName]"
         def propSheetId = propertySheet.propertySheetId.toString()
         "${objType}" objName, {
-
-          // We should save current DSL evaluation context and reset it during import properties
-          def tmpCurrent
-          def tmpStack = new LinkedList<>()
-
-          try {
-            tmpCurrent   = this.current
-            this.current = null
-
-            tmpStack.addAll(this.stack)
-            this.stack.clear()
-
-            loadNestedProperties("$path", propDir,
-                  overwriteMode, propSheetId, false, changeList)
-          } finally {
-            this.current = tmpCurrent
-            this.stack.addAll(tmpStack)
-          }
+          loadNestedProperties("$path", propDir,
+                overwriteMode, propSheetId, false, changeList)
         }
       } else {
         println "No properties directory for $objType $objName"
@@ -446,6 +415,25 @@ abstract class BaseObject extends DslDelegatingScript {
     return loaded
   }     // loadObjects
 
+
+  def evalInlineDslWoContext(String dslFile, Map bindingMap) {
+    // We should save current DSL evaluation context and reset it during import properties
+    def tmpCurrent
+    def tmpStack = new LinkedList<>()
+
+    try {
+      tmpCurrent   = this.current
+      this.current = null
+
+      tmpStack.addAll(this.stack)
+      this.stack.clear()
+
+      evalInlineDsl(dslFile, bindingMap)
+    } finally {
+      this.current = tmpCurrent
+      this.stack.addAll(tmpStack)
+    }
+  }
 
   // Helper function to load another dsl script and evaluate it in-context
   def evalInlineDsl(String dslFile, Map bindingMap, String overwriteMode = "0", Boolean pluginDeployMode = true) {
@@ -545,7 +533,7 @@ abstract class BaseObject extends DslDelegatingScript {
 
               // Map bindingMap = [propertySheetId: "$pSheetId", propertyType: 'sheet']
               Map bindingMap = [objectId: "propertySheet-$pSheetId", propertyType: 'sheet', propsDir: propsDir]
-              evalInlineDsl(propertySheetDslFile.absolutePath, bindingMap)
+              evalInlineDslWoContext(propertySheetDslFile.absolutePath, bindingMap)
             }
 
             loadNestedProperties(propPath, dir, overwrite, propSheetId, projectRootProps, changeList)
@@ -572,7 +560,7 @@ abstract class BaseObject extends DslDelegatingScript {
 
               // Map bindingMap = [propertySheetId: "$pSheetId", propertyType: 'string']
               Map bindingMap = [objectId: "propertySheet-$pSheetId", propertyType: 'string', propsDir: propsDir]
-              evalInlineDsl(propertyDslFile.absolutePath, bindingMap)
+              evalInlineDslWoContext(propertyDslFile.absolutePath, bindingMap)
             }
           }
         }
