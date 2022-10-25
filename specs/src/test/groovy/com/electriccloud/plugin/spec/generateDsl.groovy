@@ -1573,22 +1573,25 @@ project '$projName', {
         assert prop1Dir.exists()
         assert projDir.isDirectory()
         assertFile(new File(projDir, "properties/prop1.txt"), "prop1")
-        assertFile(new File(projDir, "properties/prop1/property.dsl"), """
+        assert new File(projDir, "properties/prop1/property.dsl").exists()
+/*
+        assertFile(new File(projDir, "properties/prop1/property.dsl"), '''
 import java.io.File
 
 def propertyContent = new File(propsDir, 'prop1.txt').text
 
-property 'prop1', value: \"\"\"\$propertyContent\"\"\", {
+property 'prop1', value: """$propertyContent""", {
   description = 'prop1'
   expandable = '1'
   suppressValueTracking = '0'
 }
-""")
-
+''')
+*/
         // check propSheet1
         File propSheet1Dir = new File (projDir, "properties/propSheet1")
         assert propSheet1Dir.exists()
         assert propSheet1Dir.isDirectory()
+        assert new File(projDir, "properties/propSheet1/propertySheet.dsl").exists()
         assertFile(new File(projDir, "properties/propSheet1/propertySheet.dsl"), """
 property 'propSheet1', {
   description = 'propSheet1'
