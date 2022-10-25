@@ -350,18 +350,57 @@ class GenerateDslHelper {
         File propertiesDir = new File(objDir, 'properties')
         propertiesDir.mkdir()
 
-        handleProperties(propertiesDir, result.propertySheet.property)
+        handleProperties(propertiesDir, result.propertySheet.property, obj.path + "/properties")
     }
 
-    private void handleProperties(File propertiesDir, def properties) {
+    private void handleProperties(File propertiesDir, def properties, def path) {
         for (def property :  properties) {
+            def pathToProp = path + "/" + property.propertyName
+
             if (property.propertySheet) {
                 File dir = new File(propertiesDir, encode(property.propertyName))
                 dir.mkdir()
-                handleProperties(dir, property.propertySheet.property)
+
+                // BEE-18910: export all property sheet information
+                println String.format("Generate DSL for property sheet by path: %s", pathToProp)
+
+                def propDsl = electricFlow.generateDsl(path: pathToProp,
+                        suppressNulls: suppressNulls,
+                        suppressDefaults: suppressDefault,
+                        suppressChildren: true,
+                        suppressParent: suppressParent)?.value
+
+                File propertyDir = new File(propertiesDir, encode(property.propertyName))
+                propertyDir.mkdir()
+
+                File file = new File(propertyDir, "propertySheet.dsl")
+                file << propDsl
+
+                handleProperties(dir, property.propertySheet.property, pathToProp)
             } else {
                 File file = new File(propertiesDir, encode(property.propertyName + '.txt'))
                 file << property.value
+
+                // BEE-18910: export all property information
+                println String.format("Generate DSL for property by path: %s", pathToProp)
+
+                def propDsl = electricFlow.generateDsl(path: pathToProp,
+                                                       suppressNulls: suppressNulls,
+                                                       suppressDefaults: suppressDefault,
+                                                       suppressChildren: true,
+                                                       suppressParent: suppressParent)?.value
+
+                propDsl = propDsl.replaceAll(", value: ('.*?'), \\{", ', value: """\\$propertyContent""", \\{')
+
+                File propertyDir = new File(propertiesDir, encode(property.propertyName))
+                propertyDir.mkdir()
+
+                file = new File(propertyDir, "property.dsl")
+                file << "import java.io.File\n\n"
+                file << "def propertyContent = new File(propsDir, '"
+                file << encode(property.propertyName)
+                file << ".txt').text\n"
+                file << propDsl
             }
         }
     }

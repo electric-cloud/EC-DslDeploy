@@ -108,6 +108,7 @@ abstract class BaseObject extends DslDelegatingScript {
     if (propDir.directory) {
       def propertySheet = getProperties path: "/projects/$projectName"
       def propSheetId = propertySheet.propertySheetId.toString()
+
       loadNestedProperties("/projects/$projectName", propDir, overwrite,
               propSheetId, true, changeList)
     }  else {
@@ -348,7 +349,7 @@ abstract class BaseObject extends DslDelegatingScript {
         def propSheetId = propertySheet.propertySheetId.toString()
         "${objType}" objName, {
           loadNestedProperties("$path", propDir,
-                  overwriteMode, propSheetId, false, changeList)
+                overwriteMode, propSheetId, false, changeList)
         }
       } else {
         println "No properties directory for $objType $objName"
@@ -415,6 +416,25 @@ abstract class BaseObject extends DslDelegatingScript {
   }     // loadObjects
 
 
+  def evalInlineDslWoContext(String dslFile, Map bindingMap) {
+    // We should save current DSL evaluation context and reset it during import properties
+    def tmpCurrent
+    def tmpStack = new LinkedList<>()
+
+    try {
+      tmpCurrent   = this.current
+      this.current = null
+
+      tmpStack.addAll(this.stack)
+      this.stack.clear()
+
+      evalInlineDsl(dslFile, bindingMap)
+    } finally {
+      this.current = tmpCurrent
+      this.stack.addAll(tmpStack)
+    }
+  }
+
   // Helper function to load another dsl script and evaluate it in-context
   def evalInlineDsl(String dslFile, Map bindingMap, String overwriteMode = "0", Boolean pluginDeployMode = true) {
      println "Entering evalInlineDsl"
@@ -470,6 +490,14 @@ abstract class BaseObject extends DslDelegatingScript {
 
     def allProperties = []
     propsDir.eachFile { dir ->
+
+      if (dir.name.toString() in ["property.dsl", "propertySheet.dsl"]
+          || (dir.directory && new File(dir, "property.dsl").exists())) {
+        // BEE-18910: Skip processing files and folders with special meaning directly,
+        // these optional files and folders are handled directly.
+        return
+      }
+
       println "  parsing " + dir.toString()
       int extension = dir.name.lastIndexOf('.')
       int endIndex = extension > -1 ? extension : dir.name.length()
@@ -480,36 +508,59 @@ abstract class BaseObject extends DslDelegatingScript {
 
       try {
         def existsProp = getProperty(objectId: "propertySheet-$pSheetId",
-                propertyName: propName, expand: false)
+                                     propertyName: propName,
+                                     expand: false)
 
         if (dir.directory) {
           if (changeCheck("$propPath", changeList, ["added", "changed"])
               || changeCheck("$propPath2", changeList, ["added", "changed"])) {
+
             def propSheetId
             if (existsProp) {
-              propSheetId = existsProp
-                  .propertySheetId
+              propSheetId = existsProp.propertySheetId
             }
             else {
               def res = createProperty(objectId: "propertySheet-$pSheetId",
-                  propertyName: propName, propertyType: 'sheet')
-              propSheetId = res
-                  .propertySheetId
+                                       propertyName: propName,
+                                       propertyType: 'sheet')
+              propSheetId = res.propertySheetId
             }
+
+            // BEE-18910: Evaluate optional property sheet DSL file to restore description, etc.
+            File propertySheetDslFile = new File(dir, "propertySheet.dsl")
+            if (propertySheetDslFile.exists()) {
+              println "  Processing property sheet file $propertySheetDslFile.absolutePath as a $propPath"
+
+              // Map bindingMap = [propertySheetId: "$pSheetId", propertyType: 'sheet']
+              Map bindingMap = [objectId: "propertySheet-$pSheetId", propertyType: 'sheet', propsDir: propsDir]
+              evalInlineDslWoContext(propertySheetDslFile.absolutePath, bindingMap)
+            }
+
             loadNestedProperties(propPath, dir, overwrite, propSheetId, projectRootProps, changeList)
           }
         } else {
           if (changeCheck("${propPath}.txt", changeList, ["added", "changed"])
               || changeCheck("${propPath2}.txt", changeList, ["added", "changed"])) {
+
             if (existsProp) {
-              modifyProperty(propertyName: propName, value: dir
-                  .text,
-                  objectId: "propertySheet-$pSheetId")
+              modifyProperty(propertyName: propName,
+                             value: dir.text,
+                             objectId: "propertySheet-$pSheetId")
             }
             else {
-              createProperty(propertyName: propName, value: dir
-                  .text,
-                  objectId: "propertySheet-$pSheetId")
+              createProperty(propertyName: propName,
+                             value: dir.text,
+                             objectId: "propertySheet-$pSheetId")
+            }
+
+            // BEE-18910: Evaluate optional property.dsl file with property details.
+            File propertyDslFile = new File(propsDir, "$propName/property.dsl")
+            if (propertyDslFile.exists()) {
+              println "  Processing property file $propertyDslFile.absolutePath as a $propPath"
+
+              // Map bindingMap = [propertySheetId: "$pSheetId", propertyType: 'string']
+              Map bindingMap = [objectId: "propertySheet-$pSheetId", propertyType: 'string', propsDir: propsDir]
+              evalInlineDslWoContext(propertyDslFile.absolutePath, bindingMap)
             }
           }
         }
@@ -529,9 +580,7 @@ abstract class BaseObject extends DslDelegatingScript {
         }
       }
     }
-
   }
-
 
   /**
    * NMB-27865: Intercept the DslDelegate
