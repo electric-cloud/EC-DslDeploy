@@ -109,20 +109,22 @@ abstract class BaseObject extends DslDelegatingScript {
       def propertySheet = getProperties path: "/projects/$projectName"
       def propSheetId = propertySheet.propertySheetId.toString()
 
-      def current
-      def stack
-      try {
-        current = this.current
-        stack   = this.stack
+      // We should save current DSL evaluation context and reset it during import properties
+      def tmpCurrent
+      def tmpStack = new LinkedList<>()
 
+      try {
+        tmpCurrent   = this.current
         this.current = null
-        this.stack   = new LinkedList<>()
+
+        tmpStack.addAll(this.stack)
+        this.stack.clear()
 
         loadNestedProperties("/projects/$projectName", propDir, overwrite,
                 propSheetId, true, changeList)
       } finally {
-        this.current = current
-        this.stack   = stack
+        this.current = tmpCurrent
+        this.stack.addAll(tmpStack)
       }
     }  else {
       println "No properties directory for project $projectName"
@@ -361,20 +363,23 @@ abstract class BaseObject extends DslDelegatingScript {
         def propertySheet = getProperties path: "$objPath/$plural[$objName]"
         def propSheetId = propertySheet.propertySheetId.toString()
         "${objType}" objName, {
-          def current
-          def stack
-          try {
-            current = this.current
-            stack   = this.stack
 
+          // We should save current DSL evaluation context and reset it during import properties
+          def tmpCurrent
+          def tmpStack = new LinkedList<>()
+
+          try {
+            tmpCurrent   = this.current
             this.current = null
-            this.stack   = new LinkedList<>()
+
+            tmpStack.addAll(this.stack)
+            this.stack.clear()
 
             loadNestedProperties("$path", propDir,
                   overwriteMode, propSheetId, false, changeList)
           } finally {
-            this.current = current
-            this.stack   = stack
+            this.current = tmpCurrent
+            this.stack.addAll(tmpStack)
           }
         }
       } else {
