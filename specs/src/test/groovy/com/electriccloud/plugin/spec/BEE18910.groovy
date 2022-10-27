@@ -55,4 +55,51 @@ class BEE18910
       assert propSheet1
       assert propSheet1.property.description == "propSheet1"
   }
+
+  def "round trip for complex project with properties"() {
+    def dslDir = '/tmp/' + randomize('dsl')
+
+    given: "Load complex project with properies from single DSL file"
+    dslFile("complex_project.dsl")
+
+    when: "Generate DSL files"
+    def result1 = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "generateDslToDirectory",
+          actualParameter: [
+            directory: "$dslDir",
+            pool: "$defaultPool",
+            includeAllChildren: '1',
+            suppressNulls: '1',
+            objectType: 'project',
+            objectName: 'proj_name'
+          ]
+        )""")
+    then:
+    assert result1.jobId
+    def outcome1 = getJobProperty("outcome", result1.jobId)
+    assert outcome1 == "success"
+
+    when: "Import DSL files"
+    def result2 = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installDslFromDirectory",
+          actualParameter: [
+            directory: "$dslDir",
+            pool: "$defaultPool",
+            overwrite: '1'
+          ]
+        )""")
+    then:
+    assert result2.jobId
+    def outcome2 = getJobProperty("outcome", result2.jobId)
+    assert outcome2 == "success"
+
+    cleanup:
+    deleteProjects([projectName: jira], false)
+    deleteProjects([mainProject: 'proj_name', c1: 'comp_name1', c2: 'comp_name2', p1: 'proc_name1', p2: 'proc_name2'])
+    new File(dslDir).deleteDir()
+  }
 }
