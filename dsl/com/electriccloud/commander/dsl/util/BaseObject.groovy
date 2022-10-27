@@ -417,8 +417,9 @@ abstract class BaseObject extends DslDelegatingScript {
 
 
   def evalInlineDslWoContext(String dslFile, Map bindingMap) {
-    // We should save current DSL evaluation context and reset it during import properties
+    // We should save current DSL evaluation context and restore it right after import properties
     def tmpCurrent
+    def tmpBindingMap
     def tmpStack = new LinkedList<>()
 
     try {
@@ -428,10 +429,13 @@ abstract class BaseObject extends DslDelegatingScript {
       tmpStack.addAll(this.stack)
       this.stack.clear()
 
+      tmpBindingMap = this.binding.bindingMap
+
       evalInlineDsl(dslFile, bindingMap)
     } finally {
       this.current = tmpCurrent
       this.stack.addAll(tmpStack)
+      this.binding.bindingMap = tmpBindingMap
     }
   }
 
