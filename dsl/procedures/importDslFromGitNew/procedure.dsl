@@ -24,7 +24,7 @@ procedure procName, {
                         gitRepoFolder: '$[dest]',
                         branch: '$[branch]',
                         repoUrl: '$[repoUrl]',
-                        propertyWithFileList: '$[/javascript if (myJob.incrementalImport == "1") { "/myJob/change_list.json";}]'
+                        propertyWithFileList: '$[/javascript if (myJob.incrementalImport == "1" || myJobStep.incrementalImport == "1" || myJobStep.parent.incrementalImport == "1") { "/myJob/change_list.json";}]'
                 ]
 
     step 'renameObjectsInChangeList', {
