@@ -33,12 +33,6 @@ if ($error ne "") {
 }
 print("Incremental Import: $incremental\n");
 
-# Prepare projDir and projName properties, make them available in the nested job steps
-my $projDir = $ec->getProperty('projDir')->findvalue('//value');
-$ec->setProperty('projDir', $projDir);
-my $projectName = $ec->getProperty('projName')->findvalue('//value');
-$ec->setProperty('projName', $projectName);
-
 my $changeListText = "";
 if ($incremental) {
     ### Gather change list text
@@ -94,8 +88,8 @@ import com.electriccloud.commander.dsl.util.BaseObject
 $[/myProject/scripts/Utils]
 
 // Variables available for use in DSL code
-def projectName = getProperty(propertyName: 'projName')?.value
-def projectDir = getProperty(propertyName: 'projDir')?.value
+def projectName = '$[projName]'
+def projectDir = '$[projDir]'
 def overwrite = '$[overwrite]'
 def ignoreFailed = '$[ignoreFailed]'
 def includeObjectsParam = '''$[includeObjects]'''
@@ -114,7 +108,7 @@ END_COMMAND
     my $command2;
 
     # check if corresponding directory exists
-    if ("project" eq "$objectType" && -d "$projDir/") {
+    if ("project" eq "$objectType" && -d '$[projDir]/') {
         $command2 = <<"END_COMMAND";
 
 println "OUTER DSL for processing project: " + projectName
@@ -150,7 +144,7 @@ if (context && context.advisoryMessages && context.advisoryMessages.size() > 0) 
 return ""
 END_COMMAND
         $command2 = "def changeListText = '''" . $changeListText . "''' $command2";
-    } elsif ("project" ne "$objectType" && -d "$projDir/" . pluralForm("$objectType")) {
+    } elsif ("project" ne "$objectType" && -d '$[projDir]/' . pluralForm("$objectType")) {
         $command2 = <<"END_COMMAND";
 
 println "OUTER DSL for processing project's ${objectType}(ie)s - project: " + projectName
@@ -207,6 +201,7 @@ END_COMMAND
     }
 
     my $objectTypePlural = pluralForm("$objectType");
+    my $projectName = "$[projName]";
     if ($objectType eq "project"
         || isIncluded("$[includeObjects]", "$[excludeObjects]",
         "/projects/$projectName/$objectTypePlural")) {
