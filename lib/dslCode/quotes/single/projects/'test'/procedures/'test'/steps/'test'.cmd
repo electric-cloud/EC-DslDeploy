@@ -1,1 +1,0 @@
-echo Procedure is completed

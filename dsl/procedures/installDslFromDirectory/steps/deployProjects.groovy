@@ -85,7 +85,9 @@ if (pDir.exists()) {
                     changeListText.indexOf('"what":"INITIAL"') > -1) ||
                     changeListText.indexOf("projects/$basename/") > -1)) {
             println "Processing project $basename"
-            def params = [new ActualParameter('projName', basename),
+            def escapedProjName = StringEscapeUtils
+                .escapeJava(basename)
+            def params = [new ActualParameter('projName', escapedProjName),
                           new ActualParameter('projDir', projDir
                               .absolutePath
                               .toString()

@@ -6,8 +6,7 @@
   * 4.1.6: BEE-23021 - Handle DSL import of completed releases - EC-DslDeploy side
 
 2022-10-07 Valera Fessler <vfezler@cloudbees.com>
-  * 4.1.6: BEE-19320 - Support single and double quotes in the entity names
-           BEE-22186 - Fixed incremental import in the importDslFromGitNew procedure when use it as subproceduce
+  * 4.1.6: BEE-22186 - Fixed incremental import in the importDslFromGitNew procedure when use it as subproceduce
 
 2022-09-28 Valera Fessler <vfezler@cloudbees.com>
   * 4.1.5: BEE-24274 - Fixed exception during import DSL using service catalog item
