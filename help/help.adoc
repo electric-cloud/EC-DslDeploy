@@ -125,13 +125,77 @@ image:cloudbees-common::cd-plugins/ec-dsldeploy/help/importdslfromgit.png[import
 [[releaseNotes]]
 == Release notes
 
+=== EC-DslDeploy 4.1.7
+
+* Added support for property detail information like description, etc
+* Fixed incremental import in the importDslFromGitNew procedure when use it as subproceduce
+
+=== EC-DslDeploy 4.1.6
+
+* Added DSL import of completed releases - EC-DslDeploy side
+* Fixed incremental import in the importDslFromGitNew procedure when it is used as a subproceduce
+
+=== EC-DslDeploy  4.1.5
+
+* Fixed exception during import DSL using service catalog item
+
+=== EC-DslDeploy 4.1.4
+
+* Fixed issue with exceptions that should be retried
+* Added support for serviceAccount objects
+
+=== EC-DslDeploy 4.1.3
+
+* Fixed issues caused by incremental import support
+
+=== EC-DslDeploy 4.1.2
+
+* Added support for overwrite mode in the main deploy step for single DSL files
+* Added support for Triggers import/export
+
+=== EC-DslDeploy 4.1.1
+
+* Internal improvements
+
+=== EC-DslDeploy 4.1.0
+
+* Enhanced import procedure to perform partial/incremental import
+
+=== EC-DslDeploy 4.0.4
+
+* Internal improvements
+
+=== EC-DslDeploy 4.0.3
+Fixed importDslFromGitNew doesn't proceed additionalArguments property into installDslFromDirectory step
+
+=== EC-DslDeploy 4.0.2
+Fixed unexposed DSL Import Timeouts preventing Large DSL Imports
+
+=== EC-DslDeploy 4.0.1
+
+Added configuration object support to DslDeploy plugin - plugin side
+
+=== EC-DslDeploy 4.0.0
+
+* Added new procedure to provide import from Git functionality using EC-Git plugin
+* Fixed Command Task Contents being duplicated when Tasks are Contained in a Task Group
+* Added metadata for GitSync and scmType level propertysheet
+* Fixed export not generating command task Groovy
+* Removed import old services from EC-DslDeploy Plugin
+* Fixed import DSL for projects with application microservice model when all children are in separate files
+
+=== EC-DslDeploy 3.0.3
+* Added credentials import/export support
+* Fixed files path to fix deletion issue on Windows
+* Fixed 'Relative path to DSL files' parameter in importDslFromGit
+
 === EC-DslDeploy 3.0.2
 
-* The documentation has been migrated to the main documentation site.
+* Support Triggers import/export
 
 === EC-DslDeploy 3.0.1
 
-* CEV-25319: fixed a project import in the remote mode.
+* Fixed project import in the remote mode
 
 === EC-DslDeploy 3.0.0
 
@@ -144,35 +208,36 @@ image:cloudbees-common::cd-plugins/ec-dsldeploy/help/importdslfromgit.png[import
 === EC-DslDeploy 2.2.1
 
 * The plugin is adopted to use new 'clientFiles' argument in evalDsl API what allows to remove limitation of shared folder usage for DSL import
-* fixed issue with import of 'release' property sheet under the project
-* fixed issue for 'generateDslToDirectory' with includeAcls='1'
+* Fixed issue with import of 'release' property sheet under the project
+* Fixed issue for 'generateDslToDirectory' with includeAcls='1'
 
 === EC-DslDeploy 2.2.0
 
 * Added 'overwrite' parameter to install procedures
-* added 'generateDslToDirectory' procedure
-* added 'importDslFromGit' procedure
-* enhanced 'installDsl' procedure to support deploy of more types of objects
+* Added 'generateDslToDirectory' procedure
+* Added 'importDslFromGit' procedure
+* Enhanced 'installDsl' procedure to support deploy of more types of objects
+
+=== EC-DslDeploy 2.1.3
+
+* Fixed issue with "." on DSL
 
 === EC-DslDeploy 2.1.2
 
-* Merge pull request #41 from electric-cloud-community/dev/lrochette
-* convert deployMain and deployPost to ec-perl to work around 8K limit
+* Converted deployMain and deployPost to ec-perl
 
 === EC-DslDeploy 2.1.0
 
-* Merge pull request #38 from electric-cloud-community/dev/lrochette
 * Add ACLs support
 
 === EC-DslDeploy 1.1.0
 
-* Merge pull request #26 from lrochette/master
 * Add support for resources.
 
 === EC-DslDeploy 1.0.2
 
 * Refactor tests and add sample code as test.
-* Fix https://github.com/electric-cloud-community/EC-DslDeploy/issues/14[Issue #14].
+* Refactored InstallDsl and installDslFromDirectory .
 
 === EC-DslDeploy 1.0.1
 
