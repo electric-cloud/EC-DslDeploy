@@ -104,7 +104,7 @@ This procedure main usage is to set up a CI process.
 [cols="1a,1a",options="header",]
 |===
 |Parameter |Description
-|Server Resource |The resource where the DSL files will be checked out from git and imported to the {PRODUCT} server.
+|Server Resource |The resource where the DSL files are checked out from Git and imported to the {PRODUCT} server.
 |Destination Directory |The directory on the resource where the source tree will be created and from where the DSL files are read to be imported in {PRODUCT} server.
 |Cleanup? |This option will delete the destination directory with the source tree after the job execution.
 |Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
