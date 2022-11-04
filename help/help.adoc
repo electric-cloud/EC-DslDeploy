@@ -40,7 +40,7 @@ image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/installdsl.png[installD
 
 Deploy a DSL file structure from a directory on your {PRODUCT} server.
 
-This procedure main usage is to set up a CI process. It will extract your code from your SCM in a local directory on your `Dev` {PRODUCT} server, and deploy it from there.
+This procedure's main usage is to set up a CI process. It extracts your code from your SCM in a local directory on your `Dev` {PRODUCT} server, and deploys it.
 
 [cols="1a,1a",options="header",]
 |===
