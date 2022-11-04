@@ -48,7 +48,7 @@ This procedure's main usage is to set up a CI process. It extracts your code fro
 |Directory Path |The location of the DSL code on your `Dev` {PRODUCT} server.
 |Server Pool or Resource |The name of the pool or resource where the artifact will be retrieved. Use `.` if you have retrieved in your workspace.
 |Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
-|Additional argument(s)| For evalDsl calls, additional arguments such as  `--timeout` or `--debug`. Values used in `--timeout` will be used as timeouts for ectool, evalDsl, and the job step time out used to import the DSL.
+|Additional argument(s)| For evalDsl calls, additional arguments such as  `--timeout` or `--debug`. Values used in `--timeout` are used as timeouts for ectool, evalDsl, and the job step time out used to import the DSL.
 |Ignore failures |Ignore failures during import of DSL files.
 |Local mode |Do not send files to the server with help of clientFiles argument of the evalDsl operation in local mode.
 |===
