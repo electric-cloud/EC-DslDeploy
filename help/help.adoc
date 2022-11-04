@@ -67,7 +67,7 @@ The main purpose of the procedure to be a part of installDslFromDirectory proced
 |Project Name |Name of the project to install.
 |Project directory |The location of the project DSL code on your `Dev` {PRODUCT} server.
 |Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
-|Additional argument(s)| For evalDsl calls, additional arguments such as  `--timeout` or `--debug`. Values used in `--timeout` will be used as timeouts for ectool, evalDsl, and the job step time out used to import the DSL.
+|Additional argument(s)| For evalDsl calls, additional arguments such as  `--timeout` or `--debug`. Values used in `--timeout` are used as timeouts for ectool, evalDsl, and the job step time out used to import the DSL.
 |===
 
 image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/installproject.png[installProject parameters]
