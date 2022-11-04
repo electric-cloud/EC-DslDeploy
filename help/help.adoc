@@ -112,7 +112,7 @@ This procedure main usage is to set up a CI process.
 |Git repository |The URL to the repository to pull from, for example `git://server/repo.git`.
 |Commit Hash |The Commit Hash to update the index.
 
-NOTE: This will move the HEAD.
+NOTE: This moves the HEAD.
 |Remote Branch |The name of the Git branch to use, for example `my_feature`.
 |Clone? |This option will clone a repository into a newly created directory.
 |Overwrite? |This option will overwrite a repository if it already exists.
