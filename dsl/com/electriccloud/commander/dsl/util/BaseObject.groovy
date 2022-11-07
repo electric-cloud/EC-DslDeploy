@@ -30,6 +30,8 @@ import com.electriccloud.commander.dsl.DslDelegatingScript
 import groovy.io.FileType
 import groovy.json.JsonSlurper
 import org.codehaus.groovy.control.CompilerConfiguration
+
+import java.time.Duration
 import java.util.logging.Logger
 
 abstract class BaseObject extends DslDelegatingScript {
@@ -463,7 +465,18 @@ abstract class BaseObject extends DslDelegatingScript {
     //println "  Add binding map to DSLDelegate vars: " + bindingMap
     script.getDelegate().getBinding().setVariable("bindingMap", bindingMap)
     script.getDelegate().getBinding().setVariable("pluginDeployMode", pluginDeployMode)
-    return script.run();
+
+    long startTime = System.nanoTime()
+
+    try {
+      return script.run()
+    }
+    finally {
+      if (debug) {
+        long elapsedTimeInMS = Duration.ofNanos(System.nanoTime() - startTime).toMillis()
+        logger.fine("Imported dsl file: '$dslFile' with binding map: '$bindingMap', elapsed time: $elapsedTimeInMS ms")
+      }
+    }
   }
 
   def loadAcls (File aclDir, String objPath, Map bindingMap, changeList = [:]) {

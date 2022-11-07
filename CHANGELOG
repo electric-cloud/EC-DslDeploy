@@ -1,6 +1,7 @@
 2022-10.27 Valera Fessler <vfezler@cloudbees.com>
   * 4.1.7: BEE-18910 - Added support for property detail information like description, etc
            BEE-22186 - Fixed incremental import in the importDslFromGitNew procedure when use it as subproceduce
+           BEE-27841 - Instrumented EC-DslDeploy code to help debug HSBC performance issue where importing a release from a nested dsl file structure
 
 2022-10-11 Irina Tykhan <itykhan@cloudbees.com>
   * 4.1.6: BEE-23021 - Handle DSL import of completed releases - EC-DslDeploy side
