@@ -21,6 +21,14 @@ if ("$timeout" eq "") {
 }
 print("Timeout is: '$timeout'\n");
 
+my ($debug) = ("$[additionalDslArguments]" =~ m/--debug\s+([0-1]+)/);
+print("User $debug is: '$debug'\n");
+
+if ("$debug" eq "") {
+    $debug = 0;
+}
+print("User $debug is: '$debug'\n");
+
 # Is this an incremental import?
 my $incremental = 0;
 $ec->abortOnError(0);
@@ -75,7 +83,7 @@ foreach my $objectType (@subProjectEntities ) {
         }
     }
 
-    my $shell   = 'ectool --timeout ' . $timeout . ' evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl" $[additionalDslArguments]';
+    my $shell   = 'ectool --timeout ' . $timeout . ' --debug ' . $debug . ' evalDsl --dslFile {0}.groovy --serverLibraryPath "$[/server/settings/pluginsDirectory]/$[/myProject/projectName]/dsl" $[additionalDslArguments]';
 
     # without Perl variables usage / substitution
     my $command1 = <<'END_COMMAND';
