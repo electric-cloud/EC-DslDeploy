@@ -131,6 +131,7 @@ image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/importdslfromgit.png[im
 
 * Added support for property detail information like description, etc
 * Fixed incremental imports in the importDslFromGitNew procedure when used as a subprocedure
+* Instrumented EC-DslDeploy code to help debug HSBC performance issue where importing a release from a nested dsl file structure
 
 === EC-DslDeploy 4.1.6
 
