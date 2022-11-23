@@ -127,6 +127,10 @@ image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/importdslfromgit.png[im
 [[releaseNotes]]
 == Release notes
 
+=== EC-DslDeploy 4.1.8
+
+* Added support to run sub procedure 'importDslFromGitNew' for EC-DslDeploy plugin
+
 === EC-DslDeploy 4.1.7
 
 * Added support for property detail information like description, etc
