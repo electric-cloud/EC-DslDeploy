@@ -67,6 +67,7 @@
     <documentation>EC-Git configuration name.</documentation>
     <required>1</required>
     <configuration>1</configuration>
+    <configurationPluginKey>EC-Git</configurationPluginKey>
   </formElement>
   <formElement>
     <type>entry</type>
