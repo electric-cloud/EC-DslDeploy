@@ -1,5 +1,6 @@
 2022-11.23 Valera Fessler <vfezler@cloudbees.com>
   * 4.1.8: BEE-27417 - Added support to run sub procedure 'importDslFromGitNew' for EC-DslDeploy plugin
+           BEE-24707 - Fixed issue with import non project entities in case remote agent is used
 
 2022-10.27 Valera Fessler <vfezler@cloudbees.com>
   * 4.1.7: BEE-18910 - Added support for property detail information like description, etc

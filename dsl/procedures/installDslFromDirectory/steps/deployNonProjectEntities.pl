@@ -165,7 +165,8 @@ END_COMMAND
 
         # check support of clientFiles argument
         if ($localMode eq '0' && $clientFilesCompatible) {
-            $shell .= " --clientFiles \"$[/myJob/CWD]" . "/" . pluralForm($objectType) . "\""
+            $shell .= " --clientFiles \"$[/myJob/CWD]\""
+
         }
     } else {
         $command2 = <<"END_COMMAND";
