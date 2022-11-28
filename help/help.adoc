@@ -130,6 +130,7 @@ image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/importdslfromgit.png[im
 === EC-DslDeploy 4.1.8
 
 * Added support to run sub procedure 'importDslFromGitNew' for EC-DslDeploy plugin
+* Fixed issue with import non project entities in case remote agent is used
 
 === EC-DslDeploy 4.1.7
 
