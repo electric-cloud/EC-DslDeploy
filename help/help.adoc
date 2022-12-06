@@ -97,6 +97,11 @@ image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/generatedsltodirectory.
 
 === ImportDslFromGit
 
+IMPORTANT: This procedure is deprecated and relies on the ECSCM-Git plugin, which is no longer supported. Unless you have legacy installations of {PRODUCT}, you should not use it and use <<ImportDslFromGitNew>> instead.
+====
+
+====
+
 Import DSL file structure from a Git repository.
 
 This procedure main usage is to set up a CI process.
@@ -124,6 +129,42 @@ NOTE: This moves the HEAD.
 
 image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/importdslfromgit.png[importDslFromGit parameters]
 
+=== ImportDslFromGitNew
+
+Import DSL file structure from a Git repository.
+
+This procedure main usage is to set up a CI process.
+
+NOTE: This procedure uses the cd-plugin:ec-git[] plugin.
+
+[cols="1a,1a",options="header"]
+|===
+|Parameter |Description
+|Server Pool or Resource |The resource or one of the pool resources where the DSL files are checked out from Git and imported to the {PRODUCT} server.
+|Destination Directory |The directory on the resource where the source tree is created and the DSL files are stored.
+|Relative path to DSL files |If the DSL files are not located at the top level in the repository, then specify the relative path to the directory containing the DSL files within the repository. For example, `scripts/dsls` where the DSL files are located in the following sub-directories in the repository `scripts/dsls/projects` and `scripts/dsls/resources`.
+|Cleanup? |This option deletes the destination directory with the source tree after the job execution.
+|Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
+|Configuration |`EC-Git` configuration name.
+|Git repository |URL to the repository to pull from. For example, `git://server/repo.git`.
+|Remote Branch |The name of the Git branch to use. For example, `experimental`.
+|Ignore failures |Ignore failures during import of DSL files.
+|Local mode |Do not send files to the server with help of `clientFiles`
+argument of the `evalDsl` operation in local mode. Available only if the
+destination directory is accessible from the {CD} server. In a clustered
+deployment, all {PRODUCT} server nodes must have access to this directory.
+|Additional DSL arguments |Additional argument(s) for the `evalDsl` call. For example, `--timeout` or `--debug`. Values used in `--timeout` are used as timeouts for `ectool`, `evalDsl`, and the job step timeout used to import the DSL.
+|Include objects |New line separated list of paths to the objects, that should be synchronized.
+
+If set - synchronize only these objects. If empty - synchronize all available objects.
+|Exclude objects |List of paths to objects to exclude. Exclude nothing by default.
+|Incremental import |Select to only import the incremental changes that have occurred since the previous run of the procedure. When selected, the previous run's commit ID is compared to the current commit ID in the Git repository and a change list is created. This can potentially reduce the import time because the entire DSL file structure is not re-imported from the Git repository each time the procedure runs.
+
+NOTE: If the commit ID cannot be found or if the procedure or steps cannot find, read, or correctly parse the change list, the entire DSL file structure is re-imported.
+|===
+
+image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/importdslfromgitnew.png[ImportDslFromGitNew parameters,role="screenshot",width=480]
+
 [[releaseNotes]]
 == Release notes
 
@@ -136,7 +177,7 @@ image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/importdslfromgit.png[im
 
 * Added support for property detail information like description, etc
 * Fixed incremental imports in the importDslFromGitNew procedure when used as a subprocedure
-* Instrumented EC-DslDeploy code to help debug HSBC performance issue where importing a release from a nested dsl file structure
+* Instrumented EC-DslDeploy code to help debug performance issue where importing a release from a nested DSL file structure
 
 === EC-DslDeploy 4.1.6
 
