@@ -121,7 +121,18 @@
     <label>Include objects</label>
     <property>includeObjects</property>
     <required>0</required>
-    <documentation>List of paths to objects to include. Include all by default</documentation>
+    <documentation>New line separated list of paths to objects to synchronize.
+      If set, only these objects are synchronized. If empty, all available objects are synchronized.<BR/>
+      Examples:<BR/>
+      - “/projects“ - all projects<BR/>
+      - “/projects/Default/applications“ - all applications in project 'Default'<BR/>
+      - “/users“ - all users<BR/>
+      - “/projects/Commander/procedures/Master“ - ‘Master' procedure in 'Commander’ project<BR/>
+      - “/projects/*/releases“ - all releases in all projects<BR/>
+      Objects with depth > 2 are not supported.<BR/>
+      Examples:<BR/>
+      - “/projects/*/releases/release1“<BR/>
+      - “/projects/Default/application/application1/applicationTiers”</documentation>
   </formElement>
   <formElement>
     <type>textarea</type>
