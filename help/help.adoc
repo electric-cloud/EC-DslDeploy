@@ -131,9 +131,7 @@ image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/importdslfromgit.png[im
 
 === ImportDslFromGitNew
 
-Import DSL file structure from a Git repository.
-
-This procedure main usage is to set up a CI process.
+Import DSL file structure from a Git repository. This procedure's main usage is to set up a CI process.
 
 NOTE: This procedure uses the cd-plugin:ec-git[] plugin.
 
@@ -154,9 +152,25 @@ argument of the `evalDsl` operation in local mode. Available only if the
 destination directory is accessible from the {CD} server. In a clustered
 deployment, all {PRODUCT} server nodes must have access to this directory.
 |Additional DSL arguments |Additional argument(s) for the `evalDsl` call. For example, `--timeout` or `--debug`. Values used in `--timeout` are used as timeouts for `ectool`, `evalDsl`, and the job step timeout used to import the DSL.
-|Include objects |New line separated list of paths to the objects, that should be synchronized.
+|Include objects |New line separated list of paths to the objects that should be synchronized.
 
 If set - synchronize only these objects. If empty - synchronize all available objects.
+
+Examples:
+
+* “/projects“ - all projects
+* “/projects/Default/applications“ - all applications in project 'Default'
+* “/users“ - all users
+* “/projects/Commander/procedures/Master“ - ‘Master' procedure in 'Commander’ project
+* “/projects/*/releases“ - all releases in all projects
+
+[NOTE]
+====
+Objects with depth > 2 are not supported. Examples:
+
+* “/projects/*/releases/release1“
+* “/projects/Default/application/application1/applicationTiers”
+====
 |Exclude objects |List of paths to objects to exclude. Exclude nothing by default.
 |Incremental import |Select to only import the incremental changes that have occurred since the previous run of the procedure. When selected, the previous run's commit ID is compared to the current commit ID in the Git repository and a change list is created. This can potentially reduce the import time because the entire DSL file structure is not re-imported from the Git repository each time the procedure runs.
 
