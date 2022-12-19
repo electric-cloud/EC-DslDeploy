@@ -10,6 +10,10 @@ https://github.com/electric-cloud/EC-DslDeploy/wiki[Plugin Wiki]
 
 == Procedures
 
+IMPORTANT: For all parameter descriptions below, required parameters are shown in [.required]#bold italics#.
+
+
+
 === InstallDsl
 
 Deploy a DSL file structure from an Artifact Version on your {PRODUCT} server.
@@ -17,14 +21,14 @@ Deploy a DSL file structure from an Artifact Version on your {PRODUCT} server.
 [cols="1a,1a",options="header",]
 |===
 |Parameter |Description
-|Artifact Name | Required. The name of your artifact.
+|Artifact Name |The name of your artifact.
 |Artifact Version |The version of the artifact you want to deploy. If empty, the latest version is deployed.
 NOTE: Use an empty version only in your `Dev` environment. In higher environments, it's recommended that you use a specific version that has been tested in lower environments.
 
-|Pool or Resource | Required. The name of the pool or resource where the artifact will be retrieved. The DSL is evaluated on the server so all system actions, such as file reads, will be evaluated on a server node.
+|Pool or Resource |The name of the pool or resource where the artifact will be retrieved. The DSL is evaluated on the server so all system actions, such as file reads, will be evaluated on a server node.
 
 Default value is `local`.
-|Retrieve on All server nodes | Required. Use this option when running in a cluster with a local workspace, as the artifact version needs to be retrieved on all nodes (as the system pick a random server node for each action). Use alongside a resource pool covering all server node agents for the parameter above.
+|Retrieve on All server nodes |Use this option when running in a cluster with a local workspace, as the artifact version needs to be retrieved on all nodes (as the system pick a random server node for each action). Use alongside a resource pool covering all server node agents for the parameter above.
 
 Default is `false`
 |Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
@@ -41,8 +45,8 @@ This procedure's main usage is to set up a CI process. It extracts your code fro
 [cols="1a,1a",options="header",]
 |===
 |Parameter |Description
-|Directory Path | Required. The location of the DSL code on your `Dev` {PRODUCT} server.
-|Server Pool or Resource | Required. The name of the pool or resource where the artifact will be retrieved. Use `.` if you have retrieved in your workspace.
+|Directory Path |The location of the DSL code on your `Dev` {PRODUCT} server.
+|Server Pool or Resource |The name of the pool or resource where the artifact will be retrieved. Use `.` if you have retrieved in your workspace.
 |Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
 |Additional argument(s)| For evalDsl calls, additional arguments such as  `--timeout` or `--debug`. Values used in `--timeout` are used as timeouts for ectool, evalDsl, and the job step time out used to import the DSL.
 |Ignore failures |Ignore failures during import of DSL files.
@@ -75,10 +79,10 @@ Export DSL for a top level {PRODUCT} object, with options for which child object
 [cols="1a,1a",options="header",]
 |===
 |Parameter |Description
-|Directory path | Required. Folder where the code is generated.
-|Server Pool or Resource | Required. Server pool to use for a cluster setup.
-|Object Type | Required. Object type to generate DSL for.
-|Object Name | Required. Object name to generate DSL for.
+|Directory path |Folder where the code is generated.
+|Server Pool or Resource |Server pool to use for a cluster setup.
+|Object Type |Object type to generate DSL for.
+|Object Name |Object name to generate DSL for.
 |Suppress Nulls |Exclude from the generated DSL properties with null value.
 |Suppress Defaults |Exclude from the generated DSL properties with default value.
 |Suppress Parent |Exclude from the generated DSL properties referred to object parent.
@@ -94,19 +98,23 @@ image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/generatedsltodirectory.
 === ImportDslFromGit
 
 IMPORTANT: This procedure is deprecated and relies on the ECSCM-Git plugin, which is no longer supported. Unless you have legacy installations of {PRODUCT}, you should not use it and use <<ImportDslFromGitNew>> instead.
+====
 
-Import DSL file structure from a Git repository. This procedure main usage is to set up a CI process.
+====
+
+Import DSL file structure from a Git repository.
+
+This procedure main usage is to set up a CI process.
 
 [cols="1a,1a",options="header",]
 |===
 |Parameter |Description
-|Server Resource | Required. The resource where the DSL files are checked out from Git and imported to the {PRODUCT} server.
-|Destination Directory | Required. The directory on the resource where the source tree is created and from where the DSL files are read to be imported in {PRODUCT} server.
-|Relative path to DSL files| If the DSL files are not located at the top-level in the repository, then specify the relative path to the directory containing the DSL files within the repository.
+|Server Resource |The resource where the DSL files are checked out from Git and imported to the {PRODUCT} server.
+|Destination Directory |The directory on the resource where the source tree is created and from where the DSL files are read to be imported in {PRODUCT} server.
 |Cleanup? |This option will delete the destination directory with the source tree after the job execution.
 |Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
-|Configuration | Required. The name of a saved SCM configuration.
-|Git repository |Required. The URL to the repository to pull from, for example `git://server/repo.git`.
+|Configuration |The name of a saved SCM configuration.
+|Git repository |The URL to the repository to pull from, for example `git://server/repo.git`.
 |Commit Hash |The Commit Hash to update the index.
 
 NOTE: This moves the HEAD.
@@ -117,7 +125,6 @@ NOTE: This moves the HEAD.
 |Tag |Provide the name of a specific tag to check out after the clone command.
 |Ignore failures |Ignore failures during import of DSL files.
 |Local mode |Do not send files to the server with help of clientFiles argument of the evalDsl operation in local mode.
-|Additional DSL Arguments|Additional argument for `evalDsl` call.
 |===
 
 image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/importdslfromgit.png[importDslFromGit parameters]
@@ -133,13 +140,13 @@ NOTE: This procedure uses the cd-plugin:ec-git[] plugin.
 [cols="1a,1a",options="header"]
 |===
 |Parameter |Description
-|Server Pool or Resource | Required. The resource or one of the pool resources where the DSL files are checked out from Git and imported to the {PRODUCT} server.
-|Destination Directory | Required. The directory on the resource where the source tree is created and the DSL files are stored.
+|Server Pool or Resource |The resource or one of the pool resources where the DSL files are checked out from Git and imported to the {PRODUCT} server.
+|Destination Directory |The directory on the resource where the source tree is created and the DSL files are stored.
 |Relative path to DSL files |If the DSL files are not located at the top level in the repository, then specify the relative path to the directory containing the DSL files within the repository. For example, `scripts/dsls` where the DSL files are located in the following sub-directories in the repository `scripts/dsls/projects` and `scripts/dsls/resources`.
 |Cleanup? |This option deletes the destination directory with the source tree after the job execution.
 |Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
-|Configuration | Required. `EC-Git` configuration name.
-|Git repository | Required. URL to the repository to pull from. For example, `git://server/repo.git`.
+|Configuration |`EC-Git` configuration name.
+|Git repository |URL to the repository to pull from. For example, `git://server/repo.git`.
 |Remote Branch |The name of the Git branch to use. For example, `experimental`.
 |Ignore failures |Ignore failures during import of DSL files.
 |Local mode |Do not send files to the server with help of `clientFiles`
@@ -167,7 +174,8 @@ Objects with depth > 2 are not supported. Examples:
 * “/projects/Default/application/application1/applicationTiers”
 ====
 
-|Exclude objects |New line separated list of paths to objects to exclude. Exclude nothing by default.
+If set - synchronize only these objects. If empty - synchronize all available objects.
+|Exclude objects |List of paths to objects to exclude. Exclude nothing by default.
 |Incremental import |Select to only import the incremental changes that have occurred since the previous run of the procedure. When selected, the previous run's commit ID is compared to the current commit ID in the Git repository and a change list is created. This can potentially reduce the import time because the entire DSL file structure is not re-imported from the Git repository each time the procedure runs.
 
 NOTE: If the commit ID cannot be found or if the procedure or steps cannot find, read, or correctly parse the change list, the entire DSL file structure is re-imported.
