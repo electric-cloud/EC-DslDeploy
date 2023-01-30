@@ -121,8 +121,7 @@
     <label>Include objects</label>
     <property>includeObjects</property>
     <required>0</required>
-    <documentation>New line separated list of paths to objects to synchronize.
-      If set, only these objects are synchronized. If empty, all available objects are synchronized.<BR/>
+    <documentation>New line separated list of paths to objects to synchronize. If set, only these objects are synchronized. If empty, all available objects are synchronized.<BR/>
       <BR/>
       Paths can refer to collections or specific objects, but the max depth is 2.<BR/>
       <BR/>
@@ -139,7 +138,7 @@
       Wildcards can be used for first-level objects if the max depth is ≤ 2 and the path refers to a collection.
       Supported examples:<BR/>
       - “/projects/*/releases“ - All releases in all projects<BR/>
-      <bold>Unsupported examples</bold>:<BR/>
+      Unsupported examples:<BR/>
       - “/projects/*/releases/release1“
       </documentation>
 
