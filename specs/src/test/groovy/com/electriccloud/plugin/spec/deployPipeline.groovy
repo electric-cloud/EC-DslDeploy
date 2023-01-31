@@ -125,7 +125,7 @@ class deployPipeline
         def group1ManualTask = group1Subtasks.find{it.taskName == 'manual1'}
         def group1CmdTask = group1Subtasks.find{it.taskName == 'task1'}
         assert group1CmdTask.index < group1ManualTask.index
-        assert group1CmdTask.actualParameters.parameterDetail[0].parameterValue =='echo test'
+        assert group1CmdTask.command =='echo test'
 
         //
         def group2Subtasks = group2.task
@@ -135,12 +135,12 @@ class deployPipeline
         def procedProperties = dsl """getProperties(projectName: 'pipeline_group_proj',
                 pipelineName: 'pipe1', stageName: 'stage', taskName: 'manual2')"""
 
-        assert procedProperties?.propertySheet?.property.size == 1
+        assert procedProperties?.propertySheet?.property.size() == 1
         assert procedProperties?.propertySheet?.property[0]?.value == 'value'
         //
         def group2CmdTask = group2Subtasks.find{it.taskName == 'cmd2'}
         assert group2CmdTask.index > group2ManualTask.index
-        assert group2CmdTask.actualParameters.parameterDetail[0].parameterValue =='sleep 1'
+        assert group2CmdTask.command =='sleep 1'
     }
 
     def "deploy pipeline group tasks - dsl files"()
@@ -182,7 +182,7 @@ class deployPipeline
         def group1ManualTask = group1Subtasks.find{it.taskName == 'manual1'}
         def group1CmdTask = group1Subtasks.find{it.taskName == 'task1'}
         assert group1CmdTask.index < group1ManualTask.index
-        assert group1CmdTask.actualParameters.parameterDetail[0].parameterValue =='echo test'
+        assert group1CmdTask.command =='echo test'
 
         //
         def group2Subtasks = group2.task
@@ -190,7 +190,7 @@ class deployPipeline
         def group2ManualTask = group2Subtasks.find{it.taskName == 'manual2'}
         def group2CmdTask = group2Subtasks.find{it.taskName == 'cmd2'}
         assert group2CmdTask.index > group2ManualTask.index
-        assert group2CmdTask.actualParameters.parameterDetail[0].parameterValue =='sleep 1'
+        assert group2CmdTask.command =='sleep 1'
     }
 
 }
