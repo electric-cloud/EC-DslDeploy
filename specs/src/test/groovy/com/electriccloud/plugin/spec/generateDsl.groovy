@@ -668,9 +668,7 @@ stage 'stage1'
 
 
 task 'cmd', {
-  actualParameter = [
-    'commandToRun': new File(projectDir, "./pipelines/pipeline1/stages/stage1/tasks/cmd.cmd").text,
-  ]
+  command = new File(projectDir, "./pipelines/pipeline1/stages/stage1/tasks/cmd.cmd").text
   subpluginKey = 'EC-Core'
   subprocedure = 'RunCommand'
   taskType = 'COMMAND'
@@ -1077,8 +1075,7 @@ project '$projName', {
         assertFile(new File(taskDir, 'task.dsl'),
             'import java.io.File\n\n\n'
                 + "task '$pipeTaskName', {\n"
-                + '  actualParameter = [\n'
-                + "    \'commandToRun\': new File(projectDir, \"./pipelines/$encPipeName/stages/$encStageName/tasks/$encTaskName" + ".cmd\").text,\n  ]\n"
+                + "  command = new File(projectDir, \"./pipelines/$encPipeName/stages/$encStageName/tasks/$encTaskName" + ".cmd\").text\n"
                 + '  subpluginKey = \'EC-Core\'\n'
                 + '  subprocedure = \'RunCommand\'\n'
                 + '  taskType = \'COMMAND\'\n' + '}\n')

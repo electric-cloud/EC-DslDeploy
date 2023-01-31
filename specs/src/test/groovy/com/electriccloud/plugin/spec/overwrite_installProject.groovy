@@ -171,32 +171,32 @@ class overwrite_installProject extends PluginTestHelper {
 
         then: "procedure has one step"
         def steps  = dsl """getSteps(projectName: 'ow_pr', procedureName: 'testProcedure')"""
-        assert steps?.step?.size == 1
+        assert steps?.step?.size() == 1
 
         then: "procedure has one formal parameter"
         def formalParams = dsl """getFormalParameters(projectName: '$projName',
                                                           procedureName: 'testProcedure')"""
-        assert formalParams?.formalParameter?.size == 1
+        assert formalParams?.formalParameter?.size() == 1
         assert formalParams?.formalParameter[0].formalParameterName == 'testParameter'
 
 
         then: "procedure has one formal output parameter"
         def formalOutputParams = dsl """getFormalOutputParameters(projectName: '$projName',
                                                           procedureName: 'testProcedure')"""
-        assert formalOutputParams?.formalOutputParameter?.size == 1
+        assert formalOutputParams?.formalOutputParameter?.size() == 1
         assert formalOutputParams?.formalOutputParameter[0].formalOutputParameterName == 'testOutputParam'
 
         then: "procedure has one property"
         def procedProperties = dsl """getProperties(projectName: '$projName',
                                                           procedureName: 'testProcedure')"""
 
-        assert procedProperties?.propertySheet?.property.size == 2
+        assert procedProperties?.propertySheet?.property.size() == 2
         assert procedProperties?.propertySheet?.property[1]?.propertyName == 'testProperty'
 
         then: "procedure has one email notifier"
         def procedNotifiers = dsl """getEmailNotifiers(projectName: '$projName',
                                                            procedureName: 'testProcedure')"""
-        assert procedNotifiers?.emailNotifier?.size == 1
+        assert procedNotifiers?.emailNotifier?.size() == 1
         assert procedNotifiers?.emailNotifier[0]?.notifierName == 'testEmailNotifier'
 
         then: "step has one property"
@@ -204,7 +204,7 @@ class overwrite_installProject extends PluginTestHelper {
             procedureName: 'testProcedure',
             stepName: 'testProcedureStep'
         )"""
-        assert stepProperty?.propertySheet?.property?.size == 1
+        assert stepProperty?.propertySheet?.property?.size() == 1
         assert stepProperty?.propertySheet?.property[0]?.propertyName == 'testStepProperty'
 
         then: "step has one email notifier"
@@ -212,7 +212,7 @@ class overwrite_installProject extends PluginTestHelper {
                                                          procedureName: 'testProcedure',
                                                          stepName: 'testProcedureStep'
                                                          )"""
-        assert stepNotifiers?.emailNotifier?.size == 1
+        assert stepNotifiers?.emailNotifier?.size() == 1
         assert stepNotifiers?.emailNotifier[0]?.notifierName == 'testStepNotifier'
 
         and: "procedure fields are empty"
@@ -433,7 +433,7 @@ class overwrite_installProject extends PluginTestHelper {
         then: "workflow definition has only two state definitions"
         def stateDefinitions = dsl """getStateDefinitions(projectName: '$projName',
                                                              workflowDefinitionName: 'test_wfd')"""
-        assert stateDefinitions?.stateDefinition?.size == 2
+        assert stateDefinitions?.stateDefinition?.size() == 2
         assert stateDefinitions?.stateDefinition[0]?.stateDefinitionName == 'start'
         assert stateDefinitions?.stateDefinition[1]?.stateDefinitionName == 'finish'
 
@@ -448,14 +448,14 @@ class overwrite_installProject extends PluginTestHelper {
                                                              workflowDefinitionName: 'test_wfd',
                                                              stateDefinitionName: 'start'
                                                              )"""
-        assert transitions?.transitionDefinition?.size == 1
+        assert transitions?.transitionDefinition?.size() == 1
         assert transitions?.transitionDefinition[0].transitionDefinitionName == 'transition1'
 
         then: "added email notifier was cleaned up"
         def notifiers = dsl"""getEmailNotifiers(projectName: 'ow_pr',                                                workflowDefinitionName: 'test_wfd',
                                       stateDefinitionName: 'start'
                                       )"""
-        assert notifiers?.emailNotifier?.size == 1
+        assert notifiers?.emailNotifier?.size() == 1
         assert notifiers?.emailNotifier[0]?.notifierName == 'testNotifier'
 
         then: "added formal parameter was cleaned up"
@@ -463,7 +463,7 @@ class overwrite_installProject extends PluginTestHelper {
                                                          workflowDefinitionName: 'test_wfd',
                                                          stateDefinitionName: 'start'
                                                          )"""
-        assert formals?.formalParameter?.size ==1
+        assert formals?.formalParameter?.size() ==1
         assert formals?.formalParameter[0].formalParameterName == 'testParameter'
 
         then: "added stated definition property was cleaned up"
@@ -471,7 +471,7 @@ class overwrite_installProject extends PluginTestHelper {
                                     workflowDefinitionName: 'test_wfd',
                                     stateDefinitionName: 'start'
                                     )"""
-        assert stateProps?.propertySheet?.property?.size == 2
+        assert stateProps?.propertySheet?.property?.size() == 2
         assert stateProps?.propertySheet?.property[1]?.propertyName == 'testStartProperty'
     }
 
@@ -967,7 +967,7 @@ class overwrite_installProject extends PluginTestHelper {
 
         then: "only one catalog remained in project"
         def catalogs = dsl """getCatalogs(projectName: 'ow_pr')"""
-        assert catalogs?.catalog?.size == 1
+        assert catalogs?.catalog?.size() == 1
         def remainedCatalog = catalogs?.catalog[0]
 
         then: "catalog entity UUID did not change"
@@ -976,11 +976,11 @@ class overwrite_installProject extends PluginTestHelper {
 
         then: "added property was overwritten"
         def properties = dsl """getProperties (projectName: 'ow_pr', catalogName: 'testCatalog' )"""
-        assert properties?.propertySheet?.property?.size == 1
+        assert properties?.propertySheet?.property?.size() == 1
 
         then: "only one catalog item remained"
         def catalogItems = dsl """getCatalogItems(projectName: 'ow_pr', catalogName: 'testCatalog')"""
-        assert catalogItems?.catalogItem?.size == 1
+        assert catalogItems?.catalogItem?.size() == 1
         def remainedCatalogItem = catalogItems?.catalogItem[0]
 
         then: "catalog item UUID did not change"
@@ -1612,7 +1612,7 @@ class overwrite_installProject extends PluginTestHelper {
         assert result.project['projectName'] == testProjName
 
         when:
-        result = dsl "generateDsl(path: '/projects/$testProjName')"
+        result = dsl "generateDsl(path: '/projects/$testProjName/procedures')"
         println result
         //resort to manual parsing due to implicit dsl test escaping
         Matcher matcher = Pattern.compile("procedure '(.*)', \\{[\\W\\w]*step '(.*)', \\{[\\W\\w]*command\\s=\\s'(.*)'[\\W\\w]*?}?\\W*}")
@@ -1623,6 +1623,9 @@ class overwrite_installProject extends PluginTestHelper {
             assert matcher.group(3) == "echo Procedure is completed"
         }
         else assert false
+
+        result = dsl "generateDsl(path: '/projects/$testProjName')"
+        println result
 
         and:
         result = dsl "getPipeline(projectName: '$testProjName', pipelineName: '$pipelineName')"
@@ -1641,8 +1644,7 @@ class overwrite_installProject extends PluginTestHelper {
 
         then: "task created"
         assert result.task['taskName'] == pipeTaskName
-        assert result.task['actualParameters']['parameterDetail'].parameterName[0] == 'commandToRun'
-        assert result.task['actualParameters']['parameterDetail'].parameterValue[0] == 'echo task completed'
+        assert result.task['command']== 'echo task completed'
 
         cleanup:
         deleteProjects([projectName: testProjName], false)
@@ -1712,8 +1714,7 @@ class overwrite_installProject extends PluginTestHelper {
 
         then: "task created"
         assert result.task['taskName'] == pipeTaskName
-        assert result.task['actualParameters']['parameterDetail'].parameterName[0] == 'commandToRun'
-        assert result.task['actualParameters']['parameterDetail'].parameterValue[0] == 'echo task 1 completed'
+        assert result.task['command'] == 'echo task 1 completed'
 
         cleanup:
         deleteProjects([projectName: testProjName], false)
