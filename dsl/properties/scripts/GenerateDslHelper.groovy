@@ -391,7 +391,7 @@ class GenerateDslHelper {
                                                        suppressParent: suppressParent)?.value
 
                 propDsl = propDsl.replaceAll(", value: ('.*?'), \\{", ', value: """\\$propertyContent""", \\{')
-                propDsl = propDsl.replaceAll("$property.propertyName = .*", "$property.propertyName = " + '"""\\$propertyContent"""')
+                propDsl = propDsl.replaceAll("(?s)$property.propertyName = .*", "$property.propertyName = " + '"""\\$propertyContent"""')
 
                 File propertyDir = new File(propertiesDir, encode(property.propertyName))
                 propertyDir.mkdir()
