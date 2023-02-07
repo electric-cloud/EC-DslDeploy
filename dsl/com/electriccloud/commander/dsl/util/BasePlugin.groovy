@@ -187,12 +187,12 @@ abstract class BasePlugin extends DslDelegatingScript {
 	//Helper function to load another dsl script and evaluate it in-context
 	def evalInlineDsl(String dslFile, Map bindingMap) {
 
-		CompilerConfiguration cc = new CompilerConfiguration();
-		cc.setScriptBaseClass(DelegatingScript.class.getName());
-		GroovyShell sh = new GroovyShell(this.class.classLoader, bindingMap? new Binding(bindingMap) : new Binding(), cc);
+		CompilerConfiguration cc = new CompilerConfiguration()
+		cc.setScriptBaseClass(DelegatingScript.class.getName())
+		GroovyShell sh = new GroovyShell(this.class.classLoader, bindingMap? new Binding(bindingMap) : new Binding(), cc)
 		DelegatingScript script = (DelegatingScript)sh.parse(new File(dslFile))
-		script.setDelegate(this);
-		return script.run();
+		script.setDelegate(this)
+		return script.run()
 	}
 
 	def nullIfEmpty(def value) {

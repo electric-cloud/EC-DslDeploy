@@ -208,6 +208,10 @@ image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/importdslfromgitnew.png
 [[releaseNotes]]
 == Release notes
 
+=== EC-DslDeploy 4.1.9
+
+* Fixed regression with multiline property values generation
+
 === EC-DslDeploy 4.1.8
 
 * Added support to run sub procedure 'importDslFromGitNew' for EC-DslDeploy plugin

@@ -43,7 +43,7 @@ abstract class BaseObject extends DslDelegatingScript {
   private static final Collection<String> ORDERED_CHILD_ENTITY_TYPES =
           Arrays.asList("catalogItems", "deployerApplications", "deployerServices",
                   "steps", "reportingFilters", "stages", "stateDefinitions", "tasks",
-                  "widgets");
+                  "widgets")
 
   private static final Map<String, String> ENCODE_MAP = ["/": "@2F", "\\": "@5C"] as HashMap
   private static final Map<String, String> DECODE_MAP = ["@2F": "/", "@5C": "\\"] as HashMap
@@ -448,15 +448,15 @@ abstract class BaseObject extends DslDelegatingScript {
      println "  bindingMap       : " + bindingMap
      println "  overwriteMode    : $overwriteMode"
      println "  pluginDeployMode : $pluginDeployMode"
-    CompilerConfiguration cc = new CompilerConfiguration();
-    cc.setScriptBaseClass(InnerDelegatingScript.class.getName());
+    CompilerConfiguration cc = new CompilerConfiguration()
+    cc.setScriptBaseClass(InnerDelegatingScript.class.getName())
     //println "Class loader class name: ${th
     // is.scriptClassLoader.class.name}"
     // NMB-27865: Use the same groovy class loader that was used for evaluating
     // the DSL passed to evalDsl.
-    GroovyShell sh = new GroovyShell(this.scriptClassLoader, bindingMap? new Binding(bindingMap) : new Binding(), cc);
+    GroovyShell sh = new GroovyShell(this.scriptClassLoader, bindingMap? new Binding(bindingMap) : new Binding(), cc)
     DelegatingScript script = (DelegatingScript)sh.parse(new File(dslFile))
-    script.setDelegate(this.delegate);
+    script.setDelegate(this.delegate)
     // add bindingMap to DslDelegate to deal with collections removing in 'overwrite' mode
     if (overwriteMode.toBoolean()) {
       println "  Add overwrite flag to DSLDelegate vars: " + overwriteMode.toBoolean()
@@ -610,12 +610,12 @@ abstract class BaseObject extends DslDelegatingScript {
    * reference to the groovy class loader that used for
    * evaluating the DSL script passed in to evalDsl.
    */
-  private def delegate;
-  private def scriptClassLoader;
+  private def delegate
+  private def scriptClassLoader
 
   public void setDelegate(DslDelegate delegate) {
     this.scriptClassLoader = this.class.classLoader
-    this.delegate = delegate;
+    this.delegate = delegate
     super.setDelegate(delegate)
   }
 
@@ -644,7 +644,7 @@ abstract class BaseObject extends DslDelegatingScript {
     // The change list will only apply if it is marked "INCREMENTAL" and if the supplied file is found in the list
     //  Otherwise the change list does NOT apply (make all changes by applying all files)
     println "changeCheck: look for path '$filePath' in $changeList"
-    boolean change = true;
+    boolean change = true
     if (changeList?.what == "INCREMENTAL") {
       // The change list applies and this file may be found or not
       change = changeTypes.any{changeType ->
@@ -664,6 +664,6 @@ abstract class BaseObject extends DslDelegatingScript {
       value = value.substring(1)
     }
 
-    return value;
+    return value
   }
 }
