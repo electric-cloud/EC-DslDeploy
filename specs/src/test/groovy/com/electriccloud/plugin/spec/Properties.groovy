@@ -120,7 +120,7 @@ class BEE18910
             includeAllChildren: '1',
             suppressNulls: '1',
             objectType: 'project',
-            objectName: 'proj_name'
+            objectName: 'BEE-30105'
           ]
         )""")
     then:
@@ -146,7 +146,7 @@ class BEE18910
 
     cleanup:
     deleteProjects([projectName: jira], false)
-    deleteProjects([mainProject: 'proj_name', c1: 'comp_name1', c2: 'comp_name2', p1: 'proc_name1', p2: 'proc_name2'])
+    deleteProjects([mainProject: 'BEE-30105', c1: 'comp_name1', c2: 'comp_name2', p1: 'proc_name1', p2: 'proc_name2'])
     new File(dslDir).deleteDir()
   }
 }

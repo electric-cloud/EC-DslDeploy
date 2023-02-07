@@ -1,4 +1,4 @@
-project 'SECO-2616', {
+project 'BEE-30105', {
     tracked = '1'
 
     // Custom properties
