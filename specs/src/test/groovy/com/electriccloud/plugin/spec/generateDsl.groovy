@@ -669,8 +669,6 @@ stage 'stage1'
 
 task 'cmd', {
   command = new File(projectDir, "./pipelines/pipeline1/stages/stage1/tasks/cmd.cmd").text
-  subpluginKey = 'EC-Core'
-  subprocedure = 'RunCommand'
   taskType = 'COMMAND'
 }
 """)
@@ -1076,8 +1074,6 @@ project '$projName', {
             'import java.io.File\n\n\n'
                 + "task '$pipeTaskName', {\n"
                 + "  command = new File(projectDir, \"./pipelines/$encPipeName/stages/$encStageName/tasks/$encTaskName" + ".cmd\").text\n"
-                + '  subpluginKey = \'EC-Core\'\n'
-                + '  subprocedure = \'RunCommand\'\n'
                 + '  taskType = \'COMMAND\'\n' + '}\n')
         assertFile(new File(pipeStageDir, "tasks/" + encTaskName + ".cmd"),
             'echo task %1 completed')
