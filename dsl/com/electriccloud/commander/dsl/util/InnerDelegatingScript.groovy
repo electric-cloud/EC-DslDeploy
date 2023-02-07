@@ -45,7 +45,7 @@ abstract class InnerDelegatingScript extends DelegatingScript {
             newArgs[0]       = propertyArgs
 
             for (int i = 0; i < args.length; i++) {
-                newArgs[i + 1] = args[i];
+                newArgs[i + 1] = args[i]
             }
 
             args = newArgs
