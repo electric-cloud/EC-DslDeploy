@@ -14,6 +14,9 @@ $[/myProject/scripts/perlHeaderJSON]
 # "." returns the Flow installation directory instead of the workspace
 $ec->setProperty("/myJob/CWD", getcwd);
 
+# store DSL format in a job property:
+$ec->setProperty("/myJob/dslFormat", "$[dslFormat]");
+
 my $counter=0;
 opendir(my $topDslDir, ".") || die ("cannot read top level directory");
 

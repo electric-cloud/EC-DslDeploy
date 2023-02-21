@@ -4,6 +4,7 @@ $[/myProject/scripts/GenerateDslHelper]
 
 ElectricFlow ef = new ElectricFlow()
 new GenerateDslBuilder(ef)
+        .dslFormat('$[dslFormat]')
         .objectType('$[objectType]')
         .objectName('$[objectName]')
         .toDirectory('$[directory]')

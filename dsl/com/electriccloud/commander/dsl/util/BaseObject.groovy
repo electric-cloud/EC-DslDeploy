@@ -27,6 +27,8 @@ package com.electriccloud.commander.dsl.util
 
 import com.electriccloud.commander.dsl.DslDelegate
 import com.electriccloud.commander.dsl.DslDelegatingScript
+import com.electriccloud.commander.dsl.DslYamlProcessor
+
 import groovy.io.FileType
 import groovy.json.JsonSlurper
 import org.codehaus.groovy.control.CompilerConfiguration
@@ -34,7 +36,9 @@ import org.codehaus.groovy.control.CompilerConfiguration
 import java.time.Duration
 import java.util.logging.Logger
 
-abstract class BaseObject extends DslDelegatingScript {
+abstract class BaseObject
+      extends DslDelegatingScript
+{
 
   private final static Logger logger = Logger.getLogger("")
 
@@ -76,7 +80,7 @@ abstract class BaseObject extends DslDelegatingScript {
     return found
   }
 
-  def loadProject(String projectDir, String projectName, String overwriteMode = "0", changeList = [:]) {
+  def loadProject(String projectDir, String projectName, String overwriteMode = "0", changeList = [:], String dslFormat = "groovy") {
     // load the project.groovy if it exists
     // println "Entering loadProject"
     // println "  projectDir    : $projectDir"
@@ -90,7 +94,7 @@ abstract class BaseObject extends DslDelegatingScript {
       if (changeCheck("projects/$projectName/${dslFile.name}", changeList, ["added", "changed"])) {
         println "Processing project file projects/$projectName/${dslFile.name}"
         def proj=evalInlineDsl(dslFile.toString(),
-            [projectName: projectName, projectDir: projectDir], overwriteMode, true)
+            [projectName: projectName, projectDir: projectDir], overwriteMode, true, dslFormat)
         counter ++
       }
     } else {
@@ -99,7 +103,7 @@ abstract class BaseObject extends DslDelegatingScript {
     return counter
   }
 
-  def loadProjectProperties(String projectDir, String projectName, String overwrite = '0', changeList = [:]) {
+  def loadProjectProperties(String projectDir, String projectName, String overwrite = '0', changeList = [:], String dslFormat = "groovy") {
     // println "Entering loadProjectProperties"
     // println "  projectDir  : $projectDir"
     // println "  projectName : $projectName"
@@ -112,13 +116,13 @@ abstract class BaseObject extends DslDelegatingScript {
       def propSheetId = propertySheet.propertySheetId.toString()
 
       loadNestedProperties("/projects/$projectName", propDir, overwrite,
-              propSheetId, true, changeList)
+              propSheetId, true, changeList, dslFormat)
     }  else {
       println "No properties directory for project $projectName"
     }
   }
 
-  def loadProjectAcls(String projectDir, String projectName, changeList = [:]) {
+  def loadProjectAcls(String projectDir, String projectName, changeList = [:], String dslFormat = "groovy") {
     // println "Entering loadProjectAcls"
     // println "  projectDir  : $projectDir"
     // println "  projectName : $projectName"
@@ -127,7 +131,7 @@ abstract class BaseObject extends DslDelegatingScript {
     def aclDir=new File(projectDir, 'acls')
     if (aclDir.directory) {
       loadAcls(aclDir, "/projects/$projectName",
-               [projectName: projectName, projectDir: projectDir], changeList)
+               [projectName: projectName, projectDir: projectDir], changeList. dslFormat)
     }  else {
       println "No acls directory for project $projectName"
     }
@@ -142,12 +146,12 @@ abstract class BaseObject extends DslDelegatingScript {
         - bindingMap: a list of properties to pass dow to evaluate the DSL
                       in context. Typically objectName and objectDir
      ######################################################################## */
-  def loadObject(String dslFile, Map bindingMap = [:], String overwriteMode = "0") {
+  def loadObject(String dslFile, Map bindingMap = [:], String overwriteMode = "0", String dslFormat = "groovy") {
     // println "Entering loadObject:"
     // println "  dslFile       : $dslFile"
     // println "  bindingMap    : " + bindingMap.toMapString(100)
     // println "  overwriteMode : $overwriteMode"
-    return evalInlineDsl(dslFile, bindingMap, overwriteMode)
+    return evalInlineDsl(dslFile, bindingMap, overwriteMode, true, dslFormat)
   }
 
   /* ########################################################################
@@ -167,7 +171,8 @@ abstract class BaseObject extends DslDelegatingScript {
                   Boolean pluginDeployMode = true,
                   def includeObjects = [],
                   def excludeObjects = [],
-                  def changeList = [:]) {
+                  def changeList = [:],
+                  String dslFormat = "groovy") {
 
 //     println "Entering loadObjects"
 //     println "  objType          : $objType"
@@ -180,7 +185,7 @@ abstract class BaseObject extends DslDelegatingScript {
 //     println "  includeObjects   : $includeObjects"
 //     println "  excludeObjects   : $excludeObjects"
 //     println "  changeList       : $changeList"
-
+//     println "  dslFormat        : dslFormat"
 
     def counters=[:]
     def nbObjs=0
@@ -217,7 +222,7 @@ abstract class BaseObject extends DslDelegatingScript {
             try {
               if (loadObjectFromDirectory(objDir, objType, objPath, plural,
                       bindingMap, overwriteMode, counters,
-                      includeObjects, excludeObjects, changeList)) {
+                      includeObjects, excludeObjects, changeList, dslFormat)) {
                 nbObjs++
               }
             } catch (Exception e) {
@@ -234,7 +239,7 @@ abstract class BaseObject extends DslDelegatingScript {
             try {
               if (loadObjectFromDirectory(it, objType, objPath, plural,
                       bindingMap, overwriteMode, counters,
-                      includeObjects, excludeObjects, changeList)) {
+                      includeObjects, excludeObjects, changeList, dslFormat)) {
                 nbObjs++
               }
             } catch (Exception e) {
@@ -269,7 +274,8 @@ abstract class BaseObject extends DslDelegatingScript {
                               counters,
                               includeObjects = [],
                               excludeObjects = [],
-                              changeList = [:]) {
+                              changeList = [:],
+                              String dslFormat = "groovy") {
 //     println "Entering loadObjectFromDirectory"
 //     println "  childDir       : $childDir"
 //     println "  objType        : $objType"
@@ -280,6 +286,8 @@ abstract class BaseObject extends DslDelegatingScript {
 //     println "  counters       : $counters"
 //     println "  includeObjects : $includeObjects"
 //     println "  excludeObjects : $excludeObjects"
+//     println "  excludeObjects : $excludeObjects"
+//     println "  dslFormat      : dslFormat"
 
     def objName = decode(childDir.name)
     def objPathSize = objPath.split('/').size()
@@ -308,7 +316,7 @@ abstract class BaseObject extends DslDelegatingScript {
                   ? ("$objPath" + "$plural/$objName")
                   : "$objPath/$plural/$objName"
     if(changeCheck("$path/${dslFile.name}", changeList, ["added", "changed"])) {
-      def obj = loadObject(dslFile.absolutePath, bindingMap, overwriteMode)
+      def obj = loadObject(dslFile.absolutePath, bindingMap, overwriteMode, dslFormat)
 
       if (obj == null) {
         // if response is null then it means an object wasn't imported because some error
@@ -338,7 +346,7 @@ abstract class BaseObject extends DslDelegatingScript {
       if (aclDir.directory) {
         println "Found acls for $path"
         "${objType}" objName, {
-          loadAcls(aclDir, "$path", bindingMap, changeList)
+          loadAcls(aclDir, "$path", bindingMap, changeList. dslFormat)
         }
       } else {
         println "No acls directory for $objType $objName"
@@ -351,7 +359,7 @@ abstract class BaseObject extends DslDelegatingScript {
         def propSheetId = propertySheet.propertySheetId.toString()
         "${objType}" objName, {
           loadNestedProperties("$path", propDir,
-                overwriteMode, propSheetId, false, changeList)
+                overwriteMode, propSheetId, false, changeList, dslFormat)
         }
       } else {
         println "No properties directory for $objType $objName"
@@ -395,7 +403,8 @@ abstract class BaseObject extends DslDelegatingScript {
                 true,
                 includeObjects,
                 excludeObjects,
-                changeList)
+                changeList,
+                dslFormat)
           }
 
           if (childrenCounter) {
@@ -418,7 +427,7 @@ abstract class BaseObject extends DslDelegatingScript {
   }     // loadObjects
 
 
-  def evalInlineDslWoContext(String dslFile, Map bindingMap) {
+  def evalInlineDslWoContext(String dslFile, Map bindingMap, String dslFormat = "groovy") {
     // We should save current DSL evaluation context and restore it right after import properties
     def tmpCurrent
     def tmpBindingMap
@@ -433,7 +442,7 @@ abstract class BaseObject extends DslDelegatingScript {
 
       tmpBindingMap = this.binding.bindingMap
 
-      evalInlineDsl(dslFile, bindingMap)
+      evalInlineDsl(dslFile, bindingMap, "", true, dslFormat)
     } finally {
       this.current = tmpCurrent
       this.stack.addAll(tmpStack)
@@ -442,12 +451,19 @@ abstract class BaseObject extends DslDelegatingScript {
   }
 
   // Helper function to load another dsl script and evaluate it in-context
-  def evalInlineDsl(String dslFile, Map bindingMap, String overwriteMode = "0", Boolean pluginDeployMode = true) {
+  def evalInlineDsl(String dslFile, Map bindingMap, String overwriteMode = "0", Boolean pluginDeployMode = true, String dslFormat = "groovy") {
      println "Entering evalInlineDsl"
      println "  dslFile          : $dslFile"
      println "  bindingMap       : " + bindingMap
      println "  overwriteMode    : $overwriteMode"
      println "  pluginDeployMode : $pluginDeployMode"
+     println "  dslFormat        : $dslFormat"
+
+    def dsl = null
+    if ("yaml" == dslFormat) {
+      dsl = this.dslYamlProcessor.convert(new File(dslFile).text, [:])
+    }
+
     CompilerConfiguration cc = new CompilerConfiguration()
     cc.setScriptBaseClass(InnerDelegatingScript.class.getName())
     //println "Class loader class name: ${th
@@ -455,13 +471,25 @@ abstract class BaseObject extends DslDelegatingScript {
     // NMB-27865: Use the same groovy class loader that was used for evaluating
     // the DSL passed to evalDsl.
     GroovyShell sh = new GroovyShell(this.scriptClassLoader, bindingMap? new Binding(bindingMap) : new Binding(), cc)
-    DelegatingScript script = (DelegatingScript)sh.parse(new File(dslFile))
+    DelegatingScript script = "yaml" == dslFormat
+                              ? (DelegatingScript)sh.parse(dsl)
+                              : (DelegatingScript)sh.parse(new File(dslFile))
+
     script.setDelegate(this.delegate)
+    // script.setDslYamlProcessor(this.dslYamlProcessor)
+
     // add bindingMap to DslDelegate to deal with collections removing in 'overwrite' mode
     if (overwriteMode.toBoolean()) {
       println "  Add overwrite flag to DSLDelegate vars: " + overwriteMode.toBoolean()
       script.getDelegate().getBinding().setVariable("overwrite", overwriteMode.toBoolean())
     }
+
+    // add bindingMap to DslDelegate to deal with YAML format
+    if ("yaml" == dslFormat) {
+      println "  Add YAML format option to DSLDelegate vars: " + dslFormat
+      script.getDelegate().getBinding().setVariable("format", dslFormat)
+    }
+
     //println "  Add binding map to DSLDelegate vars: " + bindingMap
     script.getDelegate().getBinding().setVariable("bindingMap", bindingMap)
     script.getDelegate().getBinding().setVariable("pluginDeployMode", pluginDeployMode)
@@ -479,24 +507,24 @@ abstract class BaseObject extends DslDelegatingScript {
     }
   }
 
-  def loadAcls (File aclDir, String objPath, Map bindingMap, changeList = [:]) {
+  def loadAcls (File aclDir, String objPath, Map bindingMap, changeList = [:], String dslFormat = "groovy") {
 //    println "Entering loadAcls"
 //    println "  aclDir     : $aclDir"
 //    println "  objPath    : $objPath"
 //    println "  bindingMap : " + bindingMap.toMapString(250)
 //    println "  changeList : $changeList"
-
+//    println "  dslFormat  : dslFormat"
 
     aclDir.eachFileMatch(FileType.FILES, ~/(?i)^.*\.(groovy|dsl)/) { dslFile ->
       if (changeCheck("$objPath/acls/${dslFile.name}", changeList, ["changed", "added"])) {
         println "  Processing ACL file $objPath/acls/${dslFile.name}"
-        evalInlineDsl(dslFile.toString(), bindingMap)
+        evalInlineDsl(dslFile.toString(), bindingMap, "0", true, dslFormat)
       }
     }
   }
 
   def loadNestedProperties(String propRoot, File propsDir, String overwrite = '0', String pSheetId,
-                           boolean projectRootProps=false, changeList = [:]) {
+                           boolean projectRootProps=false, changeList = [:], String dslFormat = "groovy") {
     // println "Entering loadNestedProperties"
     // println "  propRoot         : $propRoot"
     // println "  propsDir         : $propsDir"
@@ -550,10 +578,10 @@ abstract class BaseObject extends DslDelegatingScript {
 
               // Map bindingMap = [propertySheetId: "$pSheetId", propertyType: 'sheet']
               Map bindingMap = [objectId: "propertySheet-$pSheetId", propertyType: 'sheet', propsDir: propsDir]
-              evalInlineDslWoContext(propertySheetDslFile.absolutePath, bindingMap)
+              evalInlineDslWoContext(propertySheetDslFile.absolutePath, bindingMap, dslFormat)
             }
 
-            loadNestedProperties(propPath, dir, overwrite, propSheetId, projectRootProps, changeList)
+            loadNestedProperties(propPath, dir, overwrite, propSheetId, projectRootProps, changeList, dslFormat)
           }
         } else {
           if (changeCheck("${propPath}.txt", changeList, ["added", "changed"])
@@ -577,7 +605,7 @@ abstract class BaseObject extends DslDelegatingScript {
 
               // Map bindingMap = [propertySheetId: "$pSheetId", propertyType: 'string']
               Map bindingMap = [objectId: "propertySheet-$pSheetId", propertyType: 'string', propsDir: propsDir]
-              evalInlineDslWoContext(propertyDslFile.absolutePath, bindingMap)
+              evalInlineDslWoContext(propertyDslFile.absolutePath, bindingMap, dslFormat)
             }
           }
         }
@@ -611,16 +639,30 @@ abstract class BaseObject extends DslDelegatingScript {
    * evaluating the DSL script passed in to evalDsl.
    */
   private def delegate
+  private def dslYamlProcessor
   private def scriptClassLoader
 
-  public void setDelegate(DslDelegate delegate) {
+  def getDelegate()
+  {
+    this.delegate
+  }
+
+  def getDslYamlProcessor()
+  {
+    this.dslYamlProcessor
+  }
+
+  void setDelegate(DslDelegate delegate)
+  {
     this.scriptClassLoader = this.class.classLoader
     this.delegate = delegate
     super.setDelegate(delegate)
   }
 
-  public def getDelegate(){
-    this.delegate
+  void setDslYamlProcessor(DslYamlProcessor dslYamlProcessor)
+  {
+    this.dslYamlProcessor = dslYamlProcessor
+    super.setDslYamlProcessor(dslYamlProcessor)
   }
 
   def getPluralForm(String objType){

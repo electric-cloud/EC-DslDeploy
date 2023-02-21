@@ -1,6 +1,5 @@
 package com.electriccloud.commander.dsl.util
 
-import groovy.io.FileType
 import groovy.json.JsonOutput
 import groovy.util.XmlSlurper
 import java.io.File

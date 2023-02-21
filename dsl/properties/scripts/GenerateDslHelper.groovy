@@ -11,6 +11,7 @@ class GenerateDslHelper {
     //
     private def electricFlow
 
+    private String dslFormat
     private String objectType
     private String objectName
     private File toDirectory
@@ -29,6 +30,7 @@ class GenerateDslHelper {
     $[/myProject/scripts/Utils]
 
     GenerateDslHelper(def ef,
+                      String format,
                       String objType,
                       String objName,
                       String toDir,
@@ -44,6 +46,7 @@ class GenerateDslHelper {
 
         electricFlow = ef
 
+        dslFormat = format
         objectType = objType
         objectName = objName
         toDirectory = new File(toDir)
@@ -69,6 +72,11 @@ class GenerateDslHelper {
         // store full path to the directory in a job property:
         electricFlow.setProperty(propertyName: 'directoryFullPath',
                 value: toDirectory.getAbsolutePath(), jobId: '$[/myJob/id]')
+
+
+        // store DSL format in a job property:
+        electricFlow.setProperty(propertyName: 'dslFormat',
+                value: dslFormat, jobId: '$[/myJob/id]')
 
         //
         def structure = electricFlow.getObjectDslStructure(
@@ -143,8 +151,12 @@ class GenerateDslHelper {
                     obj.name, obj.type, objDslFile.getAbsolutePath())
 
             //All in one file including all commands
-            objDslFile << electricFlow.generateDsl(path: obj.path, suppressNulls: suppressNulls, withAcls: includeAcls,
-                    suppressDefaults: suppressDefault, suppressParent: suppressParent).value
+            objDslFile << electricFlow.generateDsl(format: dslFormat,
+                                                   path: obj.path,
+                                                   suppressNulls: suppressNulls,
+                                                   withAcls: includeAcls,
+                                                   suppressDefaults: suppressDefault,
+                                                   suppressParent: 'yaml' == dslFormat ? false : suppressParent).value
             return
         }
 
@@ -192,16 +204,17 @@ class GenerateDslHelper {
         // generate DSL for a current object
 
         println String.format("Generate DSL for '%s' %s in %s.", obj.name, obj.type, objDslFile.getAbsolutePath())
-        def dsl = electricFlow.generateDsl(path: obj.path,
-                includeChildren: includeChildrenValue,
-                suppressNulls: suppressNulls,
-                suppressDefaults: suppressDefault,
-                suppressChildren: true,
-                suppressParent: suppressParent,
-                withAcls: includeAcl,
-                useFileReferences: true).value
+        def dsl = electricFlow.generateDsl(format: dslFormat,
+                                           path: obj.path,
+                                           includeChildren: includeChildrenValue,
+                                           suppressNulls: suppressNulls,
+                                           suppressDefaults: suppressDefault,
+                                           suppressChildren: true,
+                                           suppressParent: 'yaml' == dslFormat ? false : suppressParent,
+                                           withAcls: includeAcl,
+                                           useFileReferences: 'yaml' != dslFormat).value
 
-        if (hasFileRefInFile || obj.fileRefInfo?.size()?:0 > 0) {
+        if ('yaml' != dslFormat && (hasFileRefInFile || obj.fileRefInfo?.size()?:0 > 0)) {
             objDslFile << 'import java.io.File\n\n'
             dsl = dsl.replaceAll("'(new File\\(.*,.*\\).text)'", "\$1")
             dsl = encodePath(dsl)
@@ -216,14 +229,15 @@ class GenerateDslHelper {
         }
 
         if (obj.aclsOwner && obj.aclsOwner != '0' && includeAclsInDifferentFile) {
-            def aclDsl = electricFlow.generateDsl(path: obj.path + "/acl",
-                    includeChildren: includeChildrenValue,
-                    suppressNulls: suppressNulls,
-                    suppressDefaults: suppressDefault,
-                    suppressChildren: true,
-                    suppressParent: suppressParent,
-                    withAcls: includeAcl,
-                    useFileReferences: true).value
+            def aclDsl = electricFlow.generateDsl(format: dslFormat,
+                                                  path: obj.path + "/acl",
+                                                  includeChildren: includeChildrenValue,
+                                                  suppressNulls: suppressNulls,
+                                                  suppressDefaults: suppressDefault,
+                                                  suppressChildren: true,
+                                                  suppressParent: 'yaml' == dslFormat ? false : suppressParent,
+                                                  withAcls: includeAcl,
+                                                  useFileReferences: 'yaml' != dslFormat).value
 
             File aclsDir = new File(objDir, 'acls')
             aclsDir.mkdir()
@@ -364,11 +378,12 @@ class GenerateDslHelper {
                 // BEE-18910: export all property sheet information
                 println String.format("Generate DSL for property sheet by path: %s", pathToProp)
 
-                def propDsl = electricFlow.generateDsl(path: pathToProp,
-                        suppressNulls: suppressNulls,
-                        suppressDefaults: suppressDefault,
-                        suppressChildren: true,
-                        suppressParent: suppressParent)?.value
+                def propDsl = electricFlow.generateDsl(format: dslFormat,
+                                                       path: pathToProp,
+                                                       suppressNulls: suppressNulls,
+                                                       suppressDefaults: suppressDefault,
+                                                       suppressChildren: true,
+                                                       suppressParent: 'yaml' == dslFormat ? false : suppressParent)?.value
 
                 File propertyDir = new File(propertiesDir, encode(property.propertyName))
                 propertyDir.mkdir()
@@ -384,23 +399,29 @@ class GenerateDslHelper {
                 // BEE-18910: export all property information
                 println String.format("Generate DSL for property by path: %s", pathToProp)
 
-                def propDsl = electricFlow.generateDsl(path: pathToProp,
+                def propDsl = electricFlow.generateDsl(format: dslFormat,
+                                                       path: pathToProp,
                                                        suppressNulls: suppressNulls,
                                                        suppressDefaults: suppressDefault,
                                                        suppressChildren: true,
-                                                       suppressParent: suppressParent)?.value
-
-                propDsl = propDsl.replaceAll(", value: ('.*?'), \\{", ', value: """\\$propertyContent""", \\{')
-                propDsl = propDsl.replaceAll("(?s)$property.propertyName = .*", "$property.propertyName = " + '"""\\$propertyContent"""')
+                                                       suppressParent: 'yaml' == dslFormat ? false : suppressParent)?.value
 
                 File propertyDir = new File(propertiesDir, encode(property.propertyName))
                 propertyDir.mkdir()
 
                 file = new File(propertyDir, "property.dsl")
-                file << "import java.io.File\n\n"
-                file << "def propertyContent = new File(propsDir, '"
-                file << encode(property.propertyName)
-                file << ".txt').text\n"
+
+                if ('yaml' != dslFormat) {
+                    propDsl = propDsl.replaceAll(", value: ('.*?'), \\{", ', value: """\\$propertyContent""", \\{')
+                    propDsl = propDsl.replaceAll("(?s)$property.propertyName = .*", "$property.propertyName = " + '"""\\$propertyContent"""')
+
+                    file = new File(propertyDir, "property.dsl")
+                    file << "import java.io.File\n\n"
+                    file << "def propertyContent = new File(propsDir, '"
+                    file << encode(property.propertyName)
+                    file << ".txt').text\n"
+                }
+
                 file << propDsl
             }
         }
@@ -541,6 +562,7 @@ class GenerateDslBuilder {
     private def electricFlow
 
     // required parameters
+    private String dslFormat
     private String objectType
     private String objectName
     private String toDirectory
@@ -574,6 +596,7 @@ class GenerateDslBuilder {
         }
 
         return new GenerateDslHelper(electricFlow,
+                dslFormat,
                 objectType,
                 objectName,
                 toDirectory,
@@ -587,6 +610,11 @@ class GenerateDslBuilder {
                 childrenInDifferentFile,
                 Arrays.asList(includeChildren.split('[, ]+')))
 
+    }
+
+    GenerateDslBuilder dslFormat(String format) {
+        dslFormat = format
+        return this
     }
 
     GenerateDslBuilder objectType(String objType) {

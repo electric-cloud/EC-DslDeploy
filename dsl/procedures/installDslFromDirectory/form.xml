@@ -17,6 +17,22 @@
 -->
 <editor>
   <formElement>
+    <type>select</type>
+    <label>DSL Format:</label>
+    <property>dslFormat</property>
+    <required>1</required>
+    <documentation>Format to use for the DSL. Defaults to `groovy` format.</documentation>
+    <value>groovy</value>
+    <option>
+      <name>Groovy</name>
+      <value>groovy</value>
+    </option>
+    <option>
+      <name>YAML</name>
+      <value>yaml</value>
+    </option>
+  </formElement>
+  <formElement>
     <type>entry</type>
     <label>Directory path</label>
     <property>directory</property>

@@ -97,9 +97,9 @@ if (pDir.exists()) {
                           new ActualParameter('ignoreFailed', '$[ignoreFailed]'),
                           new ActualParameter('localMode', '$[localMode]'),
                           new ActualParameter('includeObjects', '''$[includeObjects]'''),
-                          new ActualParameter('excludeObjects', '''$[excludeObjects]''')]
-            ef
-                .createJobStep(jobStepName: basename,
+                          new ActualParameter('excludeObjects', '''$[excludeObjects]'''),
+                          new ActualParameter('dslFormat', '''$[dslFormat]''')]
+            ef.createJobStep(jobStepName: basename,
                     subproject: '$[/myProject]',
                     subprocedure: 'installProject',
                     actualParameters: params)

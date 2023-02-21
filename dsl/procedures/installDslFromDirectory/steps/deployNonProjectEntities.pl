@@ -120,6 +120,7 @@ END_COMMAND
         $command2 = <<"END_COMMAND";
 
 def absDir    = '$[/myJob/CWD]'
+def dslFormat = '$[/myJob/dslFormat]'
 def overwrite = '$[overwrite]'
 def ignoreFailed = '$[ignoreFailed]'
 def includeObjectsParam = '''$[includeObjects]'''
@@ -146,7 +147,7 @@ File dir      = new File(absDir, pluralForm("$objectType"))
 
 if (dir.exists()) {
   def counters = loadObjects("$objectType", absDir, "/", [:], overwrite,
-  ignoreFailed, true, includeObjects, excludeObjects, changeList)
+  ignoreFailed, true, includeObjects, excludeObjects, changeList, dslFormat)
   setProperty(propertyName: "summary", value: summaryString(counters))
 } else {
   setProperty(propertyName: "summary", value: "no " + pluralForm("$objectType"))

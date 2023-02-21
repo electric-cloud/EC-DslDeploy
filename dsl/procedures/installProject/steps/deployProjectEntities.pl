@@ -99,6 +99,7 @@ $[/myProject/scripts/Utils]
 def projectName = '$[projName]'
 def projectDir = '$[projDir]'
 def overwrite = '$[overwrite]'
+def dslFormat = '$[/myJob/dslFormat]'
 def ignoreFailed = '$[ignoreFailed]'
 def includeObjectsParam = '''$[includeObjects]'''
 def excludeObjectsParam = '''$[excludeObjects]'''
@@ -133,9 +134,9 @@ if (changeListText != null && changeListText.size() > 0) {
 
 def counter
 project projectName, {
-  counter = loadProject(projectDir, projectName, overwrite, changeList)
-  loadProjectProperties(projectDir, projectName, overwrite, changeList)
-  loadProjectAcls(projectDir, projectName, changeList)
+  counter = loadProject(projectDir, projectName, overwrite, changeList, dslFormat)
+  loadProjectProperties(projectDir, projectName, overwrite, changeList, dslFormat)
+  loadProjectAcls(projectDir, projectName, changeList, dslFormat)
 }
 
 if (counter == 0) {
@@ -171,7 +172,7 @@ def counters
 project projectName, {
   counters = loadObjects("$objectType", projectDir, "/projects/" + projectName,
     [projectName: projectName, projectDir: projectDir], overwrite, ignoreFailed,
-     true, includeObjects, excludeObjects, changeList)
+     true, includeObjects, excludeObjects, changeList, dslFormat)
 }
 
 //pop up possible error
