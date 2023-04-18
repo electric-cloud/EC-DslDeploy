@@ -149,4 +149,55 @@ class Properties
     deleteProjects([mainProject: 'BEE-30105', c1: 'comp_name1', c2: 'comp_name2', p1: 'proc_name1', p2: 'proc_name2'])
     new File(dslDir).deleteDir()
   }
+
+  def "BEE-33074 property name with with encoded character"() {
+    def dslDir = '/tmp/' + randomize('dsl')
+
+    given: "Load project with property name that contains special character that should be encoded/decoded"
+    dslFile("project_with_property_name_with_encoded_character.dsl")
+
+    when: "Generate DSL files"
+    def result1 = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "generateDslToDirectory",
+          actualParameter: [
+            directory: "$dslDir",
+            pool: "$defaultPool",
+            includeAllChildren: '1',
+            suppressNulls: '1',
+            objectType: 'project',
+            objectName: 'BEE-33074'
+          ]
+        )""")
+    then:
+    assert result1.jobId
+    def outcome1 = getJobProperty("outcome", result1.jobId)
+    assert outcome1 == "success"
+
+    when: "Import DSL files"
+    def result2 = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installDslFromDirectory",
+          actualParameter: [
+            directory: "$dslDir",
+            pool: "$defaultPool",
+            overwrite: '1'
+          ]
+        )""")
+    then:
+    assert result2.jobId
+    def outcome2 = getJobProperty("outcome", result2.jobId)
+    assert outcome2 == "success"
+    and: "check number of existing properties"
+    def properties = dsl """getProperties(projectName: 'BEE-33074')"""
+
+    assert properties?.propertySheet?.property.size() == 1
+
+    cleanup:
+    deleteProjects([projectName: jira], false)
+    deleteProjects([mainProject: 'BEE-30105', c1: 'comp_name1', c2: 'comp_name2', p1: 'proc_name1', p2: 'proc_name2'])
+    new File(dslDir).deleteDir()
+  }
 }
