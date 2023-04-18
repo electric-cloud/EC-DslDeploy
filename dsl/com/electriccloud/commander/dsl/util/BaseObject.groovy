@@ -559,17 +559,6 @@ abstract class BaseObject extends DslDelegatingScript {
           if (changeCheck("${propPath}.txt", changeList, ["added", "changed"])
               || changeCheck("${propPath2}.txt", changeList, ["added", "changed"])) {
 
-            if (existsProp) {
-              modifyProperty(propertyName: propName,
-                             value: dir.text,
-                             objectId: "propertySheet-$pSheetId")
-            }
-            else {
-              createProperty(propertyName: propName,
-                             value: dir.text,
-                             objectId: "propertySheet-$pSheetId")
-            }
-
             // BEE-18910: Evaluate optional property.dsl file with property details.
             File propertyDslFile = new File(propsDir, "$propName/property.dsl")
             if (propertyDslFile.exists()) {
@@ -578,6 +567,16 @@ abstract class BaseObject extends DslDelegatingScript {
               // Map bindingMap = [propertySheetId: "$pSheetId", propertyType: 'string']
               Map bindingMap = [objectId: "propertySheet-$pSheetId", propertyType: 'string', propsDir: propsDir]
               evalInlineDslWoContext(propertyDslFile.absolutePath, bindingMap)
+            }
+            else if (existsProp) {
+              modifyProperty(propertyName: decode(propName),
+                             value: dir.text,
+                             objectId: "propertySheet-$pSheetId")
+            }
+            else {
+              createProperty(propertyName: decode(propName),
+                             value: dir.text,
+                             objectId: "propertySheet-$pSheetId")
             }
           }
         }
