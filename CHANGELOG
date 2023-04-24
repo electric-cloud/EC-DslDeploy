@@ -1,5 +1,6 @@
 2023-04.18 Valera Fessler <vfezler@cloudbees.com>
   * 4.1.10: BEE-33074 - fixed duplication properties issue with original and encoded names
+            BEE-32453 - Added 'httpIdleTimeout' argument into the 'generateDsl' plugin procedure
 
 2023-02.07 Valera Fessler <vfezler@cloudbees.com>
   * 4.1.9: BEE-30105 - Fixed regression with multiline property values generation

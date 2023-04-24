@@ -3,6 +3,13 @@ import com.electriccloud.client.groovy.ElectricFlow
 $[/myProject/scripts/GenerateDslHelper]
 
 ElectricFlow ef = new ElectricFlow()
+
+def timeout = '$[httpIdleTimeout]'
+
+if (timeout.isInteger()) {
+    ef.setIdleTimeout(timeout as Integer)
+}
+
 new GenerateDslBuilder(ef)
         .objectType('$[objectType]')
         .objectName('$[objectName]')

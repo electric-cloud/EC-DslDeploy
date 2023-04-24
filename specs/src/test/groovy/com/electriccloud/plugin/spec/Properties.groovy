@@ -73,7 +73,8 @@ class Properties
             includeAllChildren: '1',
             suppressNulls: '1',
             objectType: 'project',
-            objectName: 'proj_name'
+            objectName: 'proj_name',
+            timeout: '180
           ]
         )""")
     then:
@@ -120,7 +121,8 @@ class Properties
             includeAllChildren: '1',
             suppressNulls: '1',
             objectType: 'project',
-            objectName: 'BEE-30105'
+            objectName: 'BEE-30105',
+            timeout: '180
           ]
         )""")
     then:
@@ -167,7 +169,8 @@ class Properties
             includeAllChildren: '1',
             suppressNulls: '1',
             objectType: 'project',
-            objectName: 'BEE-33074'
+            objectName: 'BEE-33074',
+            timeout: '180
           ]
         )""")
     then:

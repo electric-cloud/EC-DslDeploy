@@ -2,7 +2,7 @@
   <author>CloudBees</author>
   <authorUrl>http://www.electric-cloud.com/support</authorUrl>
   <category>Utility</category>
-  <commander-version min="10.5" />
+  <commander-version min="2023.06" />
   <depends min="1.4.0">EC-PluginManager</depends>
   <depends min="1.7.0">EC-Git</depends>
   <description>Deploy your complete ElectricFlow DSL file structure to the server</description>

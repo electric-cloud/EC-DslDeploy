@@ -140,4 +140,12 @@
     <documentation>Comma-separated list of patterns to include, like pipelines, procedures.*, applications.applicationTiers.components</documentation>
   </formElement>
 
+  <formElement>
+    <type>entry</type>
+    <label>HTTP idle timeout</label>
+    <property>httpIdleTimeout</property>
+    <required>0</required>
+    <documentation>Socket idle timeout in seconds for HTTP requests to the server (in seconds).</documentation>
+  </formElement>
+
 </editor>

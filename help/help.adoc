@@ -211,6 +211,7 @@ image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/importdslfromgitnew.png
 === EC-DslDeploy 4.1.10
 
 * Fixed duplication properties issue with original and encoded names
+* Added 'httpIdleTimeout' argument into the 'generateDsl' plugin procedure
 
 === EC-DslDeploy 4.1.9
 
