@@ -10,7 +10,7 @@
   <key>EC-DslDeploy</key>
   <label>EC-DslDeploy</label>
   <ecSupportLevel>10</ecSupportLevel>
-  <version>4.1.10</version>
+  <version>4.2.0</version>
   <hasAdoc>true</hasAdoc>
 
 <detailedDescription>CloudBees CD allows you to take a fully code-native approach to continuous delivery and release orchestration using the CloudBees CD Groovy-based DSL. The CloudBees CD model based approach means that every object in CloudBees CD, including release pipelines, deployment automation &amp; strategies, environments, configurations, application models, and more, are all backed by code.
