@@ -145,7 +145,7 @@
     <label>HTTP idle timeout</label>
     <property>httpIdleTimeout</property>
     <required>0</required>
-    <documentation>Socket idle timeout in seconds for HTTP requests to the server (in seconds).</documentation>
+    <documentation>Socket idle timeout in seconds for HTTP requests to the server (in seconds). Defaults to 3 minutes.</documentation>
   </formElement>
 
 </editor>
