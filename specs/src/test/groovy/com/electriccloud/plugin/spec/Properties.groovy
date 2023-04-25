@@ -74,7 +74,7 @@ class Properties
             suppressNulls: '1',
             objectType: 'project',
             objectName: 'proj_name',
-            timeout: '180
+            timeout: '180'
           ]
         )""")
     then:
@@ -122,7 +122,7 @@ class Properties
             suppressNulls: '1',
             objectType: 'project',
             objectName: 'BEE-30105',
-            timeout: '180
+            timeout: '210'
           ]
         )""")
     then:
@@ -170,7 +170,7 @@ class Properties
             suppressNulls: '1',
             objectType: 'project',
             objectName: 'BEE-33074',
-            timeout: '180
+            timeout: '240'
           ]
         )""")
     then:
