@@ -45,9 +45,6 @@ abstract class BaseObject extends DslDelegatingScript {
                   "steps", "reportingFilters", "stages", "stateDefinitions", "tasks",
                   "widgets")
 
-  private static final Map<String, String> ENCODE_MAP = ["/": "@2F", "\\": "@5C"] as HashMap
-  private static final Map<String, String> DECODE_MAP = ["@2F": "/", "@5C": "\\"] as HashMap
-
   def jsonSlurper = new JsonSlurper()
 
   // return the object.groovy or object.dsl
@@ -418,7 +415,7 @@ abstract class BaseObject extends DslDelegatingScript {
   }     // loadObjects
 
 
-  def evalInlineDslWoContext(String dslFile, Map bindingMap) {
+  def evalInlineDslWoContext(String dslFile, Map bindingMap, String overwriteMode = "0") {
     // We should save current DSL evaluation context and restore it right after import properties
     def tmpCurrent
     def tmpBindingMap
@@ -433,7 +430,7 @@ abstract class BaseObject extends DslDelegatingScript {
 
       tmpBindingMap = this.binding.bindingMap
 
-      evalInlineDsl(dslFile, bindingMap)
+      evalInlineDsl(dslFile, bindingMap, overwriteMode)
     } finally {
       this.current = tmpCurrent
       this.stack.addAll(tmpStack)
@@ -454,7 +451,11 @@ abstract class BaseObject extends DslDelegatingScript {
     // is.scriptClassLoader.class.name}"
     // NMB-27865: Use the same groovy class loader that was used for evaluating
     // the DSL passed to evalDsl.
-    GroovyShell sh = new GroovyShell(this.scriptClassLoader, bindingMap? new Binding(bindingMap) : new Binding(), cc)
+
+    // Inject characters encode/decode mapping
+    bindingMap << ['charactersMapping': Const.DECODE_MAP]
+
+    GroovyShell sh = new GroovyShell(this.scriptClassLoader, new Binding(bindingMap), cc)
     DelegatingScript script = (DelegatingScript)sh.parse(new File(dslFile))
     script.setDelegate(this.delegate)
     // add bindingMap to DslDelegate to deal with collections removing in 'overwrite' mode
@@ -518,10 +519,15 @@ abstract class BaseObject extends DslDelegatingScript {
       println "  parsing " + dir.toString()
       int extension = dir.name.lastIndexOf('.')
       int endIndex = extension > -1 ? extension : dir.name.length()
-      String propName = dir.name.substring(0, endIndex)
+
+      String propFileName = dir.name.substring(0, endIndex)
+
+      // Try to decode potentially encoded property name
+      String propName = decode(propFileName)
       String propPath = "${propRoot}/${propName}"
       String propPath2 = "${propRoot}/properties/${propName}"
-      allProperties<<propName
+
+      allProperties << propName
 
       try {
         def existsProp = getProperty(objectId: "propertySheet-$pSheetId",
@@ -533,7 +539,19 @@ abstract class BaseObject extends DslDelegatingScript {
               || changeCheck("$propPath2", changeList, ["added", "changed"])) {
 
             def propSheetId
-            if (existsProp) {
+
+            // BEE-18910: Evaluate optional property sheet DSL file to restore description, etc.
+            File propertySheetDslFile = new File(dir, "propertySheet.dsl")
+            if (propertySheetDslFile.exists()) {
+              println "  Processing property sheet file $propertySheetDslFile.absolutePath as a $propPath"
+
+              // Map bindingMap = [propertySheetId: "$pSheetId", propertyType: 'sheet']
+              Map bindingMap = [objectId: "propertySheet-$pSheetId", propertyType: 'sheet', propsDir: propsDir]
+              def res = evalInlineDslWoContext(propertySheetDslFile.absolutePath, bindingMap, overwrite)
+
+              propSheetId = res.propertySheetId
+            }
+            else if (existsProp) {
               propSheetId = existsProp.propertySheetId
             }
             else {
@@ -543,16 +561,6 @@ abstract class BaseObject extends DslDelegatingScript {
               propSheetId = res.propertySheetId
             }
 
-            // BEE-18910: Evaluate optional property sheet DSL file to restore description, etc.
-            File propertySheetDslFile = new File(dir, "propertySheet.dsl")
-            if (propertySheetDslFile.exists()) {
-              println "  Processing property sheet file $propertySheetDslFile.absolutePath as a $propPath"
-
-              // Map bindingMap = [propertySheetId: "$pSheetId", propertyType: 'sheet']
-              Map bindingMap = [objectId: "propertySheet-$pSheetId", propertyType: 'sheet', propsDir: propsDir]
-              evalInlineDslWoContext(propertySheetDslFile.absolutePath, bindingMap)
-            }
-
             loadNestedProperties(propPath, dir, overwrite, propSheetId, projectRootProps, changeList)
           }
         } else {
@@ -560,21 +568,21 @@ abstract class BaseObject extends DslDelegatingScript {
               || changeCheck("${propPath2}.txt", changeList, ["added", "changed"])) {
 
             // BEE-18910: Evaluate optional property.dsl file with property details.
-            File propertyDslFile = new File(propsDir, "$propName/property.dsl")
+            File propertyDslFile = new File(propsDir, "$propFileName/property.dsl")
             if (propertyDslFile.exists()) {
               println "  Processing property file $propertyDslFile.absolutePath as a $propPath"
 
               // Map bindingMap = [propertySheetId: "$pSheetId", propertyType: 'string']
               Map bindingMap = [objectId: "propertySheet-$pSheetId", propertyType: 'string', propsDir: propsDir]
-              evalInlineDslWoContext(propertyDslFile.absolutePath, bindingMap)
+              evalInlineDslWoContext(propertyDslFile.absolutePath, bindingMap, overwrite)
             }
             else if (existsProp) {
-              modifyProperty(propertyName: decode(propName),
+              modifyProperty(propertyName: propName,
                              value: dir.text,
                              objectId: "propertySheet-$pSheetId")
             }
             else {
-              createProperty(propertyName: decode(propName),
+              createProperty(propertyName: propName,
                              value: dir.text,
                              objectId: "propertySheet-$pSheetId")
             }
