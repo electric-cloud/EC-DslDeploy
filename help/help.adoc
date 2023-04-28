@@ -211,6 +211,7 @@ image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/importdslfromgitnew.png
 === EC-DslDeploy 4.2.0
 
 * Added 'httpIdleTimeout' argument into the 'generateDsl' plugin procedure
+* Fixed import issue with entity names that contain special characters in the overwrite mode
 
 === EC-DslDeploy 4.1.10
 
