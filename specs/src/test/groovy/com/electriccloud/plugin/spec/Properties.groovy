@@ -205,7 +205,7 @@ class Properties
   }
 
   // check that entities with special characters in the name are imported successfully
-  // special characters: ?<>%*(!@#$^&()|:
+  // special characters: ?<>%*(!@#$^&()|:.
   def "nested entities with special characters in name"()
   {
     def dslDir = '/tmp/' + randomize('dsl')
@@ -224,7 +224,7 @@ class Properties
               includeAllChildren: '1',
               suppressNulls: '1',
               objectType: 'project',
-              objectName: 'projectName ?<>%*(!@#\$^&()|: projectName',
+              objectName: 'projectName ?<>%*(!@#\$^&()|:. projectName',
               httpIdleTimeout: '270'
             ]
           )""")
@@ -253,10 +253,10 @@ class Properties
     and:
     // Properties are created properly
     println "Checking properties"
-    def propSheet1 = dsl "getProperty propertyName: '/projects/projectName ?<>%*(!@#\$^&()|: projectName/pipelines/pipelineName ?<>%*(!@#\$^&()|: pipelineName/stages/stageName ?<>%*(!@#\$^&()|: stageName/tasks/taskName ?<>%*(!@#\$^&()|: taskName/properties/propertySheetName ?<>%*(!@#\$^&()|: propertySheetName'"
+    def propSheet1 = dsl "getProperty propertyName: '/projects/projectName ?<>%*(!@#\$^&()|:. projectName/pipelines/pipelineName ?<>%*(!@#\$^&()|:. pipelineName/stages/stageName ?<>%*(!@#\$^&()|:. stageName/tasks/taskName ?<>%*(!@#\$^&()|:. taskName/properties/propertySheetName ?<>%*(!@#\$^&()|:. propertySheetName'"
     assert propSheet1
     and:
-    def prop1 = dsl "getProperty propertyName: '/projects/projectName ?<>%*(!@#\$^&()|: projectName/pipelines/pipelineName ?<>%*(!@#\$^&()|: pipelineName/stages/stageName ?<>%*(!@#\$^&()|: stageName/tasks/taskName ?<>%*(!@#\$^&()|: taskName/properties/propertySheetName ?<>%*(!@#\$^&()|: propertySheetName/propertyName ?<>%*(!@#\$^&()|: propertyName'"
+    def prop1 = dsl "getProperty propertyName: '/projects/projectName ?<>%*(!@#\$^&()|:. projectName/pipelines/pipelineName ?<>%*(!@#\$^&()|:. pipelineName/stages/stageName ?<>%*(!@#\$^&()|:. stageName/tasks/taskName ?<>%*(!@#\$^&()|:. taskName/properties/propertySheetName ?<>%*(!@#\$^&()|:. propertySheetName/propertyName ?<>%*(!@#\$^&()|:. propertyName'"
     assert prop1
     assert prop1.property.value == "?<>%*(!@#\$^&()|\":"
 

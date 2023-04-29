@@ -1600,8 +1600,8 @@ property 'propSheet1', {
     private static String encode(String arg)
     {
         Map<String, String> ENCODE_MAP = [
-            "/": "%2F", "\\": "%5C", ":": "%3A", "*": "%2A", "?": "%3F", "\"": "%22",
-            "<": "%3C", ">": "%3E", "|": "%7C"
+            '/': '%2F', '\\': '%5C', ':': '%3A', '*': '%2A', '?': '%3F', '"': '%22',
+            '<': '%3C', '>': '%3E', '|': '%7C', '$': '%24', '.': '%2E'
         ] as HashMap
         String result = arg
         ENCODE_MAP.each {key, value ->
