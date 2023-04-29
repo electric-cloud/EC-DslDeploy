@@ -1,15 +1,15 @@
 
-project 'projectName ?<>%*(!@#$^&()|: projectName', {
+project 'projectName ?<>%*(!@#$^&()|:. projectName', {
 
-    pipeline 'pipelineName ?<>%*(!@#$^&()|: pipelineName', {
+    pipeline 'pipelineName ?<>%*(!@#$^&()|:. pipelineName', {
 
-        stage 'stageName ?<>%*(!@#$^&()|: stageName', {
+        stage 'stageName ?<>%*(!@#$^&()|:. stageName', {
 
-            task 'taskName ?<>%*(!@#$^&()|: taskName', {
+            task 'taskName ?<>%*(!@#$^&()|:. taskName', {
 
-                property 'propertySheetName ?<>%*(!@#$^&()|: propertySheetName', {
+                property 'propertySheetName ?<>%*(!@#$^&()|:. propertySheetName', {
 
-                    property 'propertyName ?<>%*(!@#$^&()|: propertyName', value: '?<>%*(!@#$^&()|":'
+                    property 'propertyName ?<>%*(!@#$^&()|:. propertyName', value: '?<>%*(!@#$^&()|:.'
                 }
             }
         }

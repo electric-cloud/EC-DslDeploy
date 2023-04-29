@@ -262,7 +262,7 @@ class Properties
 
     cleanup:
     deleteProjects([projectName: jira], false)
-    deleteProjects([mainProject: 'projectName ?<>%*(!@#$^&()|: projectName'])
+    deleteProjects([mainProject: 'projectName ?<>%*(!@#$^&()|:. projectName'])
     new File(dslDir).deleteDir()
   }
 }
