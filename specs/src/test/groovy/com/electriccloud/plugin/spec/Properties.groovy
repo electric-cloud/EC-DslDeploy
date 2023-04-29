@@ -258,7 +258,7 @@ class Properties
     and:
     def prop1 = dsl "getProperty propertyName: '/projects/projectName ?<>%*(!@#\$^&()|:. projectName/pipelines/pipelineName ?<>%*(!@#\$^&()|:. pipelineName/stages/stageName ?<>%*(!@#\$^&()|:. stageName/tasks/taskName ?<>%*(!@#\$^&()|:. taskName/properties/propertySheetName ?<>%*(!@#\$^&()|:. propertySheetName/propertyName ?<>%*(!@#\$^&()|:. propertyName'"
     assert prop1
-    assert prop1.property.value == "?<>%*(!@#\$^&()|\":"
+    assert prop1.property.value == "?<>%*(!@#\$^&()|:."
 
     cleanup:
     deleteProjects([projectName: jira], false)
