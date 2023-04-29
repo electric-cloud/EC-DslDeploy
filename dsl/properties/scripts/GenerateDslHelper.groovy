@@ -136,7 +136,7 @@ class GenerateDslHelper {
     def handleObject(def obj, def objDir,
                      boolean topLevel = false) {
         //println String.format("handleObject: %s, %s", obj, objDir.path)
-        File objDslFile = new File (objDir, encode(obj.type + ".dsl"))
+        File objDslFile = new File (objDir, encode(obj.type) + ".dsl")
         if (topLevel && includeAllChildren && includeChildrenInSameFile) {
 
             println String.format("generate DSL for the '%s' %s and all it's nested objects in a same file %s",
@@ -191,7 +191,7 @@ class GenerateDslHelper {
 
         // generate DSL for a current object
 
-        println String.format("Generate DSL for '%s' %s in %s.", obj.name, obj.type, objDslFile.getAbsolutePath())
+        println String.format("Generate DSL for '%s' %s in %s", obj.name, obj.type, objDslFile.getAbsolutePath())
         def dsl = electricFlow.generateDsl(path: obj.path,
                 includeChildren: includeChildrenValue,
                 suppressNulls: suppressNulls,
@@ -355,14 +355,16 @@ class GenerateDslHelper {
 
     private void handleProperties(File propertiesDir, def properties, def path) {
         for (def property :  properties) {
-            def pathToProp = path + "/" + property.propertyName
+            def pathToProp = path + '/' + property.propertyName
+
+            File propertyDir = new File(propertiesDir, encode(property.propertyName))
+            propertyDir.mkdir()
 
             if (property.propertySheet) {
-                File dir = new File(propertiesDir, encode(property.propertyName))
-                dir.mkdir()
-
                 // BEE-18910: export all property sheet information
-                println String.format("Generate DSL for property sheet by path: %s", pathToProp)
+                println String.format("Generate DSL for '%s' property sheet in %s",
+                                      property.propertyName,
+                                      new File(propertyDir, 'propertySheet.dsl').getAbsolutePath())
 
                 def propDsl = electricFlow.generateDsl(path: pathToProp,
                         suppressNulls: suppressNulls,
@@ -370,19 +372,19 @@ class GenerateDslHelper {
                         suppressChildren: true,
                         suppressParent: suppressParent)?.value
 
-                File propertyDir = new File(propertiesDir, encode(property.propertyName))
-                propertyDir.mkdir()
 
-                File file = new File(propertyDir, "propertySheet.dsl")
+                File file = new File(propertyDir, 'propertySheet.dsl')
                 file << propDsl
 
-                handleProperties(dir, property.propertySheet.property, pathToProp)
+                handleProperties(propertyDir, property.propertySheet.property, pathToProp)
             } else {
-                File file = new File(propertiesDir, encode(property.propertyName + '.txt'))
+                File file = new File(propertiesDir, encode(property.propertyName) + '.txt')
                 file << property.value
 
                 // BEE-18910: export all property information
-                println String.format("Generate DSL for property by path: %s", pathToProp)
+                println String.format("Generate DSL for '%s' property in %s",
+                                      property.propertyName,
+                                      new File(propertyDir, 'property.dsl').getAbsolutePath())
 
                 def propDsl = electricFlow.generateDsl(path: pathToProp,
                                                        suppressNulls: suppressNulls,
@@ -392,9 +394,6 @@ class GenerateDslHelper {
 
                 propDsl = propDsl.replaceAll(", value: ('.*?'), \\{", ', value: """\\$propertyContent""", \\{')
                 propDsl = propDsl.replaceAll("(?s)\\Q$property.propertyName\\E = .*", "\\Q$property.propertyName\\E = " + '"""\\$propertyContent"""')
-
-                File propertyDir = new File(propertiesDir, encode(property.propertyName))
-                propertyDir.mkdir()
 
                 file = new File(propertyDir, "property.dsl")
                 file << "import java.io.File\n\n"

@@ -29,7 +29,7 @@ class Const {
 
   static Map<String, String> ENCODE_MAP = [
       '/': '%2F', '\\': '%5C', ':': '%3A', '*': '%2A', '?': '%3F', '"': '%22',
-      '<': '%3C', '>': '%3E', '|': '%7C', '$': '%24'
+      '<': '%3C', '>': '%3E', '|': '%7C', '$': '%24', '.': '%2E'
     ].asUnmodifiable()
 
   static Map<String, String> DECODE_MAP = ENCODE_MAP
