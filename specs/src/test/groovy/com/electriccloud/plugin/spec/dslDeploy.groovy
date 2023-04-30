@@ -128,4 +128,23 @@ class dslDeploy extends PluginTestHelper {
      """
      assert catItem.catalogItem.catalogItemName == "Service OnBoarding"
    }
+
+  // Check timeout
+  def "check timeout work in deployMain step"() {
+    given: "the sample code"
+    when: "Load DSL Code"
+      def result= runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installDslFromDirectory",
+          actualParameter: [
+            directory: "$plugDir/$pName-$pVersion/lib/dslCode/BEE-32659",
+            pool: "$defaultPool",
+            additionalDslArguments: "--debug 1 --timeout 600",
+          ]
+        )""")
+    then: "job succeeds"
+      assert result.jobId
+      assert getJobProperty("outcome", result.jobId) == "success"
+   }
 }
