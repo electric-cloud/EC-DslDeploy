@@ -22,11 +22,36 @@ my $ovrwrt = 0;
 if (lc("$[overwrite]") eq "true" || "$[overwrite]") {
     $ovrwrt = 1;
 }
+print("User overwrite is: '$ovrwrt'\n");
+
+my ($userTimeout) = ("$[additionalDslArguments]" =~ m/--timeout\s+([0-9]+)/);
+print("User timeout is: '$userTimeout'\n");
+
+my $pluginTimeout = $[/server/EC-DslDeploy/timeout];
+print("Plugin timeout is: '$pluginTimeout'\n");
+
+my $timeout = $userTimeout;
+if ("$timeout" eq "") {
+    $timeout = $pluginTimeout;
+}
+print("Timeout is: '$timeout'\n");
+
+$ec->setTimeout($timeout);
+
+my ($debug) = ("$[additionalDslArguments]" =~ m/--debug\s+([0-1]+)/);
+print("User debug is: '$debug'\n");
+
+if ("$debug" eq "") {
+    $debug = 0;
+}
+print("Debug is: '$debug'\n");
+
+$ec->{debug} = $debug;
 
 while (my $file = readdir($topDslDir)) {
   if ($file =~ m/^.*\.(dsl|groovy)$/) {
     printf ("Processing top level file $file\n");
-    $ec->evalDsl({dslFile => $file, overwrite => $ovrwrt});
+    $ec->evalDsl({dslFile => $file, overwrite => $ovrwrt, debug => $debug, timeout => $timeout});
     $counter++
   }
 }

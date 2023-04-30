@@ -29,12 +29,12 @@ if ("$timeout" eq "") {
 print("Timeout is: '$timeout'\n");
 
 my ($debug) = ("$[additionalDslArguments]" =~ m/--debug\s+([0-1]+)/);
-print("User $debug is: '$debug'\n");
+print("User debug is: '$debug'\n");
 
 if ("$debug" eq "") {
     $debug = 0;
 }
-print("User $debug is: '$debug'\n");
+print("Debug is: '$debug'\n");
 
 # Is this an incremental import?
 my $incremental = 0;
