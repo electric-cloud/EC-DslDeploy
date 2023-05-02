@@ -9,6 +9,8 @@ use ElectricCommander;
 use Data::Dumper;
 $| = 1;
 
+use utf8;
+
 my $DEBUG=0;
 
 # Create a single instance of the Perl access to ElectricCommander

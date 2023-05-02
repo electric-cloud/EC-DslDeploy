@@ -214,6 +214,7 @@ image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/importdslfromgitnew.png
 * Fixed import issue with entity names that contain special characters in the overwrite mode
 * Improved logging in the 'generateDslToDirectory' procedure for properties and property sheets
 * Fixed issue with 'timeout' argument in the 'generateDslToDirectory' procedure
+* Fixed import issue for CD entities with names contain punctuated characters
 
 === EC-DslDeploy 4.1.10
 

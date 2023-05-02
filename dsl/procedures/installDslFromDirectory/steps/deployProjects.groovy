@@ -10,8 +10,6 @@
   2022-03-17  mayasse  adding change list/incremental/partial import features
 
 */
-import groovy.io.FileType
-import groovy.json.StringEscapeUtils
 import com.electriccloud.client.groovy.ElectricFlow
 import com.electriccloud.client.groovy.apis.model.*
 import com.electriccloud.client.groovy.models.ActualParameter
@@ -85,9 +83,7 @@ if (pDir.exists()) {
                     changeListText.indexOf('"what":"INITIAL"') > -1) ||
                     changeListText.indexOf("projects/$basename/") > -1)) {
             println "Processing project $basename"
-            def escapedProjName = StringEscapeUtils
-                .escapeJava(basename)
-            def params = [new ActualParameter('projName', escapedProjName),
+            def params = [new ActualParameter('projName', basename),
                           new ActualParameter('projDir', projDir
                               .absolutePath
                               .toString()
