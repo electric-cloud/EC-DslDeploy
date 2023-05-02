@@ -265,4 +265,66 @@ class Properties
     deleteProjects([mainProject: 'projectName ?<>%*(!@#$^&()|:. projectName'])
     new File(dslDir).deleteDir()
   }
+
+  // check that entities with puncted characters in the name are imported successfully
+  // punctuated characters: Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß
+  def "nested entities with names contain punctuated characters"()
+  {
+    def dslDir = '/tmp/' + randomize('dsl')
+
+    given: "Load entities"
+    dslFile("nested_entities_punctuated_chars.dsl")
+
+    when: "Generate DSL files"
+    def result1 = runProcedureDsl("""
+          runProcedure(
+            projectName: "/plugins/$pName/project",
+            procedureName: "generateDslToDirectory",
+            actualParameter: [
+              directory: "$dslDir",
+              pool: "$defaultPool",
+              includeAllChildren: '1',
+              suppressNulls: '1',
+              objectType: 'project',
+              objectName: 'projectName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß projectName',
+              httpIdleTimeout: '270'
+            ]
+          )""")
+    then:
+    assert result1.jobId
+    def outcome1 = getJobProperty("outcome", result1.jobId)
+    assert outcome1 == "success"
+
+    when: "Import DSL files in overwrite mode with debug enabled"
+    def result2 = runProcedureDsl("""
+          runProcedure(
+            projectName: "/plugins/$pName/project",
+            procedureName: "installDslFromDirectory",
+            actualParameter: [
+              directory: "$dslDir",
+              pool: "$defaultPool",
+              additionalDslArguments: "--debug 1",
+              overwrite: '1'
+            ]
+          )""")
+    then:
+    assert result2.jobId
+    def outcome2 = getJobProperty("outcome", result2.jobId)
+    assert outcome2 == "success"
+
+    and:
+    // Properties are created properly
+    println "Checking properties"
+    def propSheet1 = dsl "getProperty propertyName: '/projects/projectName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß projectName/pipelines/pipelineName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß pipelineName/stages/stageName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß stageName/tasks/taskName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß taskName/properties/propertySheetName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß propertySheetName'"
+    assert propSheet1
+    and:
+    def prop1 = dsl "getProperty propertyName: '/projects/projectName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß projectName/pipelines/pipelineName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß pipelineName/stages/stageName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß stageName/tasks/taskName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß taskName/properties/propertySheetName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß propertySheetName/propertyName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß propertyName'"
+    assert prop1
+    assert prop1.property.value == "Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß"
+
+    cleanup:
+    deleteProjects([projectName: jira], false)
+    deleteProjects([mainProject: 'projectName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß projectName'])
+    new File(dslDir).deleteDir()
+  }
 }
