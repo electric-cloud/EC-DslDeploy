@@ -267,7 +267,7 @@ class Properties
   }
 
   // check that entities with puncted characters in the name are imported successfully
-  // punctuated characters: Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß
+  // punctuated characters: ÒÓÔÕÖ×ØÙÚÛÜÝÞß
   def "nested entities with names contain punctuated characters"()
   {
     def dslDir = '/tmp/' + randomize('dsl')
@@ -286,7 +286,7 @@ class Properties
               includeAllChildren: '1',
               suppressNulls: '1',
               objectType: 'project',
-              objectName: 'projectName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß projectName',
+              objectName: 'projectName ÒÓÔÕÖ×ØÙÚÛÜÝÞß projectName',
               httpIdleTimeout: '270'
             ]
           )""")
@@ -315,16 +315,16 @@ class Properties
     and:
     // Properties are created properly
     println "Checking properties"
-    def propSheet1 = dsl "getProperty propertyName: '/projects/projectName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß projectName/pipelines/pipelineName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß pipelineName/stages/stageName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß stageName/tasks/taskName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß taskName/properties/propertySheetName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß propertySheetName'"
+    def propSheet1 = dsl "getProperty propertyName: '/projects/projectName ÒÓÔÕÖ×ØÙÚÛÜÝÞß projectName/pipelines/pipelineName ÒÓÔÕÖ×ØÙÚÛÜÝÞß pipelineName/stages/stageName ÒÓÔÕÖ×ØÙÚÛÜÝÞß stageName/tasks/taskName ÒÓÔÕÖ×ØÙÚÛÜÝÞß taskName/properties/propertySheetName ÒÓÔÕÖ×ØÙÚÛÜÝÞß propertySheetName'"
     assert propSheet1
     and:
-    def prop1 = dsl "getProperty propertyName: '/projects/projectName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß projectName/pipelines/pipelineName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß pipelineName/stages/stageName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß stageName/tasks/taskName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß taskName/properties/propertySheetName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß propertySheetName/propertyName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß propertyName'"
+    def prop1 = dsl "getProperty propertyName: '/projects/projectName ÒÓÔÕÖ×ØÙÚÛÜÝÞß projectName/pipelines/pipelineName ÒÓÔÕÖ×ØÙÚÛÜÝÞß pipelineName/stages/stageName ÒÓÔÕÖ×ØÙÚÛÜÝÞß stageName/tasks/taskName ÒÓÔÕÖ×ØÙÚÛÜÝÞß taskName/properties/propertySheetName ÒÓÔÕÖ×ØÙÚÛÜÝÞß propertySheetName/propertyName ÒÓÔÕÖ×ØÙÚÛÜÝÞß propertyName'"
     assert prop1
-    assert prop1.property.value == "Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß"
+    assert prop1.property.value == "ÒÓÔÕÖ×ØÙÚÛÜÝÞß"
 
     cleanup:
     deleteProjects([projectName: jira], false)
-    deleteProjects([mainProject: 'projectName Ò|Ó|Ô|Õ|Ö|×|Ø|Ù|Ú|Û|Ü|Ý|Þ|ß projectName'])
+    deleteProjects([mainProject: 'projectName ÒÓÔÕÖ×ØÙÚÛÜÝÞß projectName'])
     new File(dslDir).deleteDir()
   }
 }
