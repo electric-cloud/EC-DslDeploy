@@ -34,7 +34,6 @@ Default is `false`
 |Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
 |===
 
-image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/installdsl.png[installDsl parameters]
 
 === InstallDslFromDirectory
 
@@ -73,7 +72,6 @@ Objects with depth > 2 are not supported. Examples:
 |Exclude objects |New line separated list of paths to exclude (See *Include objects* for examples). Exclude nothing by default.
 |===
 
-image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/installdslfromdirectory.png[installDslFromDirectory parameters]
 
 === InstallProject
 
@@ -90,7 +88,6 @@ The main purpose of the procedure to be a part of installDslFromDirectory proced
 |Additional argument(s)| For evalDsl calls, additional arguments such as  `--timeout` or `--debug`. Values used in `--timeout` are used as timeouts for ectool, evalDsl, and the job step time out used to import the DSL.
 |===
 
-image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/installproject.png[installProject parameters]
 
 === GenerateDslToDirectory
 
@@ -113,7 +110,6 @@ Export DSL for a top level {PRODUCT} object, with options for which child object
 |Children in Different Files | A comma-separated list of patterns to include, like pipelines, procedures.`*`, applications.applicationTiers.components
 |===
 
-image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/generatedsltodirectory.png[generateDslToDirectory parameters]
 
 === ImportDslFromGit
 
@@ -146,7 +142,6 @@ NOTE: This moves the HEAD.
 |Additional DSL Arguments| Additional argument for `evalDsl` call.
 |===
 
-image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/importdslfromgit.png[importDslFromGit parameters]
 
 === ImportDslFromGitNew
 
@@ -203,7 +198,6 @@ If set, only these objects are synchronized. If empty, all available objects are
 NOTE: If the commit ID cannot be found or if the procedure or steps cannot find, read, or correctly parse the change list, the entire DSL file structure is re-imported.
 |===
 
-image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/importdslfromgitnew.png[ImportDslFromGitNew parameters,role="screenshot"]
 
 [[releaseNotes]]
 == Release notes
