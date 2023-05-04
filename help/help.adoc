@@ -111,6 +111,161 @@ Export DSL for a top level {PRODUCT} object, with options for which child object
 |===
 
 
+.GenerateDslToDirectory output example
+[%collapsible]
+====
+In the following *GenerateDslToDirectory* output example, you can see the directory structure generated for two projects, `testProject1` (line 3) and `testProject2` (line 58), and two resources, `testResource1` (line 114) and `testResource2` (line 127) into a `/tmp/dsl` directory.
+
+[source,shell,linenums,role="novalidate"]
+
+----
+/tmp/dsl
+├── projects
+│   ├── testProject1
+│   │   ├── acls
+│   │   │   └── acl.dsl
+│   │   ├── procedures
+│   │   │   ├── testProcedure1
+│   │   │   │   ├── acls
+│   │   │   │   │   └── acl.dsl
+│   │   │   │   ├── procedure.dsl
+│   │   │   │   ├── properties
+│   │   │   │   │   ├── testProperty1
+│   │   │   │   │   │   └── property.dsl
+│   │   │   │   │   ├── testProperty1.txt
+│   │   │   │   │   └── testPropertySheet1
+│   │   │   │   │       ├── propertySheet.dsl
+│   │   │   │   │       ├── testProperty2
+│   │   │   │   │       │   └── property.dsl
+│   │   │   │   │       └── testProperty2.txt
+│   │   │   │   └── steps
+│   │   │   │       ├── metadata.json
+│   │   │   │       ├── testStep1
+│   │   │   │       │   ├── acls
+│   │   │   │       │   │   └── acl.dsl
+│   │   │   │       │   └── step.dsl
+│   │   │   │       ├── testStep1.cmd
+│   │   │   │       ├── testStep2
+│   │   │   │       │   ├── acls
+│   │   │   │       │   │   └── acl.dsl
+│   │   │   │       │   └── step.dsl
+│   │   │   │       └── testStep2.cmd
+│   │   │   └── testProcedure2
+│   │   │       ├── acls
+│   │   │       │   └── acl.dsl
+│   │   │       ├── procedure.dsl
+│   │   │       ├── properties
+│   │   │       │   ├── testProperty1
+│   │   │       │   │   └── property.dsl
+│   │   │       │   ├── testProperty1.txt
+│   │   │       │   └── testPropertySheet1
+│   │   │       │       ├── propertySheet.dsl
+│   │   │       │       ├── testProperty2
+│   │   │       │       │   └── property.dsl
+│   │   │       │       └── testProperty2.txt
+│   │   │       └── steps
+│   │   │           ├── metadata.json
+│   │   │           ├── testStep1
+│   │   │           │   ├── acls
+│   │   │           │   │   └── acl.dsl
+│   │   │           │   └── step.dsl
+│   │   │           ├── testStep1.cmd
+│   │   │           ├── testStep2
+│   │   │           │   ├── acls
+│   │   │           │   │   └── acl.dsl
+│   │   │           │   └── step.dsl
+│   │   │           └── testStep2.cmd
+│   │   └── project.dsl
+│   └── testProject2
+│       ├── acls
+│       │   └── acl.dsl
+│       ├── procedures
+│       │   ├── testProcedure1
+│       │   │   ├── acls
+│       │   │   │   └── acl.dsl
+│       │   │   ├── procedure.dsl
+│       │   │   ├── properties
+│       │   │   │   ├── testProperty1
+│       │   │   │   │   └── property.dsl
+│       │   │   │   ├── testProperty1.txt
+│       │   │   │   └── testPropertySheet1
+│       │   │   │       ├── propertySheet.dsl
+│       │   │   │       ├── testProperty2
+│       │   │   │       │   └── property.dsl
+│       │   │   │       └── testProperty2.txt
+│       │   │   └── steps
+│       │   │       ├── metadata.json
+│       │   │       ├── testStep1
+│       │   │       │   ├── acls
+│       │   │       │   │   └── acl.dsl
+│       │   │       │   └── step.dsl
+│       │   │       ├── testStep1.cmd
+│       │   │       ├── testStep2
+│       │   │       │   ├── acls
+│       │   │       │   │   └── acl.dsl
+│       │   │       │   └── step.dsl
+│       │   │       └── testStep2.cmd
+│       │   └── testProcedure2
+│       │       ├── acls
+│       │       │   └── acl.dsl
+│       │       ├── procedure.dsl
+│       │       ├── properties
+│       │       │   ├── testProperty1
+│       │       │   │   └── property.dsl
+│       │       │   ├── testProperty1.txt
+│       │       │   └── testPropertySheet1
+│       │       │       ├── propertySheet.dsl
+│       │       │       ├── testProperty2
+│       │       │       │   └── property.dsl
+│       │       │       └── testProperty2.txt
+│       │       └── steps
+│       │           ├── metadata.json
+│       │           ├── testStep1
+│       │           │   ├── acls
+│       │           │   │   └── acl.dsl
+│       │           │   └── step.dsl
+│       │           ├── testStep1.cmd
+│       │           ├── testStep2
+│       │           │   ├── acls
+│       │           │   │   └── acl.dsl
+│       │           │   └── step.dsl
+│       │           └── testStep2.cmd
+│       └── project.dsl
+└── resources
+├── testResource1
+│   ├── acls
+│   │   └── acl.dsl
+│   ├── properties
+│   │   ├── testProperty1
+│   │   │   └── property.dsl
+│   │   ├── testProperty1.txt
+│   │   └── testPropertySheet1
+│   │       ├── propertySheet.dsl
+│   │       ├── testProperty2
+│   │       │   └── property.dsl
+│   │       └── testProperty2.txt
+│   └── resource.dsl
+└── testResource2
+├── acls
+│   └── acl.dsl
+├── properties
+│   ├── testProperty1
+│   │   └── property.dsl
+│   ├── testProperty1.txt
+│   └── testPropertySheet1
+│       ├── propertySheet.dsl
+│       ├── testProperty2
+│       │   └── property.dsl
+│       └── testProperty2.txt
+└── resource.dsl
+
+64 directories, 74 files
+----
+
+====
+
+
+
 === ImportDslFromGit
 
 IMPORTANT: This procedure is deprecated and relies on the ECSCM-Git plugin, which is no longer supported. Unless you have legacy installations of {PRODUCT}, you should not use it and use <<ImportDslFromGitNew>> instead.
