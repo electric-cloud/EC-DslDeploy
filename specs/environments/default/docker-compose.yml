@@ -14,9 +14,9 @@ services:
     tty: true
     environment:
       - COMMANDER_SERVER=electricflow
-      - LC_ALL=en_US.UTF-8
-      - LANG=en_US.UTF-8
-      - LANGUAGE=en_US.UTF-8
+      - LC_ALL=C.UTF-8
+      - LANG=C.UTF-8
+      - LANGUAGE=C.UTF-8
 networks:
   internal:
     driver: bridge
