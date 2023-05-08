@@ -72,6 +72,44 @@ Objects with depth > 2 are not supported. Examples:
 |Exclude objects |New line separated list of paths to exclude (See *Include objects* for examples). Exclude nothing by default.
 |===
 
+.InstallDslFromDirectory input example
+[%collapsible]
+====
+In the following *InstallDslFromDirectory* input example, `/projects` is being used to install the projects `FOO`, `BAR`, and `PIPE``.
+
+[source,text,linenums,role="novalidate"]
+----
+`-- projects
+    |-- FOO
+    |   |-- catalogs
+    |   |   `-- Test\ Catalog
+    |   |       |-- catalog.dsl
+    |   |       `-- catalogItems
+    |   |           `-- Service\ OnBoarding
+    |   |               `-- catalogItem.dsl
+    |   |-- procedures
+    |   |   `-- FOO1
+    |   |       |-- procedure.groovy
+    |   |       `-- steps
+    |   |           `-- echo.pl
+    |   `-- project.groovy
+    |-- BAR
+    |   |-- procedures
+    |   |   `-- BAR1
+    |   |       |-- procedure.groovy
+    |   |       `-- steps
+    |   |           `-- echo.pl
+    |   |-- project.groovy
+    |   `-- properties
+    |       `-- prop1.txt
+    `-- PIPE
+        |-- pipelines
+        |   `-- UC1
+        |       `-- pipeline.groovy
+        `-- project.groovy
+----
+
+====
 
 === InstallProject
 
@@ -87,6 +125,27 @@ The main purpose of the procedure to be a part of installDslFromDirectory proced
 |Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
 |Additional argument(s)| For evalDsl calls, additional arguments such as  `--timeout` or `--debug`. Values used in `--timeout` are used as timeouts for ectool, evalDsl, and the job step time out used to import the DSL.
 |===
+
+.InstallProject input example
+[%collapsible]
+====
+In the following *InstallProject* input example, you can see a sample directory structure to install a project. In this example, `FOO` project with the `BAR` procedure.
+
+[source,text,linenums,role="novalidate"]
+----
+FOO
+|-- procedures
+|   `-- BAR
+|       |-- procedure.groovy
+|       `-- steps
+|           `-- echo.pl
+|-- project.groovy
+`-- properties
+    `-- prop1.txt
+
+----
+
+====
 
 
 === GenerateDslToDirectory
@@ -111,13 +170,12 @@ Export DSL for a top level {PRODUCT} object, with options for which child object
 |===
 
 
-.GenerateDslToDirectory output example
+.GenerateDslToDirectory project output example
 [%collapsible]
 ====
-In the following *GenerateDslToDirectory* output example, you can see the directory structure generated for two projects, `testProject1` (line 3) and `testProject2` (line 58), and two resources, `testResource1` (line 114) and `testResource2` (line 127) into a `/tmp/dsl` directory.
+In the following *GenerateDslToDirectory* output example, you can see the directory structure generated for an example project, `testProject1` into a `/tmp/dsl` directory.
 
-[source,shell,linenums,role="novalidate"]
-
+[source,text,linenums,role="novalidate"]
 ----
 /tmp/dsl
 ├── projects
@@ -175,63 +233,20 @@ In the following *GenerateDslToDirectory* output example, you can see the direct
 │   │   │           │   │   └── acl.dsl
 │   │   │           │   └── step.dsl
 │   │   │           └── testStep2.cmd
-│   │   └── project.dsl
-│   └── testProject2
-│       ├── acls
-│       │   └── acl.dsl
-│       ├── procedures
-│       │   ├── testProcedure1
-│       │   │   ├── acls
-│       │   │   │   └── acl.dsl
-│       │   │   ├── procedure.dsl
-│       │   │   ├── properties
-│       │   │   │   ├── testProperty1
-│       │   │   │   │   └── property.dsl
-│       │   │   │   ├── testProperty1.txt
-│       │   │   │   └── testPropertySheet1
-│       │   │   │       ├── propertySheet.dsl
-│       │   │   │       ├── testProperty2
-│       │   │   │       │   └── property.dsl
-│       │   │   │       └── testProperty2.txt
-│       │   │   └── steps
-│       │   │       ├── metadata.json
-│       │   │       ├── testStep1
-│       │   │       │   ├── acls
-│       │   │       │   │   └── acl.dsl
-│       │   │       │   └── step.dsl
-│       │   │       ├── testStep1.cmd
-│       │   │       ├── testStep2
-│       │   │       │   ├── acls
-│       │   │       │   │   └── acl.dsl
-│       │   │       │   └── step.dsl
-│       │   │       └── testStep2.cmd
-│       │   └── testProcedure2
-│       │       ├── acls
-│       │       │   └── acl.dsl
-│       │       ├── procedure.dsl
-│       │       ├── properties
-│       │       │   ├── testProperty1
-│       │       │   │   └── property.dsl
-│       │       │   ├── testProperty1.txt
-│       │       │   └── testPropertySheet1
-│       │       │       ├── propertySheet.dsl
-│       │       │       ├── testProperty2
-│       │       │       │   └── property.dsl
-│       │       │       └── testProperty2.txt
-│       │       └── steps
-│       │           ├── metadata.json
-│       │           ├── testStep1
-│       │           │   ├── acls
-│       │           │   │   └── acl.dsl
-│       │           │   └── step.dsl
-│       │           ├── testStep1.cmd
-│       │           ├── testStep2
-│       │           │   ├── acls
-│       │           │   │   └── acl.dsl
-│       │           │   └── step.dsl
-│       │           └── testStep2.cmd
-│       └── project.dsl
-└── resources
+└───└───└── project.dsl
+----
+
+====
+
+.GenerateDslToDirectory resources output example
+[%collapsible]
+====
+In the following *GenerateDslToDirectory* output example, you can see the directory structure generated for two example resources, `testResource1` (line 3) and `testResource2` (line 16) into a `/tmp/dsl` directory.
+
+[source,text,linenums,role="novalidate"]
+----
+/tmp/dsl
+├──resources
 ├── testResource1
 │   ├── acls
 │   │   └── acl.dsl
@@ -258,8 +273,6 @@ In the following *GenerateDslToDirectory* output example, you can see the direct
 │       │   └── property.dsl
 │       └── testProperty2.txt
 └── resource.dsl
-
-64 directories, 74 files
 ----
 
 ====
