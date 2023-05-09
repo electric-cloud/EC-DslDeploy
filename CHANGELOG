@@ -3,6 +3,7 @@
            BEE-33566 - Fixed import issue with entity names that contain special characters in the overwrite mode
            BEE-33551 - Improved logging in the 'generateDslToDirectory' procedure for properties and property sheets
            BEE-32659 - Fixed issue with 'timeout' argument in the 'generateDslToDirectory' procedure
+           BEE-32295 - Fixed import issue for CD entities with names contain punctuated characters
 
 2023-04.18 Valera Fessler <vfezler@cloudbees.com>
   * 4.1.10: BEE-33074 - fixed duplication properties issue with original and encoded names
