@@ -215,6 +215,7 @@ image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/importdslfromgitnew.png
 * Improved logging in the 'generateDslToDirectory' procedure for properties and property sheets
 * Fixed issue with 'timeout' argument in the 'generateDslToDirectory' procedure
 * Fixed import issue for CD entities with names contain punctuated characters
+* Fixed issue with import new properties in the overwrite mode
 
 === EC-DslDeploy 4.1.10
 
