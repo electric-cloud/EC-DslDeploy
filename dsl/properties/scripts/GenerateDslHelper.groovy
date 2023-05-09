@@ -393,7 +393,7 @@ class GenerateDslHelper {
                                                        suppressParent: suppressParent)?.value
 
                 propDsl = propDsl.replaceAll(", value: ('.*?'), \\{", ', value: """\\$propertyContent""", \\{')
-                propDsl = propDsl.replaceAll("(?s)\\Q$property.propertyName\\E = .*", "\\Q$property.propertyName\\E = " + '"""\\$propertyContent"""')
+                propDsl = propDsl.replaceAll("(?s)\\Q$property.propertyName\\E = .*", "$property.propertyName = " + '"""\\$propertyContent"""')
 
                 file = new File(propertyDir, "property.dsl")
                 file << "import java.io.File\n\n"
