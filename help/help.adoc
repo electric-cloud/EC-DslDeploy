@@ -79,34 +79,34 @@ In the following *InstallDslFromDirectory* input example, `/projects` is being u
 
 [source,text,linenums,role="novalidate"]
 ----
-`-- projects
-    |-- catalogTest
-    |   |-- catalogs
-    |   |   `-- Test\ Catalog
-    |   |       |-- catalog.dsl
-    |   |       `-- catalogItems
-    |   |           `-- Service\ OnBoarding
-    |   |               `-- catalogItem.dsl
-    |   |-- procedures
-    |   |   `-- catalogProcedure1
-    |   |       |-- procedure.groovy
-    |   |       `-- steps
-    |   |           `-- echo.pl
-    |   `-- project.groovy
-    |-- testProject
-    |   |-- procedures
-    |   |   `-- testProcedure1
-    |   |       |-- procedure.groovy
-    |   |       `-- steps
-    |   |           `-- echo.pl
-    |   |-- project.groovy
-    |   `-- properties
-    |       `-- prop1.txt
-    `-- testPipeline
-        |-- pipelines
-        |   `-- UC1
-        |       `-- pipeline.groovy
-        `-- project.groovy
+├── projects
+    ├── catalogTest
+    │   ├── catalogs
+    │   │   └── Test\ Catalog
+    │   │       ├── catalog.dsl
+    │   │       └── catalogItems
+    │   │           └── Service\ OnBoarding
+    │   │               └── catalogItem.dsl
+    │   ├── procedures
+    │   │   └── catalogProcedure1
+    │   │       ├── procedure.groovy
+    │   │       └── steps
+    │   │           └── echo.pl
+    │   └── project.groovy
+    ├── testProject
+    │   ├── procedures
+    │   │   └── testProcedure1
+    │   │       ├── procedure.groovy
+    │   │       └── steps
+    │   │           └── echo.pl
+    │   ├── project.groovy
+    │   └── properties
+    │       └── prop1.txt
+    └── testPipeline
+        ├── pipelines
+        │   └── UC1
+        │       └── pipeline.groovy
+        └── project.groovy
 ----
 
 ====
@@ -134,19 +134,18 @@ In the following *InstallProject* input example, you can see a sample directory 
 [source,text,linenums,role="novalidate"]
 ----
 project1
-|-- procedures
-|  |-- procedure1
-|   |       |-- procedure.groovy
-|   |       `-- steps
-|   |           `-- echo.pl
-|   `-- procedure2
-|       |-- procedure.groovy
-|       `-- steps
-|           `-- echo.pl
-|-- project.groovy
-`-- properties
-    `-- prop1.txt
-
+├── procedures
+│   ├── procedure1
+│   │       ├── procedure.groovy
+│   │       └── steps
+│   │           └── echo.pl
+│   └── procedure2
+│       ├── procedure.groovy
+│       └── steps
+│           └── echo.pl
+├── project.groovy
+└── properties
+    └── prop1.txt
 ----
 
 ====
