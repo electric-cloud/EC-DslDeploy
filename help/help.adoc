@@ -34,7 +34,6 @@ Default is `false`
 |Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
 |===
 
-image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/installdsl.png[installDsl parameters]
 
 === InstallDslFromDirectory
 
@@ -60,7 +59,7 @@ Examples:
 * “/projects“ - all projects
 * “/projects/Default/applications“ - all applications in project 'Default'
 * “/users“ - all users
-* “/projects/Commander/procedures/Master“ - ‘Master' procedure in 'Commander’ project
+* “/projects/Commander/procedures/Master“ - 'Master' procedure in 'Commander' project
 * “/projects/*/releases“ - all releases in all projects
 
 [NOTE]
@@ -73,7 +72,44 @@ Objects with depth > 2 are not supported. Examples:
 |Exclude objects |New line separated list of paths to exclude (See *Include objects* for examples). Exclude nothing by default.
 |===
 
-image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/installdslfromdirectory.png[installDslFromDirectory parameters]
+.InstallDslFromDirectory input example
+[%collapsible]
+====
+In the following *InstallDslFromDirectory* input example, `/projects` is being used to install the projects `catalogTest`, `testProject`, and `testPipeLine`.
+
+[source,text,linenums,role="novalidate"]
+----
+├── projects
+    ├── catalogTest
+    │   ├── catalogs
+    │   │   └── Test\ Catalog
+    │   │       ├── catalog.dsl
+    │   │       └── catalogItems
+    │   │           └── Service\ OnBoarding
+    │   │               └── catalogItem.dsl
+    │   ├── procedures
+    │   │   └── catalogProcedure1
+    │   │       ├── procedure.groovy
+    │   │       └── steps
+    │   │           └── echo.pl
+    │   └── project.groovy
+    ├── testProject
+    │   ├── procedures
+    │   │   └── testProcedure1
+    │   │       ├── procedure.groovy
+    │   │       └── steps
+    │   │           └── echo.pl
+    │   ├── project.groovy
+    │   └── properties
+    │       └── prop1.txt
+    └── testPipeline
+        ├── pipelines
+        │   └── UC1
+        │       └── pipeline.groovy
+        └── project.groovy
+----
+
+====
 
 === InstallProject
 
@@ -90,7 +126,30 @@ The main purpose of the procedure to be a part of installDslFromDirectory proced
 |Additional argument(s)| For evalDsl calls, additional arguments such as  `--timeout` or `--debug`. Values used in `--timeout` are used as timeouts for ectool, evalDsl, and the job step time out used to import the DSL.
 |===
 
-image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/installproject.png[installProject parameters]
+.InstallProject input example
+[%collapsible]
+====
+In the following *InstallProject* input example, you can see a sample directory structure to install a project. In this example, `project1` project with the `procedure1` and `procedure2` procedure.
+
+[source,text,linenums,role="novalidate"]
+----
+project1
+├── procedures
+│   ├── procedure1
+│   │       ├── procedure.groovy
+│   │       └── steps
+│   │           └── echo.pl
+│   └── procedure2
+│       ├── procedure.groovy
+│       └── steps
+│           └── echo.pl
+├── project.groovy
+└── properties
+    └── prop1.txt
+----
+
+====
+
 
 === GenerateDslToDirectory
 
@@ -113,7 +172,115 @@ Export DSL for a top level {PRODUCT} object, with options for which child object
 |Children in Different Files | A comma-separated list of patterns to include, like pipelines, procedures.`*`, applications.applicationTiers.components
 |===
 
-image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/generatedsltodirectory.png[generateDslToDirectory parameters]
+
+.GenerateDslToDirectory project output example
+[%collapsible]
+====
+In the following *GenerateDslToDirectory* output example, you can see the directory structure generated for an example project, `testProject1` into a `/tmp/dsl` directory.
+
+[source,text,linenums,role="novalidate"]
+----
+/tmp/dsl
+├── projects
+│   ├── testProject1
+│   │   ├── acls
+│   │   │   └── acl.dsl
+│   │   ├── procedures
+│   │   │   ├── testProcedure1
+│   │   │   │   ├── acls
+│   │   │   │   │   └── acl.dsl
+│   │   │   │   ├── procedure.dsl
+│   │   │   │   ├── properties
+│   │   │   │   │   ├── testProperty1
+│   │   │   │   │   │   └── property.dsl
+│   │   │   │   │   ├── testProperty1.txt
+│   │   │   │   │   └── testPropertySheet1
+│   │   │   │   │       ├── propertySheet.dsl
+│   │   │   │   │       ├── testProperty2
+│   │   │   │   │       │   └── property.dsl
+│   │   │   │   │       └── testProperty2.txt
+│   │   │   │   └── steps
+│   │   │   │       ├── metadata.json
+│   │   │   │       ├── testStep1
+│   │   │   │       │   ├── acls
+│   │   │   │       │   │   └── acl.dsl
+│   │   │   │       │   └── step.dsl
+│   │   │   │       ├── testStep1.cmd
+│   │   │   │       ├── testStep2
+│   │   │   │       │   ├── acls
+│   │   │   │       │   │   └── acl.dsl
+│   │   │   │       │   └── step.dsl
+│   │   │   │       └── testStep2.cmd
+│   │   │   └── testProcedure2
+│   │   │       ├── acls
+│   │   │       │   └── acl.dsl
+│   │   │       ├── procedure.dsl
+│   │   │       ├── properties
+│   │   │       │   ├── testProperty1
+│   │   │       │   │   └── property.dsl
+│   │   │       │   ├── testProperty1.txt
+│   │   │       │   └── testPropertySheet1
+│   │   │       │       ├── propertySheet.dsl
+│   │   │       │       ├── testProperty2
+│   │   │       │       │   └── property.dsl
+│   │   │       │       └── testProperty2.txt
+│   │   │       └── steps
+│   │   │           ├── metadata.json
+│   │   │           ├── testStep1
+│   │   │           │   ├── acls
+│   │   │           │   │   └── acl.dsl
+│   │   │           │   └── step.dsl
+│   │   │           ├── testStep1.cmd
+│   │   │           ├── testStep2
+│   │   │           │   ├── acls
+│   │   │           │   │   └── acl.dsl
+│   │   │           │   └── step.dsl
+│   │   │           └── testStep2.cmd
+└───└───└── project.dsl
+----
+
+====
+
+.GenerateDslToDirectory resources output example
+[%collapsible]
+====
+In the following *GenerateDslToDirectory* output example, you can see the directory structure generated for two example resources, `testResource1` (line 3) and `testResource2` (line 16) into a `/tmp/dsl` directory.
+
+[source,text,linenums,role="novalidate"]
+----
+/tmp/dsl
+├──resources
+├── testResource1
+│   ├── acls
+│   │   └── acl.dsl
+│   ├── properties
+│   │   ├── testProperty1
+│   │   │   └── property.dsl
+│   │   ├── testProperty1.txt
+│   │   └── testPropertySheet1
+│   │       ├── propertySheet.dsl
+│   │       ├── testProperty2
+│   │       │   └── property.dsl
+│   │       └── testProperty2.txt
+│   └── resource.dsl
+└── testResource2
+├── acls
+│   └── acl.dsl
+├── properties
+│   ├── testProperty1
+│   │   └── property.dsl
+│   ├── testProperty1.txt
+│   └── testPropertySheet1
+│       ├── propertySheet.dsl
+│       ├── testProperty2
+│       │   └── property.dsl
+│       └── testProperty2.txt
+└── resource.dsl
+----
+
+====
+
+
 
 === ImportDslFromGit
 
@@ -146,7 +313,6 @@ NOTE: This moves the HEAD.
 |Additional DSL Arguments| Additional argument for `evalDsl` call.
 |===
 
-image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/importdslfromgit.png[importDslFromGit parameters]
 
 === ImportDslFromGitNew
 
@@ -163,7 +329,7 @@ NOTE: When using *ImportDslFromGitNew*, the count of imported entities does not 
 |Parameter |Description
 |Server Pool or Resource | Required. The resource or one of the pool resources where the DSL files are checked out from Git and imported to the {PRODUCT} server.
 |Destination Directory | Required. The directory on the resource where the source tree is created and the DSL files are stored.
-|Relative path to DSL files |If the DSL files are not located at the top level in the repository, then specify the relative path to the directory containing the DSL files within the repository. For example, `scripts/dsls` where the DSL files are located in the following sub-directories in the repository `scripts/dsls/projects` and `scripts/dsls/resources`.
+|Relative path to DSL files |If the DSL files are not located at the top level in the repository, then specify the relative path to the directory containing the DSL files within the repository. For example, `scripts/dsls` where the DSL files are located in the following subdirectories in the repository `scripts/dsls/projects` and `scripts/dsls/resources`.
 |Cleanup? |This option deletes the destination directory with the source tree after the job execution.
 |Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
 |Configuration | Required. `EC-Git` configuration name.
@@ -203,7 +369,6 @@ If set, only these objects are synchronized. If empty, all available objects are
 NOTE: If the commit ID cannot be found or if the procedure or steps cannot find, read, or correctly parse the change list, the entire DSL file structure is re-imported.
 |===
 
-image:cloudbees-common-sda::cd-plugins/ec-dsldeploy/help/importdslfromgitnew.png[ImportDslFromGitNew parameters,role="screenshot"]
 
 [[releaseNotes]]
 == Release notes
