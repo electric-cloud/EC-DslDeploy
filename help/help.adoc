@@ -75,12 +75,12 @@ Objects with depth > 2 are not supported. Examples:
 .InstallDslFromDirectory input example
 [%collapsible]
 ====
-In the following *InstallDslFromDirectory* input example, `/projects` is being used to install the projects `FOO`, `BAR`, and `PIPE``.
+In the following *InstallDslFromDirectory* input example, `/projects` is being used to install the projects `catalogTest`, `testProject`, and `testPipeLine`.
 
 [source,text,linenums,role="novalidate"]
 ----
 `-- projects
-    |-- FOO
+    |-- catalogTest
     |   |-- catalogs
     |   |   `-- Test\ Catalog
     |   |       |-- catalog.dsl
@@ -88,21 +88,21 @@ In the following *InstallDslFromDirectory* input example, `/projects` is being u
     |   |           `-- Service\ OnBoarding
     |   |               `-- catalogItem.dsl
     |   |-- procedures
-    |   |   `-- FOO1
+    |   |   `-- catalogProcedure1
     |   |       |-- procedure.groovy
     |   |       `-- steps
     |   |           `-- echo.pl
     |   `-- project.groovy
-    |-- BAR
+    |-- testProject
     |   |-- procedures
-    |   |   `-- BAR1
+    |   |   `-- testProcedure1
     |   |       |-- procedure.groovy
     |   |       `-- steps
     |   |           `-- echo.pl
     |   |-- project.groovy
     |   `-- properties
     |       `-- prop1.txt
-    `-- PIPE
+    `-- testPipeline
         |-- pipelines
         |   `-- UC1
         |       `-- pipeline.groovy
@@ -129,13 +129,17 @@ The main purpose of the procedure to be a part of installDslFromDirectory proced
 .InstallProject input example
 [%collapsible]
 ====
-In the following *InstallProject* input example, you can see a sample directory structure to install a project. In this example, `FOO` project with the `BAR` procedure.
+In the following *InstallProject* input example, you can see a sample directory structure to install a project. In this example, `project1` project with the `procedure1` and `procedure2` procedure.
 
 [source,text,linenums,role="novalidate"]
 ----
-FOO
+project1
 |-- procedures
-|   `-- BAR
+|  |-- procedure1
+|   |       |-- procedure.groovy
+|   |       `-- steps
+|   |           `-- echo.pl
+|   `-- procedure2
 |       |-- procedure.groovy
 |       `-- steps
 |           `-- echo.pl
