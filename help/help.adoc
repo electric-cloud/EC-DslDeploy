@@ -59,7 +59,7 @@ Examples:
 * “/projects“ - all projects
 * “/projects/Default/applications“ - all applications in project 'Default'
 * “/users“ - all users
-* “/projects/Commander/procedures/Master“ - ‘Master' procedure in 'Commander’ project
+* “/projects/Commander/procedures/Master“ - 'Master' procedure in 'Commander' project
 * “/projects/*/releases“ - all releases in all projects
 
 [NOTE]
@@ -329,7 +329,7 @@ NOTE: When using *ImportDslFromGitNew*, the count of imported entities does not 
 |Parameter |Description
 |Server Pool or Resource | Required. The resource or one of the pool resources where the DSL files are checked out from Git and imported to the {PRODUCT} server.
 |Destination Directory | Required. The directory on the resource where the source tree is created and the DSL files are stored.
-|Relative path to DSL files |If the DSL files are not located at the top level in the repository, then specify the relative path to the directory containing the DSL files within the repository. For example, `scripts/dsls` where the DSL files are located in the following sub-directories in the repository `scripts/dsls/projects` and `scripts/dsls/resources`.
+|Relative path to DSL files |If the DSL files are not located at the top level in the repository, then specify the relative path to the directory containing the DSL files within the repository. For example, `scripts/dsls` where the DSL files are located in the following subdirectories in the repository `scripts/dsls/projects` and `scripts/dsls/resources`.
 |Cleanup? |This option deletes the destination directory with the source tree after the job execution.
 |Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
 |Configuration | Required. `EC-Git` configuration name.
