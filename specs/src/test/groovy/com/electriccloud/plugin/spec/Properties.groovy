@@ -104,6 +104,54 @@ class Properties
     new File(dslDir).deleteDir()
   }
 
+  def "test process required fields"() {
+    def dslDir = '/tmp/' + randomize('dsl')
+
+    given: "Load complex project with properties from single DSL file"
+    dslFile("process.dsl")
+
+    when: "Generate DSL files"
+    def result1 = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "generateDslToDirectory",
+          actualParameter: [
+            directory: "$dslDir",
+            pool: "$defaultPool",
+            includeAllChildren: '1',
+            suppressNulls: '1',
+            objectType: 'project',
+            objectName: 'proj_name',
+            httpIdleTimeout: '180'
+          ]
+        )""")
+    then:
+    assert result1.jobId
+    def outcome1 = getJobProperty("outcome", result1.jobId)
+    assert outcome1 == "success"
+
+    when: "Import DSL files"
+    def result2 = runProcedureDsl("""
+        runProcedure(
+          projectName: "/plugins/$pName/project",
+          procedureName: "installDslFromDirectory",
+          actualParameter: [
+            directory: "$dslDir",
+            pool: "$defaultPool",
+            overwrite: '1'
+          ]
+        )""")
+    then:
+    assert result2.jobId
+    def outcome2 = getJobProperty("outcome", result2.jobId)
+    assert outcome2 == "success"
+
+    cleanup:
+    deleteProjects([projectName: jira], false)
+    deleteProjects([mainProject: 'proj_name'])
+    new File(dslDir).deleteDir()
+  }
+
   def "multiline properties"() {
     def dslDir = '/tmp/' + randomize('dsl')
 
@@ -148,7 +196,7 @@ class Properties
 
     cleanup:
     deleteProjects([projectName: jira], false)
-    deleteProjects([mainProject: 'BEE-30105', c1: 'comp_name1', c2: 'comp_name2', p1: 'proc_name1', p2: 'proc_name2'])
+    deleteProjects([mainProject: 'BEE-30105'])
     new File(dslDir).deleteDir()
   }
 
@@ -200,7 +248,7 @@ class Properties
 
     cleanup:
     deleteProjects([projectName: jira], false)
-    deleteProjects([mainProject: 'BEE-30105', c1: 'comp_name1', c2: 'comp_name2', p1: 'proc_name1', p2: 'proc_name2'])
+    deleteProjects([mainProject: 'BEE-33074'])
     new File(dslDir).deleteDir()
   }
 
@@ -325,6 +373,68 @@ class Properties
     cleanup:
     deleteProjects([projectName: jira], false)
     deleteProjects([mainProject: 'projectName ÒÓÔÕÖ×ØÙÚÛÜÝÞß projectName'])
+    new File(dslDir).deleteDir()
+  }
+
+  def "BEE-33683: import new and/or nested properties in the overwrite mode"()
+  {
+    def dslDir = '/tmp/' + randomize('dsl')
+
+    given: "Load entities"
+    dslFile("new_nested_properties_in_overwrte.dsl")
+
+    when: "Generate DSL files with properties"
+    def result1 = runProcedureDsl("""
+          runProcedure(
+            projectName: "/plugins/$pName/project",
+            procedureName: "generateDslToDirectory",
+            actualParameter: [
+              directory: "$dslDir",
+              pool: "$defaultPool",
+              includeAllChildren: '1',
+              suppressNulls: '1',
+              objectType: 'project',
+              objectName: 'BEE-33683',
+              httpIdleTimeout: '270'
+            ]
+          )""")
+    then:
+    assert result1.jobId
+    def outcome1 = getJobProperty("outcome", result1.jobId)
+    assert outcome1 == "success"
+
+    when: "Remove properties"
+    dsl "deleteProperty propertyName: '/projects/BEE-33683/procedures/BEE-33683/properties/testPropertySheet'"
+
+    when: "Import DSL files in overwrite mode with debug enabled"
+    def result2 = runProcedureDsl("""
+          runProcedure(
+            projectName: "/plugins/$pName/project",
+            procedureName: "installDslFromDirectory",
+            actualParameter: [
+              directory: "$dslDir",
+              pool: "$defaultPool",
+              additionalDslArguments: "--debug 1 --timeout 3600",
+              overwrite: '1'
+            ]
+          )""")
+    then:
+    assert result2.jobId
+    def outcome2 = getJobProperty("outcome", result2.jobId)
+    assert outcome2 == "success"
+
+    and:
+    // Properties are created properly
+    def propSheet2 = dsl "getProperty propertyName: '/projects/BEE-33683/procedures/BEE-33683/properties/testPropertySheet'"
+    assert propSheet2
+    and:
+    def prop2 = dsl "getProperty propertyName: '/projects/BEE-33683/procedures/BEE-33683/properties/testPropertySheet/testProperty'"
+    assert prop2
+    assert prop2.property.value == "testValue"
+
+    cleanup:
+    deleteProjects([projectName: jira], false)
+    deleteProjects([mainProject: 'BEE-33683'])
     new File(dslDir).deleteDir()
   }
 }
