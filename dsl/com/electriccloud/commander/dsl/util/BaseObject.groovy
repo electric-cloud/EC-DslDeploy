@@ -415,7 +415,7 @@ abstract class BaseObject extends DslDelegatingScript {
   }     // loadObjects
 
 
-  def evalInlineDslWoContext(String dslFile, Map bindingMap, String overwriteMode = "0") {
+  def evalInlinePropertyDsl(String dslFile, Map bindingMap, String overwriteMode = "0") {
     // We should save current DSL evaluation context and restore it right after import properties
     def tmpCurrent
     def tmpBindingMap
@@ -550,7 +550,7 @@ abstract class BaseObject extends DslDelegatingScript {
                                 propertyType: 'sheet',
                                 propertyDir: propsDir,
                                 propsDir: propsDir]
-              def res = evalInlineDslWoContext(propertySheetDslFile.absolutePath, bindingMap, overwrite)
+              def res = evalInlinePropertyDsl(propertySheetDslFile.absolutePath, bindingMap, overwrite)
 
               propSheetId = res.propertySheetId
             }
@@ -582,7 +582,7 @@ abstract class BaseObject extends DslDelegatingScript {
                                 propertyType: 'string',
                                 propertyDir: propsDir,
                                 propsDir: propsDir]
-              evalInlineDslWoContext(propertyDslFile.absolutePath, bindingMap, overwrite)
+              evalInlinePropertyDsl(propertyDslFile.absolutePath, bindingMap, overwrite)
             }
             else if (existsProp) {
               modifyProperty(propertyName: propName,
