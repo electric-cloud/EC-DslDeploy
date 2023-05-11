@@ -414,6 +414,30 @@ abstract class BaseObject extends DslDelegatingScript {
     return loaded
   }     // loadObjects
 
+
+  def evalInlineDslWoContext(String dslFile, Map bindingMap, String overwriteMode = "0") {
+    // We should save current DSL evaluation context and restore it right after import properties
+    def tmpCurrent
+    def tmpBindingMap
+    def tmpStack = new LinkedList<>()
+
+    try {
+      tmpCurrent    = this.current
+      tmpBindingMap = this.binding.bindingMap
+
+      tmpStack.addAll(this.stack)
+      this.stack.add(this.current)
+
+      evalInlineDsl(dslFile, bindingMap, overwriteMode)
+    } finally {
+      this.current            = tmpCurrent
+      this.binding.bindingMap = tmpBindingMap
+
+      this.stack.clear()
+      this.stack.addAll(tmpStack)
+    }
+  }
+
   // Helper function to load another dsl script and evaluate it in-context
   def evalInlineDsl(String dslFile, Map bindingMap, String overwriteMode = "0", Boolean pluginDeployMode = true) {
      println "Entering evalInlineDsl"
@@ -521,9 +545,12 @@ abstract class BaseObject extends DslDelegatingScript {
             if (propertySheetDslFile.exists()) {
               println "  Processing property sheet file $propertySheetDslFile.absolutePath as a $propPath"
 
-              // Map bindingMap = [propertySheetId: "$pSheetId", propertyType: 'sheet']
-              Map bindingMap = [objectId: "propertySheet-$pSheetId", propertyType: 'sheet', propsDir: propsDir]
-              def res = evalInlineDsl(propertySheetDslFile.absolutePath, bindingMap, overwrite)
+              Map bindingMap = [objectId: "propertySheet-$pSheetId",
+                                propertySheetId: pSheetId,
+                                propertyType: 'sheet',
+                                propertyDir: propsDir,
+                                propsDir: propsDir]
+              def res = evalInlineDslWoContext(propertySheetDslFile.absolutePath, bindingMap, overwrite)
 
               propSheetId = res.propertySheetId
             }
@@ -550,9 +577,12 @@ abstract class BaseObject extends DslDelegatingScript {
             if (propertyDslFile.exists()) {
               println "  Processing property file $propertyDslFile.absolutePath as a $propPath"
 
-              // Map bindingMap = [propertySheetId: "$pSheetId", propertyType: 'string']
-              Map bindingMap = [objectId: "propertySheet-$pSheetId", propertyType: 'string', propsDir: propsDir]
-              evalInlineDsl(propertyDslFile.absolutePath, bindingMap, overwrite)
+              Map bindingMap = [objectId: "propertySheet-$pSheetId",
+                                propertySheetId: pSheetId,
+                                propertyType: 'string',
+                                propertyDir: propsDir,
+                                propsDir: propsDir]
+              evalInlineDslWoContext(propertyDslFile.absolutePath, bindingMap, overwrite)
             }
             else if (existsProp) {
               modifyProperty(propertyName: propName,
