@@ -405,8 +405,7 @@ class Properties
 
     when: "Remove properties"
     dsl "deleteProperty propertyName: '/projects/BEE-33683/procedures/BEE-33683/properties/testPropertySheet'"
-
-    when: "Import DSL files in overwrite mode with debug enabled"
+    and: "Import DSL files in overwrite mode with debug enabled"
     def result2 = runProcedureDsl("""
           runProcedure(
             projectName: "/plugins/$pName/project",
