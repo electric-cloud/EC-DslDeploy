@@ -545,11 +545,12 @@ abstract class BaseObject extends DslDelegatingScript {
             if (propertySheetDslFile.exists()) {
               println "  Processing property sheet file $propertySheetDslFile.absolutePath as a $propPath"
 
-              Map bindingMap = [objectId: "propertySheet-$pSheetId",
-                                propertySheetId: pSheetId,
-                                propertyType: 'sheet',
-                                propertyDir: propsDir,
-                                propsDir: propsDir]
+              Map bindingMap = [objectId              : "propertySheet-$pSheetId",
+                                propertySheetId       : pSheetId,
+                                propertyType          : 'sheet',
+                                propertyDir           : propsDir,
+                                propsDir              : propsDir,
+                                clearActualParameters : overwrite]
               def res = evalInlinePropertyDsl(propertySheetDslFile.absolutePath, bindingMap, overwrite)
 
               propSheetId = res.propertySheetId
@@ -564,8 +565,19 @@ abstract class BaseObject extends DslDelegatingScript {
               propSheetId = res.propertySheetId
             }
 
-            property propName, {
-              loadNestedProperties(propPath, dir, overwrite, propSheetId, projectRootProps, changeList)
+            try {
+              // skip overwrite mode for parent object when handle children
+              if (bindingMap.get('skipOverwrite') == null) {
+                bindingMap.put('skipOverwrite', new HashSet<String>())
+              }
+              ((Set<String>)bindingMap.get('skipOverwrite')).add('property')
+
+              property propName, {
+                loadNestedProperties(propPath, dir, overwrite, propSheetId, projectRootProps, changeList)
+              }
+            }
+            finally {
+              ((Set<String>)bindingMap.get('skipOverwrite')).remove('property')
             }
           }
         } else {
@@ -577,11 +589,12 @@ abstract class BaseObject extends DslDelegatingScript {
             if (propertyDslFile.exists()) {
               println "  Processing property file $propertyDslFile.absolutePath as a $propPath"
 
-              Map bindingMap = [objectId: "propertySheet-$pSheetId",
-                                propertySheetId: pSheetId,
-                                propertyType: 'string',
-                                propertyDir: propsDir,
-                                propsDir: propsDir]
+              Map bindingMap = [objectId              : "propertySheet-$pSheetId",
+                                propertySheetId       : pSheetId,
+                                propertyType          : 'string',
+                                propertyDir           : propsDir,
+                                propsDir              : propsDir,
+                                clearActualParameters : overwrite]
               evalInlinePropertyDsl(propertyDslFile.absolutePath, bindingMap, overwrite)
             }
             else if (existsProp) {
