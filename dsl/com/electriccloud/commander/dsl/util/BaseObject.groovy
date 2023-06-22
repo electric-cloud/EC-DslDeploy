@@ -45,6 +45,25 @@ abstract class BaseObject extends DslDelegatingScript {
                   "steps", "reportingFilters", "stages", "stateDefinitions", "tasks",
                   "widgets")
 
+  private static final CHILDREN = [
+          application    : ['applicationTier', 'microservice', 'process', 'tierMap', 'environmentTemplateTierMap', 'snapshot', 'trigger'],
+          applicationTier: ['component'],
+          catalog        : ['catalogItem'],
+          catalogItem    : ['trigger'],
+          component      : ['process'],
+          dashboard      : ['reportingFilter', 'widget'],
+          environment    : ['cluster', 'environmentTier'],
+          gate           : ['task'],
+          pipeline       : ['stage', 'trigger'],
+          process        : ['processStep'],
+          procedure      : ['step', 'emailNotifier', 'trigger'],
+          release        : ['pipeline', 'deployerApplication', 'trigger'],
+          stage          : ['gate', 'task'],
+          task           : ['task'],
+          step           : ['emailNotifier'],
+          widget         : ['reportingFilter', 'widgetFilterOverride']
+    ]
+
   def jsonSlurper = new JsonSlurper()
 
   // return the object.groovy or object.dsl
@@ -330,82 +349,64 @@ abstract class BaseObject extends DslDelegatingScript {
     ((Set<String>)bindingMap.get('skipOverwrite')).add(objKey)
 
     try {
-      // Load ACLs
-      def aclDir = new File(childDir, 'acls')
-      if (aclDir.directory) {
-        println "Found acls for $path"
+      if (hasChildrenEntitiesToLoad(childDir)) {
         "${objType}" objName, {
-          loadAcls(aclDir, "$path", bindingMap, changeList)
-        }
-      } else {
-        println "No acls directory for $objType $objName"
-      }
-
-      // Load nested properties
-      def propDir = new File(childDir, 'properties')
-      if (propDir.directory) {
-        def propertySheet = getProperties path: "$objPath/$plural[$objName]"
-        def propSheetId = propertySheet.propertySheetId.toString()
-        "${objType}" objName, {
-          loadNestedProperties("$path", propDir,
-                overwriteMode, propSheetId, false, changeList)
-        }
-      } else {
-        println "No properties directory for $objType $objName"
-      }
-
-      def children = [
-              application    : ['applicationTier', 'microservice', 'process', 'tierMap', 'environmentTemplateTierMap', 'snapshot', 'trigger'],
-              applicationTier: ['component'],
-              catalog        : ['catalogItem'],
-              catalogItem    : ['trigger'],
-              component      : ['process'],
-              dashboard      : ['reportingFilter', 'widget'],
-              environment    : ['cluster', 'environmentTier'],
-              gate           : ['task'],
-              pipeline       : ['stage', 'trigger'],
-              process        : ['processStep'],
-              procedure      : ['step', 'emailNotifier', 'trigger'],
-              release        : ['pipeline', 'deployerApplication', 'trigger'],
-              stage          : ['gate', 'task'],
-              task           : ['task'],
-              step           : ['emailNotifier'],
-              widget         : ['reportingFilter', 'widgetFilterOverride']
-      ]
-
-      // load subObjects loadObjects (from local structure)
-      if (children.containsKey(objType)) {
-        // println "Found children: "
-        children[objType].each { child ->
-          // println "  processing $child"
-          // println "OUTER DSL for processing ${objType}'s $child - ${objType}: " + objName
-          // Note change to use getPluralForm() because hard-coded "s" would have skipped "processes"
-          def childrenCounter
-          "${objType}" objName, {
-            childrenCounter = loadObjects(
-                child,
-                objDir,
-                objPath + "/" + getPluralForm(objType) + "['$objName']",
-                bindingMap,
-                overwriteMode,
-                "0",
-                true,
-                includeObjects,
-                excludeObjects,
-                changeList)
+          // Try to load ACLs
+          def aclDir = new File(childDir, 'acls')
+          if (aclDir.directory) {
+            println "Found acls for $path"
+            loadAcls(aclDir, "$path", bindingMap, changeList)
+          } else {
+            println "No acls directory for $objType $objName"
           }
 
-          if (childrenCounter) {
-            childrenCounter.each { key, value ->
-              def countersValue = counters.get(key)
-              if (countersValue) {
-                counters.put(key, value + countersValue)
-              } else {
-                counters.put(key, value)
+          // Try to load nested properties
+          def propDir = new File(childDir, 'properties')
+          if (propDir.directory) {
+            def propertySheet = getProperties path: "$objPath/$plural[$objName]"
+            def propSheetId = propertySheet.propertySheetId.toString()
+
+            loadNestedProperties("$path", propDir,
+                overwriteMode, propSheetId, false, changeList)
+          } else {
+            println "No properties directory for $objType $objName"
+          }
+
+          // Try to load sub objects by loadObjects (from local structure)
+          if (CHILDREN.containsKey(objType)) {
+            // println "Found children: "
+            CHILDREN[objType].each { child ->
+              // println "  processing $child"
+              // println "OUTER DSL for processing ${objType}'s $child - ${objType}: " + objName
+              // Note change to use getPluralForm() because hard-coded "s" would have skipped "processes"
+              def childrenCounter
+              childrenCounter = loadObjects(
+                                  child,
+                                  objDir,
+                                  objPath + "/" + getPluralForm(objType) + "['$objName']",
+                                  bindingMap,
+                                  overwriteMode,
+                                  "0",
+                                  true,
+                                  includeObjects,
+                                  excludeObjects,
+                                  changeList)
+
+              if (childrenCounter) {
+                childrenCounter.each { key, value ->
+                  def countersValue = counters.get(key)
+                  if (countersValue) {
+                    counters.put(key, value + countersValue)
+                  } else {
+                    counters.put(key, value)
+                  }
+                }
               }
             }
           }
         }
+      } else {
+        println "No children entities $objType $objName"
       }
     } finally {
       // allow overwrite mode for parent type
@@ -414,6 +415,31 @@ abstract class BaseObject extends DslDelegatingScript {
     return loaded
   }     // loadObjects
 
+  def hasChildrenEntitiesToLoad(def childDir)
+  {
+    def aclDir = new File(childDir, 'acls')
+
+    if (aclDir.directory) {
+      return true
+    }
+
+    def propDir = new File(childDir, 'properties')
+    if (propDir.directory) {
+      return true
+    }
+
+    if (CHILDREN.containsKey(objType)) {
+      CHILDREN[objType].each { child -> {
+        childDir.eachFile FileType.DIRECTORIES, {
+          if (it.name.startsWith(child)) {
+            return true
+          }
+        }
+      }}
+    }
+
+    return false
+  }
 
   def evalInlinePropertyDsl(String dslFile, Map bindingMap, String overwriteMode = "0") {
     // We should save current DSL evaluation context and restore it right after import properties
