@@ -32,7 +32,7 @@ documentation : Help text for the parameter
 <editor>
   <formElement>
     <type>entry</type>
-    <label>Artifact Name</label>
+    <label>Artifact NICK!Name</label>
     <property>artName</property>
     <required>1</required>
     <value>com.electriccloud:EC-dslDeploy</value>
