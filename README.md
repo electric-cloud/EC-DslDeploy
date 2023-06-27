@@ -69,4 +69,3 @@ Import Dsl from a Git repository
   * **Include objects** - list of paths to objects to include (default ALL)
   * **Exclude objects** - list of paths to objects to exclude (default None)
   * **Incremental Import** - Import only changes since the last "importDslFromGitNew".  Use a previous run's saved commit ID to compare to the current git repository commit ID and produce a change list to work from.
-
