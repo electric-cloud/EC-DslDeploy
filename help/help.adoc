@@ -373,6 +373,10 @@ NOTE: If the commit ID cannot be found or if the procedure or steps cannot find,
 [[releaseNotes]]
 == Release notes
 
+=== EC-DslDeploy 4.2.1
+
+* Fixed issue with import environment reservations
+
 === EC-DslDeploy 4.2.0
 
 * Added 'httpIdleTimeout' argument into the 'generateDsl' plugin procedure

@@ -361,7 +361,7 @@ abstract class BaseObject extends DslDelegatingScript {
               catalogItem    : ['trigger'],
               component      : ['process'],
               dashboard      : ['reportingFilter', 'widget'],
-              environment    : ['cluster', 'environmentTier'],
+              environment    : ['cluster', 'environmentTier', 'reservation'],
               gate           : ['task'],
               pipeline       : ['stage', 'trigger'],
               process        : ['processStep'],
