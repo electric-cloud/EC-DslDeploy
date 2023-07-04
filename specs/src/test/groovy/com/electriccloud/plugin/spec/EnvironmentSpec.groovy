@@ -85,6 +85,6 @@ project '$projName', {
 
     then: "check that environment reservation was created"
       def reservs = dsl """getReservations(projectName: '$projName', environmentName: 'testEnvironment')"""
-      assert reservs?.reservation?.size == 3
+      assert reservs?.reservation?.size == 1
    }
 }
