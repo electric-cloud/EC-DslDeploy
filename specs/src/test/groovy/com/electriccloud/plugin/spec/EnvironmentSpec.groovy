@@ -23,8 +23,11 @@ class EnvironmentSpec
     conditionallyDeleteProject(projName)
   }
 
-  def "BEE-35400: deploy application with tierMaps and environmentTemplateTierMaps"() {
-    given: "application dsl code"
+  def "BEE-35400: deploy environment with reservation"()
+  {
+    def dslDir = '/tmp/' + randomize('dsl')
+
+    given: "environment dsl code"
     dsl """
 project '$projName', {
   environment 'testEnvironment',{
