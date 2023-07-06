@@ -1,7 +1,8 @@
 version: '3'
 services:
   electric-flow:
-    image: "electricflow/efserver:latest"
+    hostname: "efserver"
+    image: "us-east1-docker.pkg.dev/cloudbees-artifact-registry/flow/plugin-specs/electricflow/efserver:latest"
     ports:
       - "8000:8000"
       - "8200:8200"
@@ -10,7 +11,7 @@ services:
       - "80:80"
     networks:
       - internal
-    container_name: electricflow
+    container_name: efserver
     tty: true
     environment:
       - COMMANDER_SERVER=electricflow
