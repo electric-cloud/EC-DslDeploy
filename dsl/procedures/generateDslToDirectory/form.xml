@@ -71,6 +71,17 @@
 
   <formElement>
     <type>checkbox</type>
+    <label>Suppress Empty</label>
+    <property>suppressEmpty</property>
+    <required>0</required>
+    <checkedValue>1</checkedValue>
+    <uncheckedValue>0</uncheckedValue>
+    <value>0</value>
+    <documentation>Exclude from the generated DSL properties with empty value.</documentation>
+  </formElement>
+
+  <formElement>
+    <type>checkbox</type>
     <label>Suppress Parent</label>
     <property>suppressParent</property>
     <required>0</required>

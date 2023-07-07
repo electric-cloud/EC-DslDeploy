@@ -100,6 +100,14 @@ procedure 'generateDslAndPublish', {
     uncheckedValue = '0'
   }
 
+  formalParameter 'suppressEmpty', defaultValue: '1', {
+    description = 'Exclude from the generated DSL properties with empty value.'
+    checkedValue = '1'
+    label = 'Suppress Empty'
+    type = 'checkbox'
+    uncheckedValue = '0'
+  }
+
   formalParameter 'suppressParent', defaultValue: '0', {
     description = 'Exclude from the generated DSL properties referred to object parent.'
     checkedValue = '1'
@@ -127,6 +135,7 @@ procedure 'generateDslAndPublish', {
     actualParameter 'pool', '$[runResourceName]'
     actualParameter 'suppressDefaults', '$[suppressDefaults]'
     actualParameter 'suppressNulls', '$[suppressNulls]'
+    actualParameter 'suppressEmpty', '$[suppressEmpty]'
     actualParameter 'suppressParent', '$[suppressParent]'
   }
 
