@@ -1,5 +1,6 @@
 2023-07.04 Valera Fessler <vfezler@cloudbees.com>
   * 4.2.1: BEE-35400 - Fixed issue with import environment reservations
+           BEE-33485 - Supported new option 'suppressEmpty' in the 'generateDsl' plugin procedure
 
 2023-04.25 Valera Fessler <vfezler@cloudbees.com>
   * 4.2.0: BEE-32453 - Added 'httpIdleTimeout' argument into the 'generateDsl' plugin procedure

@@ -1376,6 +1376,7 @@ trigger 'app-webhook', {
                             includeAclsInDifferentFile: '0',
                             suppressDefaults: '1',
                             suppressNulls: '1',
+                            suppressEmpty: '1',
                             artifactName: "$artifactName",
                             artifactVersionVersion: '1.0',
                             runResourceName: '$defaultPool'

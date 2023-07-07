@@ -22,6 +22,7 @@ class GenerateDslHelper {
     private boolean includeChildrenInSameFile
     private boolean suppressNulls
     private boolean suppressDefault
+    private boolean suppressEmpty
     private boolean suppressParent
     private final Deque<EntityTypeDetail> childrenStack = new LinkedList<>()
     private  FileTemplateItem difFileTemplateRoot = new FileTemplateItem()
@@ -34,6 +35,7 @@ class GenerateDslHelper {
                       String toDir,
                       boolean suppressNulls,
                       boolean suppressDefault,
+                      boolean suppressEmpty,
                       boolean suppressParent,
                       boolean includeAcls,
                       boolean includeAclsInDifferentFile,
@@ -53,6 +55,7 @@ class GenerateDslHelper {
         this.includeChildrenInSameFile = includeChildrenInSameFile
         this.suppressNulls = suppressNulls
         this.suppressDefault = suppressDefault
+        this.suppressEmpty = suppressEmpty
         this.suppressParent = suppressParent
         this.includeAllChildren = includeAllChildren
         this.includeChildren = includeChildren
@@ -144,7 +147,7 @@ class GenerateDslHelper {
 
             //All in one file including all commands
             objDslFile << electricFlow.generateDsl(path: obj.path, suppressNulls: suppressNulls, withAcls: includeAcls,
-                    suppressDefaults: suppressDefault, suppressParent: suppressParent).value
+                    suppressDefaults: suppressDefault, suppressEmpty: suppressEmpty, suppressParent: suppressParent).value
             return
         }
 
@@ -196,6 +199,7 @@ class GenerateDslHelper {
                 includeChildren: includeChildrenValue,
                 suppressNulls: suppressNulls,
                 suppressDefaults: suppressDefault,
+                suppressEmpty: suppressEmpty,
                 suppressChildren: true,
                 suppressParent: suppressParent,
                 withAcls: includeAcl,
@@ -220,6 +224,7 @@ class GenerateDslHelper {
                     includeChildren: includeChildrenValue,
                     suppressNulls: suppressNulls,
                     suppressDefaults: suppressDefault,
+                    suppressEmpty: suppressEmpty,
                     suppressChildren: true,
                     suppressParent: suppressParent,
                     withAcls: includeAcl,
@@ -369,6 +374,7 @@ class GenerateDslHelper {
                 def propDsl = electricFlow.generateDsl(path: pathToProp,
                         suppressNulls: suppressNulls,
                         suppressDefaults: suppressDefault,
+                        suppressEmpty: suppressEmpty,
                         suppressChildren: true,
                         suppressParent: suppressParent)?.value
 
@@ -389,6 +395,7 @@ class GenerateDslHelper {
                 def propDsl = electricFlow.generateDsl(path: pathToProp,
                                                        suppressNulls: suppressNulls,
                                                        suppressDefaults: suppressDefault,
+                                                       suppressEmpty: suppressEmpty,
                                                        suppressChildren: true,
                                                        suppressParent: suppressParent)?.value
 
@@ -554,6 +561,7 @@ class GenerateDslBuilder {
     private boolean includeChildrenInSameFile
     private boolean suppressNulls = true
     private boolean suppressDefault
+    private boolean suppressEmpty
     private boolean suppressParent
 
 
@@ -578,6 +586,7 @@ class GenerateDslBuilder {
                 toDirectory,
                 suppressNulls,
                 suppressDefault,
+                suppressEmpty,
                 suppressParent,
                 includeAcls,
                 includeAclsInDifferentFile,
@@ -630,6 +639,11 @@ class GenerateDslBuilder {
 
     GenerateDslBuilder suppressDefaults(boolean suppress) {
         suppressDefault = suppress
+        return this
+    }
+
+    GenerateDslBuilder suppressEmpty(boolean suppress) {
+        suppressEmpty = suppress
         return this
     }
 

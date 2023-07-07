@@ -23,5 +23,6 @@ new GenerateDslBuilder(ef)
         .suppressParent('$[suppressParent]'.equals('1'))
         .suppressNulls('$[suppressNulls]'.equals('1'))
         .suppressDefaults('$[suppressDefaults]'.equals('1'))
+        .suppressEmpty('$[suppressEmpty]'.equals('1'))
         .build()
         .generateDsl();

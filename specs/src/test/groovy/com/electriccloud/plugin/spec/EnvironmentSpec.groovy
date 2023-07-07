@@ -51,6 +51,7 @@ project '$projName', {
             pool: "$defaultPool",
             includeAllChildren: '1',
             suppressNulls: '1',
+            suppressEmpty: '1',
             objectType: 'project',
             objectName: '$projName',
             httpIdleTimeout: '180'

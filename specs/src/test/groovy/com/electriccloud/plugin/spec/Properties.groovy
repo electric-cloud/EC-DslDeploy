@@ -72,6 +72,7 @@ class Properties
             pool: "$defaultPool",
             includeAllChildren: '1',
             suppressNulls: '1',
+            suppressEmpty: '1',
             objectType: 'project',
             objectName: 'proj_name',
             httpIdleTimeout: '180'
@@ -120,6 +121,7 @@ class Properties
             pool: "$defaultPool",
             includeAllChildren: '1',
             suppressNulls: '1',
+            suppressEmpty: '1',
             objectType: 'project',
             objectName: 'proj_name',
             httpIdleTimeout: '180'
@@ -168,6 +170,7 @@ class Properties
             pool: "$defaultPool",
             includeAllChildren: '1',
             suppressNulls: '1',
+            suppressEmpty: '1',
             objectType: 'project',
             objectName: 'BEE-30105',
             httpIdleTimeout: '210'
@@ -216,6 +219,7 @@ class Properties
             pool: "$defaultPool",
             includeAllChildren: '1',
             suppressNulls: '1',
+            suppressEmpty: '1',
             objectType: 'project',
             objectName: 'BEE-33074',
             httpIdleTimeout: '240'
@@ -271,6 +275,7 @@ class Properties
               pool: "$defaultPool",
               includeAllChildren: '1',
               suppressNulls: '1',
+              suppressEmpty: '1',
               objectType: 'project',
               objectName: 'projectName ?<>%*!@#\$^&()|:. projectName',
               httpIdleTimeout: '270'
@@ -333,6 +338,7 @@ class Properties
               pool: "$defaultPool",
               includeAllChildren: '1',
               suppressNulls: '1',
+              suppressEmpty: '1',
               objectType: 'project',
               objectName: 'projectName ÒÓÔÕÖ×ØÙÚÛÜÝÞß projectName',
               httpIdleTimeout: '270'
@@ -393,6 +399,7 @@ class Properties
               pool: "$defaultPool",
               includeAllChildren: '1',
               suppressNulls: '1',
+              suppressEmpty: '1',
               objectType: 'project',
               objectName: 'BEE-33683',
               httpIdleTimeout: '270'
