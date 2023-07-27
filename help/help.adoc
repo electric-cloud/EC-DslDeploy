@@ -1,13 +1,6 @@
 
 Plugin Version @PLUGIN_VERSION@
 
-The full supported file structure is available on the https://github.com/electric-cloud/EC-DslDeploy/wiki/file-structure[Wiki].
-
-== Links
-
-https://github.com/electric-cloud/EC-DslDeploy/wiki[Plugin Wiki]
-
-
 == Procedures
 
 IMPORTANT: For all parameter descriptions below, required parameters are shown in [.required]#bold italics#.
