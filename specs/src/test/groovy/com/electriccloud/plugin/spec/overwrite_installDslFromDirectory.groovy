@@ -286,10 +286,10 @@ class overwrite_installDslFromDirectory extends PluginTestHelper {
         */
 
         when: "modify users"
-        dsl """modifyUser(userName: '$userName', persona: ['$personaName2'])"""
+        dsl """modifyUser(userName: '$userName', clearPersonas: '1', persona: ['$personaName2'])"""
         def modifiedUser = dsl """getUser(userName: '$userName')"""
 
-        dsl """modifyUser(userName: '$userName1', persona: ['$personaName1','$personaName2'])"""
+        dsl """modifyUser(userName: '$userName1', clearPersonas: '1', persona: ['$personaName1','$personaName2'])"""
         def modifiedUser1 = dsl """getUser(userName: '$userName1')"""
 
         then: 'users were modified'
@@ -303,12 +303,14 @@ class overwrite_installDslFromDirectory extends PluginTestHelper {
         when: "modify groups"
         dsl """
                 modifyGroup(groupName: '$groupName',
+                            clearPersonas: '1',
                             persona: ['$personaName2']
                             )"""
         def modifiedGroup =  dsl """getGroup(groupName: '$groupName')"""
 
         dsl """
                 modifyGroup(groupName: '$groupName1',
+                            clearPersonas: '1',
                             persona: ['$personaName1', '$personaName2']
                             )"""
         def modifiedGroup1 =  dsl """getGroup(groupName: '$groupName1')"""
