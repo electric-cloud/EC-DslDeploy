@@ -16,7 +16,7 @@ project args.projectName, {
 
         step 's2', {
             command = 'println "test";'
-            shell = 'ec-perl'
+            shell = 'cb-perl'
         }
 
         step 's3', {

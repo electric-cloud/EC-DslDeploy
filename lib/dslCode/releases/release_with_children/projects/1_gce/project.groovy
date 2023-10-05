@@ -133,7 +133,7 @@ exit SUCCESS;
       precondition = null
       releaseMode = 'none'
       resourceName = null
-      shell = 'ec-perl'
+      shell = 'cb-perl'
       subprocedure = null
       subproject = null
       timeLimitUnits = 'minutes'
@@ -238,7 +238,7 @@ if ("$errors" ne "") {
       precondition = null
       releaseMode = 'none'
       resourceName = null
-      shell = 'ec-perl'
+      shell = 'cb-perl'
       subprocedure = null
       subproject = null
       timeLimitUnits = 'minutes'
@@ -917,7 +917,7 @@ exit 0;
       precondition = null
       releaseMode = 'none'
       resourceName = null
-      shell = 'ec-perl'
+      shell = 'cb-perl'
       subprocedure = null
       subproject = null
       timeLimitUnits = 'minutes'
@@ -1055,7 +1055,7 @@ exit 0;
       precondition = ''
       releaseMode = 'none'
       resourceName = ''
-      shell = 'ec-perl'
+      shell = 'cb-perl'
       subprocedure = null
       subproject = null
       timeLimit = ''
@@ -1306,7 +1306,7 @@ println """ectool evalDsl "getServiceDeploymentDetails serviceName:'$serviceName
         precondition = ''
         releaseMode = 'none'
         resourceName = ''
-        shell = 'ec-perl'
+        shell = 'cb-perl'
         subprocedure = null
         subproject = null
         timeLimit = ''
@@ -1638,7 +1638,7 @@ println """ectool evalDsl "getServiceDeploymentDetails serviceName:'$serviceName
       precondition = ''
       releaseMode = 'none'
       resourceName = ''
-      shell = 'ec-perl'
+      shell = 'cb-perl'
       subprocedure = null
       subproject = null
       timeLimit = ''

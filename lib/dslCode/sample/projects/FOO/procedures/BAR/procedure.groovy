@@ -4,7 +4,7 @@ def procName = 'BAR'
 procedure procName, {
   step 'echo', {
     command = new File(projectDir, "./procedures/$procName/steps/echo.pl").text
-    shell = 'ec-perl'
+    shell = 'cb-perl'
 
     // Added for testing NMB-27865.
     // Check that both these property sheets

@@ -116,7 +116,7 @@ class dslDeploy extends PluginTestHelper {
          stepName: "echo"
        )
      """
-     assert step.step.shell == "ec-perl"
+     assert step.step.shell == "cb-perl"
 
       // check catalogItem BAR_2, Test Catalog
      def catItem=dsl """

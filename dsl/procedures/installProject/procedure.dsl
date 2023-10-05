@@ -8,7 +8,7 @@ procedure procName, {
 
     step 'deployProjectEntities',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployProjectEntities.pl").text,
-    shell: 'ec-perl',
+    shell: 'cb-perl',
     postProcessor: 'postp'
 
   // Do not Display in the property picker

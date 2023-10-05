@@ -77,7 +77,7 @@ project 'CEV-19608', {
 
     step 's2', {
       command = 'println "test";'
-      shell = 'ec-perl'
+      shell = 'cb-perl'
     }
 
     step 's3', {
@@ -188,7 +188,7 @@ step 's1', {
 
 step 's2', {
   command = new File(projectDir, "./procedures/proc1/steps/s2.pl").text
-  shell = 'ec-perl'
+  shell = 'cb-perl'
 }
 """)
         //
@@ -397,7 +397,7 @@ procedure 'proc1', {
 
   step 's2', {
     command = new File(projectDir, "./procedures/proc1/steps/s2.pl").text
-    shell = 'ec-perl'
+    shell = 'cb-perl'
   }
 
   step 's3', {
