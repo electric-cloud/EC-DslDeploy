@@ -1,5 +1,6 @@
 2023-09.15 Valera Fessler <vfezler@cloudbees.com>
   * 4.2.2: BEE-39599 - Fixed test "overwrite_installDslFromDirectory.deploy persona, personaPage, personaCategory, user, group" due to changes in BEE-38177
+           BEE-41099 - Fixed issue with set job step status in the overwrite mode during DSL evaluation
 
 2023-07.04 Valera Fessler <vfezler@cloudbees.com>
   * 4.2.1: BEE-35400 - Fixed issue with import environment reservations

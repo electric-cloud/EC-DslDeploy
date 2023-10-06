@@ -61,12 +61,12 @@ abstract class BaseObject extends DslDelegatingScript {
         if (dslFile.name ==~ /(?i)${objType}\.(groovy|dsl)/) {
           if (found) {
             println "Multiple files match the ${objType}.groovy or ${objType}.dsl"
-            setProperty(propertyName: "outcome", value: "warning")
+            setWarningStatus()
           }
           found = dslFile
         } else {
           println "Ignoring incorrect file  ${dslFile.name} in ${objDir.name}"
-          setProperty(propertyName: "outcome", value: "warning")
+          setWarningStatus()
         }
       }
     }
@@ -178,7 +178,6 @@ abstract class BaseObject extends DslDelegatingScript {
 //     println "  excludeObjects   : $excludeObjects"
 //     println "  changeList       : $changeList"
 
-
     def counters=[:]
     def nbObjs=0
     def plural=getPluralForm(objType)
@@ -198,7 +197,7 @@ abstract class BaseObject extends DslDelegatingScript {
       dir.eachDir {dlist << it }
       if (ORDERED_CHILD_ENTITY_TYPES.contains(plural) &&  dlist.size() > 1 && !metadata.order) {
         logger.warning('No order found in metadata.json for ordered entity type %objName. Objects will be loaded in alphabetical order.')
-        setProperty(propertyName: "outcome", value: "warning")
+        setWarningStatus()
       }
 
       try {
@@ -319,7 +318,6 @@ abstract class BaseObject extends DslDelegatingScript {
       loaded = true
     }
 
-
     // skip overwrite mode for parent object when
     // handle children
     if (bindingMap.get('skipOverwrite') == null) {
@@ -414,7 +412,6 @@ abstract class BaseObject extends DslDelegatingScript {
     return loaded
   }     // loadObjects
 
-
   def evalInlinePropertyDsl(String dslFile, Map bindingMap, String overwriteMode = "0") {
     // We should save current DSL evaluation context and restore it right after import properties
     def tmpCurrent
@@ -486,7 +483,6 @@ abstract class BaseObject extends DslDelegatingScript {
 //    println "  objPath    : $objPath"
 //    println "  bindingMap : " + bindingMap.toMapString(250)
 //    println "  changeList : $changeList"
-
 
     aclDir.eachFileMatch(FileType.FILES, ~/(?i)^.*\.(groovy|dsl)/) { dslFile ->
       if (changeCheck("$objPath/acls/${dslFile.name}", changeList, ["changed", "added"])) {
@@ -611,7 +607,7 @@ abstract class BaseObject extends DslDelegatingScript {
         }
       } catch (Exception e) {
         println(String.format("Error: cannot load property %s", propPath, e.getMessage()))
-        setProperty(propertyName: "outcome", value: "warning")
+        setWarningStatus()
       }
     }
 
@@ -624,6 +620,25 @@ abstract class BaseObject extends DslDelegatingScript {
           deleteProperty propertyName: "${it.name}", objectId: "propertySheet-$pSheetId"
         }
       }
+    }
+  }
+
+  // Set warning status for the current job step ignoring overwrite mode
+  def setWarningStatus()
+  {
+    // Ignore overwrite mode
+    if (bindingMap.get('skipOverwrite') == null) {
+      bindingMap.put('skipOverwrite', new HashSet<String>())
+    }
+
+    ((Set<String>) bindingMap.get('skipOverwrite')).add('property')
+    ((Set<String>) bindingMap.get('skipOverwrite')).add('setProperty')
+
+    try {
+        setProperty(propertyName: "outcome", value: "warning")
+    } finally {
+      ((Set<String>) bindingMap.get('skipOverwrite')).remove('property')
+      ((Set<String>) bindingMap.get('skipOverwrite')).remove('setProperty')
     }
   }
 
