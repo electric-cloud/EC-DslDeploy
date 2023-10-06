@@ -373,6 +373,7 @@ NOTE: If the commit ID cannot be found or if the procedure or steps cannot find,
 === EC-DslDeploy 4.2.2
 
 * Fixed test "overwrite_installDslFromDirectory.deploy persona, personaPage, personaCategory, user, group" due to changes in BEE-38177
+* Fixed issue with set job step status in the overwrite mode during DSL evaluation
 
 === EC-DslDeploy 4.2.1
 
