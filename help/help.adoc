@@ -368,11 +368,12 @@ NOTE: If the commit ID cannot be found or if the procedure or steps cannot find,
 
 === EC-DslDeploy 4.3.0
 
-* Switched perl from old ec-perl (5.8.9) to new cb-perl (5.32.1)
+* Updated Perl from legacy ec-perl (5.8.9) to cb-perl (5.32.1)
 
 === EC-DslDeploy 4.2.2
 
-* Fixed test "overwrite_installDslFromDirectory.deploy persona, personaPage, personaCategory, user, group" due to changes in BEE-38177
+* Fixed issue where plugin could not set warning statuses in job steps. If warnings occured, the plugin attempted to set the status, which would result failure of the complete job. 
+
 * Fixed issue with set job step status in the overwrite mode during DSL evaluation
 
 === EC-DslDeploy 4.2.1
