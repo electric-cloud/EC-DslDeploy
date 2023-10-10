@@ -136,7 +136,7 @@ class victor extends PluginTestHelper {
           procedureName: "testProcedure",
           stepName: 'echo'
         )"""
-      assert st.step.shell == "ec-perl"
+      assert st.step.shell == "cb-perl"
 
     // check report is found
     then: "report is found"

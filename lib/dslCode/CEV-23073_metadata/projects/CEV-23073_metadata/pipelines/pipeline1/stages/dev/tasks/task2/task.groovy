@@ -4,7 +4,7 @@ import java.io.File
 task 'task2', {
   actualParameter = [
     'commandToRun': new File(projectDir, "./pipelines/pipeline1/stages/dev/tasks/task2.pl").text,
-    'shellToUse': 'ec-perl',
+    'shellToUse': 'cb-perl',
   ]
   advancedMode = '0'
   allowOutOfOrderRun = '0'

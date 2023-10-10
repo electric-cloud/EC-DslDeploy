@@ -11,13 +11,13 @@ procedure procName,
   step 'deployMain',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployMain.pl").text,
     resourceName: '$[pool]',
-    shell: 'ec-perl',
+    shell: 'cb-perl',
     workingDirectory: '$[directory]'
 
   step 'deployNonProjectEntities',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployNonProjectEntities.pl").text,
     resourceName: '$[pool]',
-    shell: 'ec-perl',
+    shell: 'cb-perl',
     workingDirectory: '$[directory]'
 
   step 'deployProjects',
@@ -29,7 +29,7 @@ procedure procName,
   step 'deployPost',
     command: new File(pluginDir, "dsl/procedures/$procName/steps/deployPost.pl").text,
     resourceName: '$[pool]',
-    shell: 'ec-perl',
+    shell: 'cb-perl',
     workingDirectory: '$[/myJob/CWD]'
 
 }

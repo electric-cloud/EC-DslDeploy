@@ -260,7 +260,7 @@ die "Condition not true" unless(isIncluded("/projects\\n/users", "" , "/projects
 project '$projName', {
     procedure 'test-procedure', {
         command = '''$cmd'''
-          shell = 'ec-perl'
+          shell = 'cb-perl'
     }
 }
 """)

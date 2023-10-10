@@ -6,7 +6,7 @@ procedure procName, {
             command: new File(pluginDir, "dsl/procedures/$procName/steps/retrieveArtifact.pl").text,
             errorHandling: 'abortProcedure',
             resourceName: '$[pool]',
-            shell: 'ec-perl'
+            shell: 'cb-perl'
 
     step 'installFromDirectory',
             subprocedure: 'installDslFromDirectory',
