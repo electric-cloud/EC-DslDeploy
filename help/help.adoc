@@ -416,7 +416,7 @@ NOTE: If the commit ID cannot be found or if the procedure or steps cannot find,
 === EC-DslDeploy 4.1.6
 
 * Added DSL import of completed releases - EC-DslDeploy side
-* Fixed incremental import in the importDslFromGitNew procedure when it is used as a subproceduce
+* Fixed incremental import in the importDslFromGitNew procedure when it is used as a subprocedure
 
 === EC-DslDeploy  4.1.5
 
