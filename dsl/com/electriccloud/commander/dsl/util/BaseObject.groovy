@@ -4,7 +4,7 @@
 #
 #  Author: L.Rochette
 #
-#  Copyright 2017-2022 Electric-Cloud Inc.
+#  Copyright (c) 2024 CloudBees, Inc.
 #
 #     Licensed under the Apache License, Version 2.0 (the "License");
 #     you may not use this file except in compliance with the License.
@@ -361,6 +361,7 @@ abstract class BaseObject extends DslDelegatingScript {
               dashboard      : ['reportingFilter', 'widget'],
               environment    : ['cluster', 'environmentTier', 'reservation'],
               gate           : ['task'],
+              microservice   : ['process'],
               pipeline       : ['stage', 'trigger'],
               process        : ['processStep'],
               procedure      : ['step', 'emailNotifier', 'trigger'],
