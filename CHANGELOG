@@ -1,3 +1,6 @@
+2024-03.01 Valera Fessler <vfezler@cloudbees.com>
+  * 4.3.1: BEE-43082 - Add child process entities support for the microservice container entity
+
 2023-10.05 Valera Fessler <vfezler@cloudbees.com>
   * 4.3.0: BEE-38889 - Switched perl from old ec-perl (5.8.9) to new one cb-perl (5.32.1)
 
