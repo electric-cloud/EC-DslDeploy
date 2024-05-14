@@ -7,7 +7,7 @@ my $clientFilesCompatible = checkClientFilesCompatibility();
 my @subProjectEntities = ("project", "credentialProvider", "credential",
     "pluginConfiguration","procedure", "resourceTemplate", "workflowDefinition",
     "environmentTemplate", "environment", "component",
-    "application", "pipeline", "release", "schedule", "catalog", "report", "dashboard");
+    "application", "pipeline", "release", "reservation", "schedule", "catalog", "report", "dashboard");
 
 my ($userTimeout) = ("$[additionalDslArguments]" =~ m/--timeout\s+([0-9]+)/);
 print("User timeout is: '$userTimeout'\n");
