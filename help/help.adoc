@@ -1,12 +1,6 @@
 
 Plugin Version @PLUGIN_VERSION@
 
-== Create DslDeploy plugin configurations
-
-include::cloudbees-cd-plugin-docs::partial$create-configuration-intro.adoc[]
-
-include::cloudbees-cd-plugin-docs::partial$create-configuration.adoc[]
-
 == Create DslDeploy plugin procedures
 
 include::cloudbees-cd-plugin-docs::partial$create-procedure-intro.adoc[]
