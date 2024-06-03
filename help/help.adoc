@@ -1,68 +1,69 @@
 
 Plugin Version @PLUGIN_VERSION@
 
-== Procedures
+== Create DslDeploy plugin configurations
 
-IMPORTANT: For all parameter descriptions below, required parameters are shown in [.required]#bold italics#.
+include::cloudbees-cd-plugin-docs::partial$create-configuration-intro.adoc[]
 
+include::cloudbees-cd-plugin-docs::partial$create-configuration.adoc[]
 
+== Create DslDeploy plugin procedures
+
+include::cloudbees-cd-plugin-docs::partial$create-procedure-intro.adoc[]
 
 === InstallDsl
 
-Deploy a DSL file structure from an Artifact Version on your {PRODUCT} server.
+Deploy a DSL file structure from an artifact version on your {PRODUCT} server.
 
-[cols="1a,1a",options="header",]
+[cols="1a,1a",options="header"]
 |===
 |Parameter |Description
 |Artifact Name | Required. The name of your artifact.
-|Artifact Version |The version of the artifact you want to deploy. If empty, the latest version is deployed.
-NOTE: Use an empty version only in your `Dev` environment. In higher environments, it's recommended that you use a specific version that has been tested in lower environments.
+|Artifact Version |The version of the artifact you want to deploy. If left empty, the latest version is deployed.
 
-|Server Pool or Resource | Required. The name of the pool or resource where the artifact will be retrieved. The DSL is evaluated on the server so all system actions, such as file reads, will be evaluated on a server node.
+NOTE: Use an empty version only in your `Dev` environment. In higher environments, it is recommended that you use a specific version that has been tested in lower environments.
 
-Default value is `local`.
-|Retrieve on All server nodes | Required (By default, is set to false). Use this option when running in a cluster with a local workspace, as the artifact version needs to be retrieved on all nodes (as the system pick a random server node for each action). Use alongside a resource pool covering all server node agents for the parameter above.
+|Server Pool or Resource | Required. The name of the pool or resource where the artifact is retrieved. The DSL is evaluated on the server so all system actions, such as file reads, are evaluated on a server node. The default value is `local`.
 
-Default is `false`
-|Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
+|Retrieve on all server nodes | Required. If selected, the artifact version is retrieved on all nodes and the system selects a random server node for each action. This can be useful when running in a cluster with a local workspace and can be used in conjunction with a resource pool to cover all server node agents. The default is `false`.
+|Overwrite mode |If selected, overwrite mode is enabled and if the object exists, all attributes and child objects are overwritten by the values in the DSL files.
 |===
 
 
 === InstallDslFromDirectory
 
-Deploy a DSL file structure from a directory on your {PRODUCT} server.
+Deploys a DSL file structure from a directory on your {PRODUCT} server. This procedure's main usage is to set up a CI process. It extracts your code from your source control tool to a local directory on your `Dev` {PRODUCT} server, and then deploys it.
 
-This procedure's main usage is to set up a CI process. It extracts your code from your SCM in a local directory on your `Dev` {PRODUCT} server, and deploys it.
+==== Input parameters
 
-[cols="1a,1a",options="header",]
+.InstallDslFromDirectory input parameters
+[cols="1a,1a",options="header"]
 |===
 |Parameter |Description
 |Directory Path | Required. The location of the DSL code on your `Dev` {PRODUCT} server.
-|Server Pool or Resource | Required. The name of the pool or resource where the artifact will be retrieved. Use `.` if you have retrieved in your workspace.
-|Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
-|Additional argument(s)| For evalDsl calls, additional arguments such as  `--timeout` or `--debug`. Values used in `--timeout` are used as timeouts for ectool, evalDsl, and the job step time out used to import the DSL.
-|Ignore failures |Ignore failures during import of DSL files.
-|Local mode |Do not send files to the server with help of clientFiles argument of the evalDsl operation in local mode.
-|Include objects |New line separated list of paths to objects to synchronize.
-
-If set, only these objects are synchronized. If empty, all available objects are synchronized.
+|Server Pool or Resource | Required. The name of the pool or resource where the artifact is retrieved. Use `.` if you have retrieved it in your workspace.
+|Overwrite mode |If selected, overwrite mode is enabled and if the object exists, all attributes and child objects are overwritten by the values in the DSL files.
+|Additional argument(s)| Additional arguments, such as  `--timeout` or `--debug`, used for `evalDsl` tools. Values used in `--timeout` are used as timeouts for `ectool`, `evalDsl`, and the job step timeout used to import the DSL.
+|Ignore failures |Ignore failures during the import of DSL files.
+|Local mode |Do not send files to the server with the help of the `clientFiles` argument of the `evalDsl` operation in local mode.
+|Include objects |Newline-separated list of paths to objects to synchronize. If set, only these objects are synchronized. If empty, all available objects are synchronized.
 
 Examples:
 
-* “/projects“ - all projects
-* “/projects/Default/applications“ - all applications in project 'Default'
-* “/users“ - all users
-* “/projects/Commander/procedures/Master“ - 'Master' procedure in 'Commander' project
-* “/projects/*/releases“ - all releases in all projects
+* `/projects` - All projects
+* `/projects/Default/applications` - All applications in project `Default`
+* `/users` - All users
+* `/projects/Commander/procedures/Master` - `Master` procedure in the `Commander` project.
+* `/projects/*/releases` - All releases in all projects
 
 [NOTE]
 ====
-Objects with depth > 2 are not supported. Examples:
+Objects with a depth greater than two are not supported. For example:
 
-* “/projects/*/releases/release1“
-* “/projects/Default/application/application1/applicationTiers”
+* `/projects/*/releases/release1`
+* `/projects/Default/application/application1/applicationTiers`
 ====
-|Exclude objects |New line separated list of paths to exclude (See *Include objects* for examples). Exclude nothing by default.
+|Exclude objects |Newline-separated list of paths to exclude (refer to *Include objects* for examples). By default, nothing is excluded.
 |===
 
 .InstallDslFromDirectory input example
@@ -106,23 +107,24 @@ In the following *InstallDslFromDirectory* input example, `/projects` is being u
 
 === InstallProject
 
-Deploy DSL file structure from a directory on your {PRODUCT} server as a project.
+Deploys the DSL file structure from a directory on your {PRODUCT} server as a project. The main purpose of the procedure is to be a part of the <<InstallDslFromDirectory>> procedure.
 
-The main purpose of the procedure to be a part of installDslFromDirectory procedure.
+==== Input parameters
 
-[cols="1a,1a",options="header",]
+.InstallProject input parameters
+[cols="1a,1a",options="header"]
 |===
 |Parameter |Description
 |Project Name |Name of the project to install.
-|Project directory |The location of the project DSL code on your `Dev` {PRODUCT} server.
-|Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
-|Additional argument(s)| For evalDsl calls, additional arguments such as  `--timeout` or `--debug`. Values used in `--timeout` are used as timeouts for ectool, evalDsl, and the job step time out used to import the DSL.
+|Project directory |Location of the project DSL code on your `Dev` {PRODUCT} server.
+|Overwrite mode |If selected, overwrite mode is enabled and if the object exists, all attributes and child objects are overwritten by the values in the DSL files.
+|Additional argument(s)| Additional arguments, such as  `--timeout` or `--debug`, used for `evalDsl` tools. Values used in `--timeout` are used as timeouts for `ectool`, `evalDsl`, and the job step timeout used to import the DSL.
 |===
 
 .InstallProject input example
 [%collapsible]
 ====
-In the following *InstallProject* input example, you can see a sample directory structure to install a project. In this example, `project1` project with the `procedure1` and `procedure2` procedure.
+In the following *InstallProject* input example, is a sample directory structure to install a project. In this example, `project1` contains two procedures: `procedure1` and `procedure2`.
 
 [source,text,linenums,role="novalidate"]
 ----
@@ -140,36 +142,37 @@ project1
 └── properties
     └── prop1.txt
 ----
-
 ====
 
 
 === GenerateDslToDirectory
 
-Export DSL for a top level {PRODUCT} object, with options for which child objects and values to include. Export the DSL in separate files in a directory tree representing the object hierarchy, for ease of editing and management.
+Exports DSL for a top-level {PRODUCT} object, with options for the child objects and values to include. For ease of editing and management, export the DSL in separate files in a directory tree representing the object hierarchy.
 
-[cols="1a,1a",options="header",]
+==== Input parameters
+
+.GenerateDslToDirectory input parameters
+[cols="1a,1a",options="header"]
 |===
 |Parameter |Description
 |Directory path | Required. Folder where the code is generated.
 |Server Pool or Resource | Required. Server pool to use for a cluster setup.
 |Object Type | Required. Object type to generate DSL for.
 |Object Name | Required. Object name to generate DSL for.
-|Suppress Nulls |Exclude from the generated DSL properties with null value.
-|Suppress Defaults |Exclude from the generated DSL properties with default value.
-|Suppress Parent |Exclude from the generated DSL properties referred to object parent.
-|Include ACLs |Include in ACLs for objects.
-|Include All Children |Include in the generated DSL all object children. If `True`, the value of the `Include Children` parameter is ignored.
-|Include children |A comma-separated list of object children the DSL should be generated for.
+|Suppress Nulls |Exclude from the generated DSL properties with a null value.
+|Suppress Defaults |Exclude from the generated DSL properties with a default value.
+|Suppress Parent |Exclude the object parent from the generated DSL properties.
+|Include ACLs |Include in access control lists (ACLs) for objects.
+|Include All Children |Include in the generated DSL for all object children. If `True`, the value of the `Include Children` parameter is ignored.
+|Include children |Comma-separated list of object children the DSL should be generated for.
 |Include Children in Same File |Include in the generated DSL all object children. If `True`, the value of the `Include Children` parameter is ignored.
-|Children in Different Files | A comma-separated list of patterns to include, like pipelines, procedures.`*`, applications.applicationTiers.components
+|Children in Different Files | Comma-separated list of patterns to include (for example, `pipelines, procedures.*, applications.applicationTiers.components`).
 |===
-
 
 .GenerateDslToDirectory project output example
 [%collapsible]
 ====
-In the following *GenerateDslToDirectory* output example, you can see the directory structure generated for an example project, `testProject1` into a `/tmp/dsl` directory.
+In the following *GenerateDslToDirectory* output example, the directory structure is generated for an example `testProject1` project into a `/tmp/dsl` directory.
 
 [source,text,linenums,role="novalidate"]
 ----
@@ -237,7 +240,7 @@ In the following *GenerateDslToDirectory* output example, you can see the direct
 .GenerateDslToDirectory resources output example
 [%collapsible]
 ====
-In the following *GenerateDslToDirectory* output example, you can see the directory structure generated for two example resources, `testResource1` (line 3) and `testResource2` (line 16) into a `/tmp/dsl` directory.
+In the following *GenerateDslToDirectory* output example, the directory structure is generated for two example resources, `testResource1` (line 3) and `testResource2` (line 16) into a `/tmp/dsl` directory.
 
 [source,text,linenums,role="novalidate"]
 ----
@@ -277,68 +280,73 @@ In the following *GenerateDslToDirectory* output example, you can see the direct
 
 === ImportDslFromGit
 
-IMPORTANT: This procedure is deprecated and relies on the ECSCM-Git plugin, which is no longer supported. Unless you have legacy installations of {PRODUCT}, you should not use it and use <<ImportDslFromGitNew>> instead.
+IMPORTANT: This procedure is deprecated and relies on the ECSCM-Git plugin, which is no longer supported. Unless you have legacy installations of {PRODUCT}, you should not use the *ImportDslFromGit* procedure and use <<ImportDslFromGitNew>> instead.
 
-Import DSL file structure from a Git repository.
+Imports the DSL file structure from a Git repository to set up a CI process.
 
-This procedure main usage is to set up a CI process.
+==== Input parameters
 
-[cols="1a,1a",options="header",]
+.ImportDslFromGit input parameters
+[cols="1a,1a",options="header"]
 |===
 |Parameter |Description
 |Server Resource | Required. The resource where the DSL files are checked out from Git and imported to the {PRODUCT} server.
-|Destination Directory | Required. The directory on the resource where the source tree is created and from where the DSL files are read to be imported in {PRODUCT} server.
+|Destination Directory | Required. The directory on the resource where the source tree is created and from where the DSL files are read to be imported in the {PRODUCT} server.
 |Relative path to DSL files| If the DSL files are not located at the top-level in the repository, then specify the relative path to the directory containing the DSL files within the repository.
-|Cleanup? |This option will delete the destination directory with the source tree after the job execution.
-|Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
-|Configuration | Required. The name of a saved SCM configuration.
-|Git repository | Required. The URL to the repository to pull from, for example `git://server/repo.git`.
-|Commit Hash |The Commit Hash to update the index.
+|Cleanup? |Deletes the destination directory with the source tree after job execution.
+|Overwrite mode |If selected, overwrite mode is enabled and if the object exists, all attributes and child objects are overwritten by the values in the DSL files.
+|Configuration | Required. Name of a saved source control configuration.
+|Git repository | Required. URL to the repository to pull from (for example, `git://server/repo.git`).
+|Commit Hash |The Git commit hash to update the index.
 
 NOTE: This moves the HEAD.
-|Remote Branch |The name of the Git branch to use, for example `my_feature`.
-|Clone? |This option will clone a repository into a newly created directory.
-|Overwrite? |This option will overwrite a repository if it already exists.
-|Depth |Create a shallow clone with a history truncated to the specified number of revisions.
+|Remote Branch |The name of the Git branch to use (for example, `my_feature`).
+|Clone? |Clones a repository into a newly created directory.
+|Overwrite? |Overwrites a repository if it already exists.
+|Depth |Creates a shallow clone with a history truncated to the specified number of revisions.
 |Tag |Provide the name of a specific tag to check out after the clone command.
 |Ignore failures |Ignore failures during import of DSL files.
-|Local mode |Do not send files to the server with help of clientFiles argument of the evalDsl operation in local mode.
-|Additional DSL Arguments| Additional argument for `evalDsl` call.
+|Local mode |Do not send files to the server with the help of the `clientFile`s argument of the `evalDsl` operation in local mode.
+|Additional DSL Arguments| Additional argument for the `evalDsl` call.
 |===
 
 
 === ImportDslFromGitNew
 
-Import DSL file structure from a Git repository.
+Imports the DSL file structure from a Git repository to set up a CI process.
 
-This procedure main usage is to set up a CI process.
+[NOTE]
+====
+* This procedure uses the cd-plugin:ec-git[] plugin.
 
-NOTE: This procedure uses the cd-plugin:ec-git[] plugin.
+* When using the *ImportDslFromGitNew* procedure, the count of imported entities does not increment for manually modified DSL files. The plugin expects each DSL file to contain one {PRODUCT} entity, which is how DSL files are generated by the plugin itself, and the count of entities is based on this format.
+====
 
-NOTE: When using *ImportDslFromGitNew*, the count of imported entities does not increment for manually modified DSL files. The plugin expects each DSL file to contain one {PRODUCT} entity, which is how DSL files are generated by plugin itself, and the count of entities is based on this format.
+==== Input parameters
 
+.ImportDslFromGitNew input parameters
 [cols="1a,1a",options="header"]
 |===
 |Parameter |Description
-|Server Pool or Resource | Required. The resource or one of the pool resources where the DSL files are checked out from Git and imported to the {PRODUCT} server.
+|Server Pool or Resource | Required. Resource or one of the pool resources where the DSL files are checked out from Git and imported to the {PRODUCT} server.
 |Destination Directory | Required. The directory on the resource where the source tree is created and the DSL files are stored.
-|Relative path to DSL files |If the DSL files are not located at the top level in the repository, then specify the relative path to the directory containing the DSL files within the repository. For example, `scripts/dsls` where the DSL files are located in the following subdirectories in the repository `scripts/dsls/projects` and `scripts/dsls/resources`.
-|Cleanup? |This option deletes the destination directory with the source tree after the job execution.
-|Overwrite mode |Select to enable overwrite mode. If the object exists, all attributes and child objects are overwritten by the values in the DSL files.
-|Configuration | Required. `EC-Git` configuration name.
-|Git repository | Required. URL to the repository to pull from. For example, `git://server/repo.git`.
-|Remote Branch |The name of the Git branch to use. For example, `experimental`.
+|Relative path to DSL files |If the DSL files are not located at the top-level in the repository, then specify the relative path to the directory containing the DSL files within the repository. For example, `scripts/dsls` is where the DSL files are located in the following subdirectories in the repository: `scripts/dsls/projects` and `scripts/dsls/resources`.
+|Cleanup? |This option deletes the destination directory with the source tree after job execution.
+|Overwrite mode |If selected, overwrite mode is enabled and if the object exists, all attributes and child objects are overwritten by the values in the DSL files.
+|Configuration | Required. The `EC-Git` plugin configuration name.
+|Git repository | Required. URL to the repository to pull from (for example, `git://server/repo.git`).
+|Remote Branch |The name of the Git branch to use (for example, `experimental`).
 |Ignore failures |Ignore failures during import of DSL files.
-|Local mode |Do not send files to the server with help of `clientFiles`
-argument of the `evalDsl` operation in local mode. Available only if the
-destination directory is accessible from the {CD} server. In a clustered
+|Local mode |Does not send files to the server with the help of the `clientFiles`
+argument of the `evalDsl` operation when in local mode. Available only if the
+destination directory is accessible from the {PRODUCT} server. In a clustered
 deployment, all {PRODUCT} server nodes must have access to this directory.
-|Additional DSL arguments |Additional argument(s) for the `evalDsl` call. For example, `--timeout` or `--debug`. Values used in `--timeout` are used as timeouts for `ectool`, `evalDsl`, and the job step timeout used to import the DSL.
-|Include objects a|New line separated list of paths to objects to synchronize.
+|Additional argument(s)| Additional arguments, such as  `--timeout` or `--debug`, used for `evalDsl` tools. Values used in `--timeout` are used as timeouts for `ectool`, `evalDsl`, and the job step timeout used to import the DSL.
+|Include objects |New line separated list of paths to objects to synchronize.
 If set, only these objects are synchronized. If empty, all available objects are synchronized.
 
-. Paths can refer to collections or specific objects, but the max depth is 2.
-+
+. Paths can refer to collections or specific objects, but the maximum depth is 2.
+
 * Supported examples:
 ** `/projects` - All projects
 ** `/projects/Default/applications` - All applications in project `Default`
@@ -349,187 +357,188 @@ If set, only these objects are synchronized. If empty, all available objects are
 ** `/projects/Default/application/application1/applicationTiers`
 
 . Wildcards can be used for first-level objects if the max depth is ≤ 2 and the path refers to a collection.
-+
+
 * Supported examples:
 ** `/projects/*/releases` - All releases in all projects
 * Unsupported examples:
 ** `/projects/Default/*/release1` - Wildcard not used on first-level object
 ** `/projects/*/releases/release1` - Exceeds max depth of 2.
 
-|Exclude objects |New line separated list of paths to exclude (See *Include objects* for examples). Exclude nothing by default.
-|Incremental import |Select to only import the incremental changes that have occurred since the previous run of the procedure. When selected, the previous run's commit ID is compared to the current commit ID in the Git repository and a change list is created. This can potentially reduce the import time because the entire DSL file structure is not re-imported from the Git repository each time the procedure runs.
+|Exclude objects |Newline-separated list of paths to exclude (refer to *Include objects* for examples). By default, nothing is excluded.
+|Incremental import |If selected, only incremental changes that have occurred since the previous run of the procedure are imported, the previous run's commit ID is compared to the current commit ID in the Git repository, and a change list is created. This can potentially reduce the import time because the entire DSL file structure is not re-imported from the Git repository each time the procedure runs.
 
-NOTE: If the commit ID cannot be found or if the procedure or steps cannot find, read, or correctly parse the change list, the entire DSL file structure is re-imported.
+NOTE: If the Git commit ID cannot be found or if the procedure or steps cannot find, read, or correctly parse the change list, the entire DSL file structure is re-imported.
 |===
 
 
 [[releaseNotes]]
-== Release notes
+== DslDeploy plugin release notes
 
-=== EC-DslDeploy 4.3.1
+=== 4.3.1
 
-* Add child process entities support for the microservice container entity
+* Added child process entities support for the microservice container entity.
 
-=== EC-DslDeploy 4.3.0
+=== 4.3.0
 
-* Updated Perl from legacy ec-perl (5.8.9) to cb-perl (5.32.1)
+* Updated Perl from legacy ec-perl (5.8.9) to cb-perl (5.32.1).
 
-=== EC-DslDeploy 4.2.2
+=== 4.2.2
 
-* Fixed issue where plugin could not set warning statuses in job steps. If warnings occured, the plugin attempted to set the status, which would result failure of the complete job. 
+* Fixed an issue where the plugin could incorrectly not set warning statuses in job steps. If warnings occurred, the plugin attempted to set the status, which would result in a failure of the complete job.
 
-* Fixed issue with set job step status in the overwrite mode during DSL evaluation
+* Fixed an issue with setting the job step status in overwrite mode during DSL evaluation.
 
-=== EC-DslDeploy 4.2.1
+=== 4.2.1
 
-* Fixed issue with import environment reservations
-* Supported new option 'suppressEmpty' in the 'generateDsl' plugin procedure
+* Fixed an issue with importing environment reservations.
+* Added support for a new *suppressEmpty* option to the *generateDsl* plugin procedure.
 
-=== EC-DslDeploy 4.2.0
+=== 4.2.0
 
-* Added 'httpIdleTimeout' argument into the 'generateDsl' plugin procedure
-* Fixed import issue with entity names that contain special characters in the overwrite mode
-* Improved logging in the 'generateDslToDirectory' procedure for properties and property sheets
-* Fixed issue with 'timeout' argument in the 'generateDslToDirectory' procedure
-* Fixed import issue for CD entities with names contain punctuated characters
-* Fixed issue with import new properties in the overwrite mode
+* Added the *httpIdleTimeout* argument to the *generateDsl* plugin procedure.
+* Fixed import issue with entity names that contain special characters in overwrite mode.
+* Improved logging in the *GenerateDslToDirectory* procedure for properties and property sheets.
+* Fixed an issue with the *timeout* argument in the *GenerateDslToDirectory* procedure.
+* Fixed an import issue for {PRODUCT} entities with names that contain punctuated characters.
+* Fixed an issue with importing new properties in overwrite mode.
 
-=== EC-DslDeploy 4.1.11
+=== 4.1.11
 
-* Fixed regression with multiline property values generation.
+* Fixed a regression with multiline property value generation.
 
-=== EC-DslDeploy 4.1.10
+=== 4.1.10
 
 * A regression was introduced in version 4.1.10. Do not use this version.
 
-=== EC-DslDeploy 4.1.9
+=== 4.1.9
 
-* Fixed regression with multiline property values generation
+* Fixed a regression with multiline property value generation.
 
-=== EC-DslDeploy 4.1.8
+=== 4.1.8
 
-* Added support to run sub procedure 'importDslFromGitNew' for EC-DslDeploy plugin
-* Fixed issue with import non project entities in case remote agent is used
+* Added support to run the *importDslFromGitNew* subprocedure for the EC-DslDeploy plugin.
+* Fixed an issue with importing non-project entities when a remote agent is used.
 
-=== EC-DslDeploy 4.1.7
+=== 4.1.7
 
-* Added support for property detail information like description, etc
-* Fixed incremental imports in the importDslFromGitNew procedure when used as a subprocedure
-* Instrumented EC-DslDeploy code to help debug performance issue where importing a release from a nested DSL file structure
+* Added support for property detail information (for example, descriptions).
+* Fixed incremental imports in the *importDslFromGitNew* procedure when used as a subprocedure.
+* Instrumented EC-DslDeploy code to help debug performance issues when importing a release from a nested DSL file structure.
 
-=== EC-DslDeploy 4.1.6
+=== 4.1.6
 
-* Added DSL import of completed releases - EC-DslDeploy side
-* Fixed incremental import in the importDslFromGitNew procedure when it is used as a subprocedure
+* Added support for DSL import of completed releases.
+* Fixed incremental imports in the *importDslFromGitNew* procedure when it is used as a subprocedure.
 
-=== EC-DslDeploy  4.1.5
+===  4.1.5
 
-* Fixed exception during import DSL using service catalog item
+* Fixed a problem where an exception error could be returned during DSL import when using a service catalog item.
 
-=== EC-DslDeploy 4.1.4
+=== 4.1.4
 
-* Fixed issue with exceptions that should be retried
-* Added support for serviceAccount objects
+* Fixed an issue with exceptions that should be retried.
+* Added support for service account objects.
 
-=== EC-DslDeploy 4.1.3
+=== 4.1.3
 
-* Fixed issues caused by incremental import support
+* Fixed issues that were caused by incremental import support.
 
-=== EC-DslDeploy 4.1.2
+=== 4.1.2
 
-* Added support for overwrite mode in the main deploy step for single DSL files
-* Added support for triggers import/export
+* Added support for overwrite mode in the main deploy step for single DSL files.
+* Added support for the import/export of triggers.
 
-=== EC-DslDeploy 4.1.1
+=== 4.1.1
 
-* Internal improvements
+* Internal improvements.
 
-=== EC-DslDeploy 4.1.0
+=== 4.1.0
 
-* Enhanced the import procedure to perform partial/incremental import
+* Enhanced the import procedure to perform partial/incremental import.
 
-=== EC-DslDeploy 4.0.4
+=== 4.0.4
 
-* Internal improvements
+* Internal improvements.
 
-=== EC-DslDeploy 4.0.3
-* Fixed importDslFromGitNew doesn't proceed additionalArguments property into installDslFromDirectory step
+=== 4.0.3
 
-=== EC-DslDeploy 4.0.2
-* Fixed unexposed DSL import timeouts preventing large DSL imports
+* Fixed an issue with the *importDslFromGitNew* procedure where it did not proceed the *additionalArguments* property in the *installDslFromDirectory* step.
 
-=== EC-DslDeploy 4.0.1
+=== 4.0.2
 
-* Added configuration object support to DslDeploy plugin - plugin side
+* Fixed unexposed DSL import timeouts preventing large DSL imports.
 
-=== EC-DslDeploy 4.0.0
+=== 4.0.1
 
-* Added new procedure to provide import from Git functionality using EC-Git plugin
-* Fixed command task contents duplicates for tasks contained in a task group
-* Added metadata for GitSync and scmType level propertysheet
-* Fixed an issue with exports not generating the Groovy command task
-* Removed import old services from EC-DslDeploy Plugin
-* Fixed import DSL for projects with application microservice model when all children are in separate files
+* Added configuration object support.
 
-=== EC-DslDeploy 3.0.3
-* Added credentials import/export support
-* Fixed files path to fix deletion issue on Windows
-* Fixed `Relative path to DSL files` parameter in importDslFromGit
+=== 4.0.0
 
-=== EC-DslDeploy 3.0.2
+* Added support for a new procedure to provide import from Git functionality using the EC-Git plugin.
+* Fixed command task contents duplicates for tasks contained in a task group.
+* Added metadata for GitSync and the `scmType`-level property sheet.
+* Fixed an issue with exports not generating the Groovy command task.
+* Removed the import of old services from the EC-DslDeploy plugin.
+* Fixed the import of DSL for projects with an application microservice model when all children are in separate files.
 
-* Support Triggers import/export
+=== 3.0.3
+* Added credentials import/export support.
+* Fixed files path to fix deletion issue on Windows.
+* Fixed the `Relative path to DSL files` parameter in `importDslFromGit`.
 
-=== EC-DslDeploy 3.0.1
+=== 3.0.2
 
-* Fixed project import in the remote mode
+* Added support triggers for import/export.
 
-=== EC-DslDeploy 3.0.0
+=== 3.0.1
 
-* The plugin is made CloudBees Supported and moved under the private repository
-* Speedup noop deploy steps
-* Added ignoreFailed and localMode parameters for import procedures
-* Added support for object names with slash and backslash symbols
-* Fixed wrong counts in step summary for import procedures
+* Fixed project import in the remote mode.
 
-=== EC-DslDeploy 2.2.1
+=== 3.0.0
+* Renamed to "CloudBees".
+* Improved the speed of *noop* deploy steps.
+* Added support for *ignoreFailed* and *localMode* parameters for import procedures.
+* Added support for object names with slash and backslash (`/` and `\`) symbols.
+* Fixed an issue that resulted in wrong counts in step summaries for import procedures.
 
-* The plugin is adopted to use new `clientFiles` argument in evalDsl API what allows to remove limitation of shared folder usage for DSL import
-* Fixed issue with import of `release` property sheet under the project
-* Fixed issue for `generateDslToDirectory` with `includeAcls='1'`
+=== 2.2.1
 
-=== EC-DslDeploy 2.2.0
+* The plugin has been updated to use the `clientFiles` argument in the `evalDsl` API, which allows the removal of the limitation of shared folder usage for DSL import.
+* Fixed an issue with importing the `release` property sheet under the project.
+* Fixed an issue for *GenerateDslToDirectory* with `includeAcls='1'`.
 
-* Added `overwrite` parameter to install procedures
-* Added `generateDslToDirectory` procedure
-* Added `importDslFromGit` procedure
-* Enhanced `installDsl` procedure to support deploy of more types of objects
+=== 2.2.0
 
-=== EC-DslDeploy 2.1.3
+* Added an *Overwrite* parameter to installation procedures.
+* Added support for the *GenerateDslToDirectory* procedure.
+* Added support for the *importDslFromGit* procedure.
+* Enhanced the *installDsl* procedure to support the deployment of more objects types.
 
-* Fixed issue with `.` on DSL
+=== 2.1.3
 
-=== EC-DslDeploy 2.1.2
+* Fixed an issue with `.` on DSL.
 
-* Converted deployMain and deployPost to EC-Perl
+=== 2.1.2
 
-=== EC-DslDeploy 2.1.0
+* Converted `deployMain` and `deployPost` to EC-Perl.
 
-* Add ACLs support
+=== 2.1.0
 
-=== EC-DslDeploy 1.1.0
+* Added ACLs support.
 
-* Add support for resources.
+=== 1.1.0
 
-=== EC-DslDeploy 1.0.2
+* Added support for resources.
 
-* Refactor tests and add sample code as test.
-* Refactored InstallDsl and installDslFromDirectory
+=== 1.0.2
 
-=== EC-DslDeploy 1.0.1
+* Refactored tests and added sample code for testing.
+* Refactored the *InstallDsl* and *InstallDslFromDirectory* procedures.
 
-* Remove EC-Admin dependency.
+=== 1.0.1
 
-=== EC-DslDeploy 1.0.0
+* Remove the EC-Admin dependency.
+
+=== 1.0.0
 
 * First official version.
