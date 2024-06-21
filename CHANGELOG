@@ -1,3 +1,6 @@
+2024-05.14 Antoine Meyer <cbameyer@cloudbees.com>
+  * 4.3.2: BEE-49248 - Process reservations under project. (Note that previously exported DSLs will need to be re-exported for import to succeed)
+
 2024-03.01 Valera Fessler <vfezler@cloudbees.com>
   * 4.3.1: BEE-43082 - Add child process entities support for the microservice container entity
 
