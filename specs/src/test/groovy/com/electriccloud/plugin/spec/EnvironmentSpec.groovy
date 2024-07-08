@@ -23,7 +23,7 @@ class EnvironmentSpec
     conditionallyDeleteProject(projName)
   }
 
-  def "BEE-35400: deploy environment with reservation"()
+  def "BEE-35400: deploy project with reservation"()
   {
     def dslDir = '/tmp/' + randomize('dsl')
 
@@ -31,12 +31,13 @@ class EnvironmentSpec
     dsl """
 project '$projName', {
   environment 'testEnvironment',{
-      reservation 'testReservation', {
-      beginDate = '2019-09-09T10:00'
-      blackout = '1'
-      endDate = '2019-09-09T11:00'
-      timeZone = 'Europe/Kiev'
-    }
+  }
+  reservation 'testReservation', {
+    environmentName = 'testEnvironment'
+    beginDate = '2019-09-09T10:00'
+    blackout = '1'
+    endDate = '2019-09-09T11:00'
+    timeZone = 'Europe/Kiev'
   }
 }
 """
