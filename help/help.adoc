@@ -368,6 +368,12 @@ NOTE: If the Git commit ID cannot be found or if the procedure or steps cannot f
 [[releaseNotes]]
 == DslDeploy plugin release notes
 
+=== 4.3.2
+
+* Process reservations under project. 
++
+NOTE: Previously exported DSLs must be re-exported for import to succeed.
+
 === 4.3.1
 
 * Added child process entities support for the microservice container entity.
