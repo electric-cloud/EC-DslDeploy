@@ -32,7 +32,6 @@ class EnvironmentSpec
 project '$projName', {
   environment 'testEnvironment',{
   }
-
   reservation 'testReservation', {
     environmentName = 'testEnvironment'
     beginDate = '2019-09-09T10:00'
