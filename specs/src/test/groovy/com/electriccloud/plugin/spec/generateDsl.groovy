@@ -1431,6 +1431,7 @@ credential 'externalCred', userName: 'testUser', {
 credential 'localCred', userName: 'localUser', {
   credentialType = 'LOCAL'
   projectName = '$projectName'
+  unattachedAllowed = '0'
 }
 """)
 
