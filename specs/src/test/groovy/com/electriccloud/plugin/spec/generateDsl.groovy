@@ -1422,6 +1422,7 @@ credential 'externalCred', userName: 'testUser', {
   credentialType = 'EXTERNAL'
   projectName = '$projectName'
   secretPath = 'db/secret'
+  unattachedAllowed = '0'
 }
 """)
         def credDir2 = new File(projDir, "credentials/localCred")
