@@ -4,22 +4,35 @@ def procName = 'importDslFromGit'
 procedure procName, {
     jobNameTemplate = 'import-dsl-from-git-$[jobId]'
 
-    step 'checkoutDsl',
-            subprocedure: 'CheckoutCode',
-            subproject:'/plugins/ECSCM-Git/project',
+    step 'Clone',
+            subprocedure: 'Clone',
+            subproject: '/plugins/EC-Git/project',
+            condition: '$[/myJob/actualParameters/clone]',
             resourceName: '$[rsrcName]',
             errorHandling: 'abortProcedure',
                 actualParameter: [
-                        clone: '$[clone]',
+                        branch: '$[branch]',
                         commit: '$[commit]',
-                        config: '$[config]',
+                        config: '$[gitConfig]',
                         depth: '$[depth]',
-                        dest: '$[dest]',
-                        GitBranch: '$[GitBranch]',
-                        GitRepo: '$[GitRepo]',
+                        gitRepoFolder: '$[dest]',
                         overwrite: '$[GitOverwrite]',
+                        repoUrl: '$[repoUrl]',
                         tag: '$[tag]'
-                ]
+                    ]
+
+    step 'Pull',
+            subprocedure: 'Pull',
+            subproject: '/plugins/EC-Git/project',
+            resourceName: '$[rsrcName]',
+            errorHandling: 'abortProcedure',
+                 actualParameter: [
+                        branch: '$[branch]',
+                        config: '$[gitConfig]',
+                        gitRepoFolder: '$[dest]',
+                        repoUrl: '$[repoUrl]',
+                        ]
+
 
     step 'installFromDirectory',
             subprocedure: 'installDslFromDirectory',

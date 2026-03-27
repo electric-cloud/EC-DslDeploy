@@ -52,7 +52,7 @@
   </formElement>
   <formElement>
     <type>checkbox</type>
-    <label>Overwrite mode</label>
+    <label>DSL Overwrite Mode</label>
     <property>overwrite</property>
     <required>0</required>
     <checkedValue>1</checkedValue>
@@ -62,16 +62,16 @@
   </formElement>
   <formElement>
     <type>entry</type>
-    <label>Configuration:</label>
-    <property>config</property>
+    <label>Configuration Name:</label>
+    <property>gitConfig</property>
     <documentation>The name of a saved SCM configuration.</documentation>
     <required>1</required>
     <configuration>1</configuration>
   </formElement>
   <formElement>
     <type>entry</type>
-    <label>Git repository:</label>
-    <property>GitRepo</property>
+    <label>Git Repository URL:</label>
+    <property>repoUrl</property>
     <documentation>URL to the repository to pull from. ie: 'git://server/repo.git'.</documentation>
     <required>1</required>
   </formElement>
@@ -85,8 +85,9 @@
 
   <formElement>
     <type>entry</type>
-    <label>Remote Branch:</label>
-    <property>GitBranch</property>
+    <label>Remote Branch Name:</label>
+    <property>branch</property>
+    <value>master</value>
     <documentation>The name of the Git branch to use. ie: 'experimental'.</documentation>
     <required>0</required>
   </formElement>
