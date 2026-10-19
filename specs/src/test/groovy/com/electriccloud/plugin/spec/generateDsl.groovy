@@ -6,6 +6,7 @@ import spock.lang.Shared
 class generateDsl extends PluginTestHelper {
     static String pName='EC-DslDeploy'
     static String jira="CEV-19608"
+    static final String GATE_SETTING = '/server/settings/insecureAllowNonAdminsToRunDsl'
     @Shared String pVersion
     @Shared String plugDir
     @Shared String dslDir
@@ -17,12 +18,13 @@ class generateDsl extends PluginTestHelper {
         dslFile "generate_dsl_test_procedure.dsl"
         pVersion = getP("/plugins/$pName/pluginVersion")
         plugDir = getP("/server/settings/pluginsDirectory")
-
+        dsl("setProperty propertyName: '$GATE_SETTING', value: 'true'")
 
     }
 
     def doCleanupSpec() {
         conditionallyDeleteProject("$jira")
+        dsl("setProperty propertyName: '$GATE_SETTING', value: 'false'")
     }
 
     /**
